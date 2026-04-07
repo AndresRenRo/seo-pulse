@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SEO Pulse v2.3 — País Lector</title>
+<title>SEO Pulse v2.4 — País Lector</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap');
 :root{--bg:#FAF8F3;--surface:#FFFFFF;--surface-alt:#F3F0E8;--text:#1A1A18;--muted:#6B6A65;--hint:#9C9A92;--green:#2D5A27;--green-light:#E8F0E6;--coral:#D85A30;--coral-light:#FAECE7;--blue:#185FA5;--blue-light:#E6F1FB;--amber:#BA7517;--amber-light:#FAEEDA;--purple:#534AB7;--purple-light:#EEEDFE;--red:#A32D2D;--red-light:#FCEBEB;--border:rgba(0,0,0,0.08);--radius:12px;--serif:'Instrument Serif',Georgia,serif;--sans:'DM Sans',-apple-system,sans-serif}
@@ -67,7 +67,8 @@ header h1 em{color:var(--green);font-style:normal}
 .country-track{flex:1;height:8px;background:var(--surface-alt);border-radius:4px;overflow:hidden}
 .country-fill{height:100%;border-radius:4px;background:var(--green)}
 .country-val{font-size:10px;color:var(--hint);min-width:40px;text-align:right}
-@media(max-width:480px){.stats{grid-template-columns:repeat(2,1fr)}.stat-val{font-size:18px}header h1{font-size:20px}.two-col{grid-template-columns:1fr}}
+.url-tag{font-size:9px;color:var(--blue);background:var(--blue-light);padding:1px 5px;border-radius:3px;display:inline-block;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+@media(max-width:480px){.stats{grid-template-columns:repeat(2,1fr)}.stat-val{font-size:18px}header h1{font-size:20px}.two-col{grid-template-columns:1fr}.url-tag{max-width:120px}}
 </style>
 </head>
 <body>
@@ -78,7 +79,7 @@ header h1 em{color:var(--green);font-style:normal}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v2.3';
+const VERSION='v2.4';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SCOPES='https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly';
 const GSC_API='https://www.googleapis.com/webmasters/v3';
@@ -91,8 +92,10 @@ function pct(c,p){if(!p)return null;return((c-p)/p*100).toFixed(1)}
 function getConfig(){try{return JSON.parse(localStorage.getItem('sp2_config')||'null')}catch{return null}}
 function getToken(){try{const t=JSON.parse(localStorage.getItem('sp2_token')||'null');if(t&&t.exp>Date.now())return t;return null}catch{return null}}
 function getSavedKws(){try{return JSON.parse(localStorage.getItem('sp2_extrakws')||'null')}catch{return null}}
+function shortPath(url){return url.replace(/https?:\/\/[^/]+/,'')}
 const expectedCtr=[0,0.396,0.187,0.110,0.076,0.053,0.044,0.032,0.024,0.020,0.016,0.014,0.012,0.010,0.009,0.008,0.007,0.006,0.006,0.005,0.005];
 function getExpectedCtr(pos){const p=Math.round(Math.min(Math.max(pos,1),20));return expectedCtr[p]||0.005}
+function suggestAction(pos){if(pos<=3)return'Mejorar CTR (title/meta)';if(pos<=7)return'Push a top 3 (internal links + contenido)';if(pos<=15)return'Expandir contenido + links internos';return'Reescribir o nuevo articulo dedicado'}
 
 function TrendChart({dailyData}){
   const canvasRef=useRef(null);const chartRef=useRef(null);
@@ -163,19 +166,84 @@ function App(){
       // COUNTRIES
       const countriesResp=await gsc({startDate:sd,endDate:ed,dimensions:['country'],type:'web',rowLimit:10});
       const countries=(countriesResp.rows||[]).map(r=>({code:r.keys[0],clicks:r.clicks,impressions:r.impressions}));
-      // ALL QUERIES
+      // ALL QUERIES (flat, for KW Analyzer + clusters + quick wins)
       const allQ=await gsc({startDate:sd,endDate:ed,dimensions:['query'],type:'web',rowLimit:5000});
       const prevAllQ=await gsc({startDate:psd,endDate:ped,dimensions:['query'],type:'web',rowLimit:5000});
       const rows=allQ.rows||[];const prevMap={};(prevAllQ.rows||[]).forEach(r=>{prevMap[r.keys[0]]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});
+
+      // ========== v2.4: QUERY+PAGE for escribir/optimizar routing ==========
+      const queryPageResp=await gsc({startDate:sd,endDate:ed,dimensions:['query','page'],type:'web',rowLimit:5000});
+      const queryPageRows=queryPageResp.rows||[];
+      // Build map: query -> best ranking page (highest clicks)
+      const queryToPage={};
+      queryPageRows.forEach(r=>{
+        const q=r.keys[0],pg=r.keys[1];
+        if(!queryToPage[q]||r.clicks>queryToPage[q].clicks){
+          queryToPage[q]={page:pg,clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr};
+        }
+      });
+
       // ALL PAGES
       const allP=await gsc({startDate:sd,endDate:ed,dimensions:['page'],type:'web',rowLimit:5000});
       const prevAllP=await gsc({startDate:psd,endDate:ped,dimensions:['page'],type:'web',rowLimit:5000});
       const pages=allP.rows||[];const prevPageMap={};(prevAllP.rows||[]).forEach(r=>{prevPageMap[r.keys[0]]={clicks:r.clicks,position:r.position}});
-      // ANALYSIS
-      const escribir=rows.filter(r=>r.impressions>300&&r.position>7).map(r=>({...r,score:Math.round(r.impressions*(1/r.position)*10)})).sort((a,b)=>b.score-a.score).slice(0,8);
-      const optimizar=[];rows.forEach(r=>{const exp=getExpectedCtr(r.position);if(r.impressions>200&&r.ctr<exp*0.6)optimizar.push({...r,type:'CTR',expected:(exp*100).toFixed(1)})});
+
+      // ========== ESCRIBIR vs OPTIMIZAR with page awareness ==========
+      const candidates=rows.filter(r=>r.impressions>300&&r.position>7);
+      const escribir=[];    // true gaps: no page ranks for this query
+      const hasPageOpt=[];  // has page already: route to optimizar
+
+      candidates.forEach(r=>{
+        const q=r.keys[0];
+        const pageInfo=queryToPage[q];
+        if(pageInfo){
+          // This query already has a ranking page — optimize it
+          hasPageOpt.push({
+            query:q,
+            page:pageInfo.page,
+            impressions:r.impressions,
+            position:r.position,
+            clicks:r.clicks,
+            ctr:r.ctr,
+            action:suggestAction(r.position),
+            type:'HAS_PAGE'
+          });
+        }else{
+          // No page found (shouldn't normally happen since GSC returns page data,
+          // but handles edge cases). Treat as write opportunity.
+          const score=Math.round(r.impressions*(1/r.position)*10);
+          escribir.push({...r,score});
+        }
+      });
+
+      // For escribir, also check: even if queryToPage has a match,
+      // if the page is clearly generic (homepage), treat as escribir.
+      // Re-check hasPageOpt: if the ranking page is just "/" or the homepage,
+      // move back to escribir (homepage ranking = no dedicated article).
+      const siteHost=config.site.replace('sc-domain:','').replace(/https?:\/\//,'');
+      const finalEscribir=[...escribir];
+      const finalHasPage=[];
+      hasPageOpt.forEach(item=>{
+        const path=shortPath(item.page);
+        if(path==='/'||path===''||path==='/index.html'){
+          // Homepage ranking — not a dedicated article
+          const score=Math.round(item.impressions*(1/item.position)*10);
+          finalEscribir.push({keys:[item.query],impressions:item.impressions,position:item.position,clicks:item.clicks,ctr:item.ctr,score});
+        }else{
+          finalHasPage.push(item);
+        }
+      });
+
+      finalEscribir.sort((a,b)=>(b.score||0)-(a.score||0));
+      finalHasPage.sort((a,b)=>b.impressions-a.impressions);
+
+      // CTR-based optimizar (existing logic)
+      const optimizar=[];rows.forEach(r=>{const exp=getExpectedCtr(r.position);if(r.impressions>200&&r.ctr<exp*0.6){const pageInfo=queryToPage[r.keys[0]];optimizar.push({...r,type:'CTR',expected:(exp*100).toFixed(1),page:pageInfo?pageInfo.page:null})}});
+
+      // Dropping pages
       const dropping=[];pages.forEach(r=>{const p=prevPageMap[r.keys[0]];if(p&&r.position-p.position>2&&r.clicks>20)dropping.push({page:r.keys[0],curPos:r.position,prevPos:p.position,clicks:r.clicks,lostClicks:p.clicks-r.clicks})});dropping.sort((a,b)=>b.lostClicks-a.lostClicks);
-      const quickWins=rows.filter(r=>r.position>=2&&r.position<=20&&r.impressions>50).sort((a,b)=>b.impressions-a.impressions).slice(0,15).map(r=>{let a='protect';if(r.position>10)a='create';else if(r.position>3)a='push';return{...r,action:a}});
+
+      const quickWins=rows.filter(r=>r.position>=2&&r.position<=20&&r.impressions>50).sort((a,b)=>b.impressions-a.impressions).slice(0,15).map(r=>{let a='protect';if(r.position>10)a='create';else if(r.position>3)a='push';const pageInfo=queryToPage[r.keys[0]];return{...r,action:a,page:pageInfo?pageInfo.page:null}});
       const clusters={};rows.forEach(r=>{const w=r.keys[0].split(' ');let s=w.slice(0,2).join(' ');if(w.length===1)s=w[0];if(!clusters[s])clusters[s]={queries:[],clicks:0,impressions:0};clusters[s].queries.push(r);clusters[s].clicks+=r.clicks;clusters[s].impressions+=r.impressions});
       const clusterArr=Object.entries(clusters).filter(([,v])=>v.queries.length>=3).map(([n,v])=>({name:n,count:v.queries.length,clicks:v.clicks,impressions:v.impressions})).sort((a,b)=>b.clicks-a.clicks).slice(0,8);
       // GA4
@@ -193,7 +261,7 @@ function App(){
       // CONTENT VS TRAFFIC
       let contentVsTraffic=[];if(ga4Data){const gm={};ga4Data.forEach(g=>{gm[g.page]=g});pages.slice(0,30).forEach(r=>{const path=r.keys[0].replace(/https?:\/\/[^/]+/,'');const ga=gm[path];if(ga&&r.clicks>10){const ratio=ga.sessions/Math.max(r.clicks,1);contentVsTraffic.push({page:path,gscClicks:r.clicks,gaSessions:ga.sessions,ratio,engRate:ga.engRate})}});contentVsTraffic.sort((a,b)=>b.ratio-a.ratio);contentVsTraffic=contentVsTraffic.slice(0,10)}
 
-      setData({summary:{clicks:cur.clicks,impressions:cur.impressions,ctr:cur.ctr*100,pos:cur.pos,clicksChg:pct(cur.clicks,prev.clicks),imprChg:pct(cur.impressions,prev.impressions)},escribir,optimizar:optimizar.sort((a,b)=>b.impressions-a.impressions).slice(0,8),dropping:dropping.slice(0,5),quickWins,clusterArr,contentVsTraffic,ga4Pages,countries,dailyData,allRows:rows});
+      setData({summary:{clicks:cur.clicks,impressions:cur.impressions,ctr:cur.ctr*100,pos:cur.pos,clicksChg:pct(cur.clicks,prev.clicks),imprChg:pct(cur.impressions,prev.impressions)},escribir:finalEscribir.slice(0,8),hasPageOpt:finalHasPage.slice(0,8),optimizar:optimizar.sort((a,b)=>b.impressions-a.impressions).slice(0,8),dropping:dropping.slice(0,5),quickWins,clusterArr,contentVsTraffic,ga4Pages,countries,dailyData,allRows:rows});
     }catch(err){console.error(err);setError(err.message);if(err.message.includes('401')){localStorage.removeItem('sp2_token');setToken(null)}}
     setLoading(false);
   },[token,config,period,gsc,ga4Fetch]);
@@ -230,15 +298,28 @@ function App(){
     </div>
 
     <KwAnalyzer gscRows={d.allRows}/>
+
+    {/* ====== ESCRIBIR NEXT (true gaps only) ====== */}
     <div className="panel"><div className="panel-head"><h3>Escribir next</h3><span className="pill pill-green">{d.escribir.length} oportunidades</span></div><div className="panel-body">
+      {d.escribir.length===0&&<div style={{fontSize:12,color:'var(--hint)',padding:'8px 0'}}>No hay queries sin pagina dedicada que cumplan el umbral.</div>}
       {d.escribir.map((r,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / score {r.score}</div></div><span className={`score ${r.score>80?'s-hi':r.score>50?'s-md':'s-lo'}`}>{r.score}</span><button className="row-btn" onClick={()=>window.open('https://claude.ai/new?q='+encodeURIComponent('Content brief para "'+r.keys[0]+'" para paislector.com'),'_blank')}>Brief</button></div>)}
-      <div className="explain">Keywords con +300 impr sin articulo dedicado.</div></div></div>
-    <div className="panel"><div className="panel-head"><h3>Optimizar ahora</h3><span className="pill pill-coral">{d.optimizar.length+d.dropping.length} acciones</span></div><div className="panel-body">
-      {d.optimizar.map((r,i)=><div className="row" key={'o'+i}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{fmt(r.impressions)} impr / CTR {(r.ctr*100).toFixed(1)}% vs esperado {r.expected}% / pos {r.position.toFixed(1)}</div></div><span className="score s-lo">CTR</span></div>)}
-      {d.dropping.map((r,i)=><div className="row" key={'d'+i}><div className="row-left"><div className="row-kw">{r.page.replace(/https?:\/\/[^/]+/,'')}</div><div className="row-meta">pos {r.prevPos.toFixed(1)} &rarr; {r.curPos.toFixed(1)} / -{Math.max(0,r.lostClicks)} clicks</div></div><span className="score s-lo">DROP</span></div>)}
-      <div className="explain">CTR bajo para posicion / paginas cayendo.</div></div></div>
+      <div className="explain">Keywords con +300 impr y pos &gt;7 que NO tienen pagina dedicada en GSC. Verdaderas oportunidades de contenido nuevo.</div></div></div>
+
+    {/* ====== OPTIMIZAR AHORA (CTR + dropping + hasPage rerouted) ====== */}
+    <div className="panel"><div className="panel-head"><h3>Optimizar ahora</h3><span className="pill pill-coral">{d.optimizar.length+d.dropping.length+d.hasPageOpt.length} acciones</span></div><div className="panel-body">
+      {/* Rerouted from escribir: queries that already have a page */}
+      {d.hasPageOpt.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--blue)',marginBottom:6,marginTop:2}}>Ya tienen pagina ({d.hasPageOpt.length})</div>
+      {d.hasPageOpt.map((r,i)=><div className="row" key={'hp'+i}><div className="row-left"><div className="row-kw">{r.query}</div><div className="row-meta"><span className="url-tag">{shortPath(r.page)}</span> pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr / {r.action}</div></div><span className="score s-md">OPT</span><button className="row-btn" onClick={()=>window.open('https://claude.ai/new?q='+encodeURIComponent('Optimiza la pagina '+r.page+' para la keyword "'+r.query+'" en paislector.com. Posicion actual: '+r.position.toFixed(1)+'. Accion sugerida: '+r.action),'_blank')}>Brief</button></div>)}</>}
+      {/* CTR underperformers */}
+      {d.optimizar.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6,marginTop:d.hasPageOpt.length>0?10:2}}>CTR bajo ({d.optimizar.length})</div>
+      {d.optimizar.map((r,i)=><div className="row" key={'o'+i}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / CTR {(r.ctr*100).toFixed(1)}% vs esperado {r.expected}% / pos {r.position.toFixed(1)}</div></div><span className="score s-lo">CTR</span></div>)}</>}
+      {/* Dropping pages */}
+      {d.dropping.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6,marginTop:10}}>Cayendo ({d.dropping.length})</div>
+      {d.dropping.map((r,i)=><div className="row" key={'d'+i}><div className="row-left"><div className="row-kw">{shortPath(r.page)}</div><div className="row-meta">pos {r.prevPos.toFixed(1)} &rarr; {r.curPos.toFixed(1)} / -{Math.max(0,r.lostClicks)} clicks</div></div><span className="score s-lo">DROP</span></div>)}</>}
+      <div className="explain">Ya tienen pagina = keywords del panel escribir que ya rankean con URL. CTR bajo = bajo para su posicion. Cayendo = paginas perdiendo posicion.</div></div></div>
+
     <div className="panel"><div className="panel-head"><h3>Quick wins</h3><span className="pill pill-amber">{d.quickWins.length} keywords</span></div><div className="panel-body">
-      {d.quickWins.map((r,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / CTR {(r.ctr*100).toFixed(1)}%</div></div><span className={`score ${r.action==='protect'?'s-hi':r.action==='push'?'s-md':'s-lo'}`}>{r.action==='protect'?'TOP3':r.action==='push'?'PUSH':'NEW'}</span></div>)}
+      {d.quickWins.map((r,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / CTR {(r.ctr*100).toFixed(1)}%</div></div><span className={`score ${r.action==='protect'?'s-hi':r.action==='push'?'s-md':'s-lo'}`}>{r.action==='protect'?'TOP3':r.action==='push'?'PUSH':'NEW'}</span></div>)}
       <div className="explain">TOP3: proteger. PUSH: internal links. NEW: articulo nuevo.</div></div></div>
     <div className="panel"><div className="panel-head"><h3>Cluster map</h3><span className="pill pill-purple">{d.clusterArr.length} clusters</span></div><div className="panel-body">
       {d.clusterArr.map((c,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{c.name}</div><div className="row-meta">{c.count} queries / {fmt(c.clicks)} clicks / {fmt(c.impressions)} impr</div></div><span className={`score ${c.count>5?'s-hi':c.count>3?'s-md':'s-lo'}`}>{c.count}q</span></div>)}
