@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SEO Pulse v2.5 — País Lector</title>
+<title>SEO Pulse v2.6 — País Lector</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap');
 :root{--bg:#FAF8F3;--surface:#FFFFFF;--surface-alt:#F3F0E8;--text:#1A1A18;--muted:#6B6A65;--hint:#9C9A92;--green:#2D5A27;--green-light:#E8F0E6;--coral:#D85A30;--coral-light:#FAECE7;--blue:#185FA5;--blue-light:#E6F1FB;--amber:#BA7517;--amber-light:#FAEEDA;--purple:#534AB7;--purple-light:#EEEDFE;--red:#A32D2D;--red-light:#FCEBEB;--border:rgba(0,0,0,0.08);--radius:12px;--serif:'Instrument Serif',Georgia,serif;--sans:'DM Sans',-apple-system,sans-serif}
@@ -84,6 +84,12 @@ header h1 em{color:var(--green);font-style:normal}
 .diag-label{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;display:inline-block;margin-right:6px}
 .diag-urgent{background:var(--coral-light);color:var(--coral)}.diag-warn{background:var(--amber-light);color:var(--amber)}.diag-ok{background:var(--green-light);color:var(--green)}.diag-info{background:var(--blue-light);color:var(--blue)}
 .top-queries-list .row{cursor:default}.top-queries-list .row:hover{background:transparent}
+/* DISCOVERY */
+.disc-input-row{display:flex;gap:8px;align-items:center}.disc-input{flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:var(--sans);background:var(--surface)}.disc-input:focus{outline:none;border-color:var(--green)}
+.disc-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.disc-chip{font-size:11px;padding:4px 10px;border-radius:14px;border:0.5px solid var(--border);background:var(--surface-alt);cursor:pointer;color:var(--muted);transition:all 0.15s}.disc-chip:hover{border-color:var(--green);color:var(--green)}
+.disc-rank{font-size:9px;color:var(--hint);margin-left:2px}
+.disc-searching{font-size:11px;color:var(--hint);padding:8px 0;display:flex;align-items:center;gap:6px}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @media(max-width:480px){.stats{grid-template-columns:repeat(2,1fr)}.stat-val{font-size:18px}header h1{font-size:20px}.two-col{grid-template-columns:1fr}.url-tag{max-width:120px}.drawer-stats{grid-template-columns:repeat(2,1fr)}}
@@ -97,8 +103,9 @@ header h1 em{color:var(--green);font-style:normal}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v2.5';
+const VERSION='v2.6';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
+const SUGGEST_API=REDIRECT_URI+'/api/suggest';
 const SCOPES='https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly';
 const GSC_API='https://www.googleapis.com/webmasters/v3';
 const GA4_API='https://analyticsdata.googleapis.com/v1beta';
@@ -125,25 +132,22 @@ function diagnose(daily,topQueries,avgPos,avgCtr,totalClicks,totalImpr){
     const h2Pos=daily.slice(mid).reduce((s,d)=>s+d.position,0)/(daily.length-mid);
     const clickDelta=h1Clicks>0?((h2Clicks-h1Clicks)/h1Clicks*100):0;
     const posDelta=h2Pos-h1Pos;
-    if(posDelta>1.5)actions.push({level:'urgent',text:'Posicion cayendo: paso de '+h1Pos.toFixed(1)+' a '+h2Pos.toFixed(1)+' en el periodo. Revisa si hay contenido nuevo de competidores, si perdiste backlinks o si hubo un core update reciente.'});
-    else if(posDelta>0.5)actions.push({level:'warn',text:'Posicion en leve descenso ('+h1Pos.toFixed(1)+' \u2192 '+h2Pos.toFixed(1)+'). Monitorear y reforzar con internal links.'});
-    else if(posDelta<-1)actions.push({level:'ok',text:'Posicion mejorando: '+h1Pos.toFixed(1)+' \u2192 '+h2Pos.toFixed(1)+'. Buen momentum.'});
-    if(clickDelta<-25&&h1Clicks>10)actions.push({level:'urgent',text:'Clicks cayeron '+Math.abs(clickDelta).toFixed(0)+'% en la segunda mitad del periodo. Posible perdida de ranking o estacionalidad.'});
-    else if(clickDelta>25&&h2Clicks>10)actions.push({level:'ok',text:'Clicks subieron '+clickDelta.toFixed(0)+'% en la segunda mitad. Tendencia positiva.'});
+    if(posDelta>1.5)actions.push({level:'urgent',text:'Posicion cayendo: '+h1Pos.toFixed(1)+' \u2192 '+h2Pos.toFixed(1)+'. Revisar competidores, backlinks, core updates.'});
+    else if(posDelta>0.5)actions.push({level:'warn',text:'Leve descenso ('+h1Pos.toFixed(1)+' \u2192 '+h2Pos.toFixed(1)+'). Reforzar con internal links.'});
+    else if(posDelta<-1)actions.push({level:'ok',text:'Posicion mejorando: '+h1Pos.toFixed(1)+' \u2192 '+h2Pos.toFixed(1)+'.'});
+    if(clickDelta<-25&&h1Clicks>10)actions.push({level:'urgent',text:'Clicks -'+Math.abs(clickDelta).toFixed(0)+'% segunda mitad del periodo.'});
+    else if(clickDelta>25&&h2Clicks>10)actions.push({level:'ok',text:'Clicks +'+clickDelta.toFixed(0)+'% segunda mitad.'});
   }
   const expCtr=getExpectedCtr(avgPos);
-  if(avgCtr<expCtr*0.5)actions.push({level:'urgent',text:'CTR muy bajo: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'% esperado para pos '+avgPos.toFixed(1)+'. Reescribir title tag y meta description con gancho emocional/especifico.'});
-  else if(avgCtr<expCtr*0.75)actions.push({level:'warn',text:'CTR bajo: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'% esperado. Oportunidad en title/meta.'});
-  else actions.push({level:'ok',text:'CTR saludable: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'% esperado.'});
-  if(avgPos<=3)actions.push({level:'info',text:'Top 3: Proteger. Mantener contenido fresco, no hacer cambios grandes, monitorear competidores.'});
-  else if(avgPos<=7)actions.push({level:'info',text:'Pos '+avgPos.toFixed(1)+': A un empujon del top 3. Agregar 3-5 internal links desde paginas fuertes, expandir contenido, agregar FAQ schema.'});
-  else if(avgPos<=15)actions.push({level:'warn',text:'Pos '+avgPos.toFixed(1)+': Expandir contenido (+500 palabras), mejorar H2s, agregar media, reforzar internal links.'});
-  else actions.push({level:'urgent',text:'Pos '+avgPos.toFixed(1)+': Pagina 2+. Reescritura completa o nuevo articulo con mejor search intent.'});
-  if(topQueries&&topQueries.length>0){
-    const topQClicks=topQueries[0].clicks;
-    if(totalClicks>0&&topQClicks/totalClicks>0.6)actions.push({level:'warn',text:'Trafico concentrado: "'+topQueries[0].keys[0]+'" = '+(topQClicks/totalClicks*100).toFixed(0)+'% de clicks. Diversificar con variantes long-tail.'});
-  }
-  if(totalImpr>1000&&totalClicks<10)actions.push({level:'urgent',text:'Alta visibilidad ('+fmt(totalImpr)+' impr) pero casi 0 clicks ('+totalClicks+'). Title/meta no conecta con search intent.'});
+  if(avgCtr<expCtr*0.5)actions.push({level:'urgent',text:'CTR muy bajo: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'% esperado. Reescribir title/meta.'});
+  else if(avgCtr<expCtr*0.75)actions.push({level:'warn',text:'CTR bajo: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'%. Oportunidad en title/meta.'});
+  else actions.push({level:'ok',text:'CTR saludable: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'%.'});
+  if(avgPos<=3)actions.push({level:'info',text:'Top 3: Proteger. Mantener fresco, no cambios grandes.'});
+  else if(avgPos<=7)actions.push({level:'info',text:'Pos '+avgPos.toFixed(1)+': Push a top 3 con 3-5 internal links + FAQ schema.'});
+  else if(avgPos<=15)actions.push({level:'warn',text:'Pos '+avgPos.toFixed(1)+': Expandir contenido +500 palabras, H2s, media, internal links.'});
+  else actions.push({level:'urgent',text:'Pos '+avgPos.toFixed(1)+': Reescritura o nuevo articulo dedicado.'});
+  if(topQueries&&topQueries.length>0&&totalClicks>0&&topQueries[0].clicks/totalClicks>0.6)actions.push({level:'warn',text:'Trafico concentrado en "'+topQueries[0].keys[0]+'" ('+((topQueries[0].clicks/totalClicks)*100).toFixed(0)+'%). Diversificar long-tail.'});
+  if(totalImpr>1000&&totalClicks<10)actions.push({level:'urgent',text:fmt(totalImpr)+' impr pero '+totalClicks+' clicks. Title/meta no conecta.'});
   return actions;
 }
 
@@ -191,8 +195,7 @@ function PageDetailDrawer({item,onClose,gscFn,period}){
   useEffect(()=>{
     if(!gscFn)return;
     (async()=>{
-      setLoading(true);
-      const sd=daysAgo(period),ed=daysAgo(1);
+      setLoading(true);const sd=daysAgo(period),ed=daysAgo(1);
       try{
         const filters=[];
         if(page)filters.push({dimension:'page',operator:'equals',expression:page});
@@ -203,16 +206,12 @@ function PageDetailDrawer({item,onClose,gscFn,period}){
         const d=(resp.rows||[]).map(r=>({date:r.keys[0],clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}));
         setDaily(d);
         let tq=null;
-        if(page){
-          const qResp=await gscFn({startDate:sd,endDate:ed,dimensions:['query'],type:'web',dimensionFilterGroups:[{filters:[{dimension:'page',operator:'equals',expression:page}]}],rowLimit:10});
-          tq=qResp.rows||[];setTopQueries(tq);
-        }
-        const totalClicks=d.reduce((s,r)=>s+r.clicks,0);
-        const totalImpr=d.reduce((s,r)=>s+r.impressions,0);
+        if(page){const qResp=await gscFn({startDate:sd,endDate:ed,dimensions:['query'],type:'web',dimensionFilterGroups:[{filters:[{dimension:'page',operator:'equals',expression:page}]}],rowLimit:10});tq=qResp.rows||[];setTopQueries(tq)}
+        const totalClicks=d.reduce((s,r)=>s+r.clicks,0);const totalImpr=d.reduce((s,r)=>s+r.impressions,0);
         const avgPos=d.length>0?d.reduce((s,r)=>s+r.position,0)/d.length:item.position||0;
         const avgCtr=totalImpr>0?totalClicks/totalImpr:0;
         setDiag(diagnose(d,tq,avgPos,avgCtr,totalClicks,totalImpr));
-      }catch(e){console.error(e);setDiag([{level:'urgent',text:'Error: '+e.message}])}
+      }catch(e){setDiag([{level:'urgent',text:'Error: '+e.message}])}
       setLoading(false);
     })();
   },[page,query,gscFn,period]);
@@ -223,12 +222,8 @@ function PageDetailDrawer({item,onClose,gscFn,period}){
   const avgCtr=totalImpr>0?(totalClicks/totalImpr*100):0;
   return ReactDOM.createPortal(
     <div className="drawer-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
-      <div className="drawer">
-        <div className="drawer-handle" onClick={onClose}><span/></div>
-        <div className="drawer-header">
-          <h2>{title}</h2>
-          {page&&<div className="drawer-url">{shortPath(page)}</div>}
-        </div>
+      <div className="drawer"><div className="drawer-handle" onClick={onClose}><span/></div>
+        <div className="drawer-header"><h2>{title}</h2>{page&&<div className="drawer-url">{shortPath(page)}</div>}</div>
         <div className="drawer-body">
           {loading?<div className="loading"><div className="spinner"/>Cargando detalle...</div>:<>
           <div className="drawer-stats">
@@ -238,24 +233,118 @@ function PageDetailDrawer({item,onClose,gscFn,period}){
             <div className="stat"><div className="stat-label">Pos. prom.</div><div className="stat-val">{avgPos.toFixed(1)}</div></div>
           </div>
           {daily&&daily.length>0&&<DetailChart daily={daily}/>}
-          <div className="diag-section">
-            <div className="diag-title">Diagnostico y acciones</div>
-            {diag.map((a,i)=><div className="diag-item" key={i}><span className={'diag-label '+(a.level==='urgent'?'diag-urgent':a.level==='warn'?'diag-warn':a.level==='ok'?'diag-ok':'diag-info')}>{a.level==='urgent'?'URGENTE':a.level==='warn'?'ATENCION':a.level==='ok'?'BIEN':'INFO'}</span>{a.text}</div>)}
-          </div>
-          {topQueries&&topQueries.length>0&&<div className="diag-section">
-            <div className="diag-title">Top queries de esta pagina</div>
-            <div className="top-queries-list">
-              {topQueries.map((q,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{q.keys[0]}</div><div className="row-meta">{fmt(q.clicks)} clicks / {fmt(q.impressions)} impr / pos {q.position.toFixed(1)}</div></div><span className={`score ${q.position<=3?'s-hi':q.position<=10?'s-md':'s-lo'}`}>P{Math.round(q.position)}</span></div>)}
-            </div>
-          </div>}
+          <div className="diag-section"><div className="diag-title">Diagnostico y acciones</div>
+            {diag.map((a,i)=><div className="diag-item" key={i}><span className={'diag-label '+(a.level==='urgent'?'diag-urgent':a.level==='warn'?'diag-warn':a.level==='ok'?'diag-ok':'diag-info')}>{a.level==='urgent'?'URGENTE':a.level==='warn'?'ATENCION':a.level==='ok'?'BIEN':'INFO'}</span>{a.text}</div>)}</div>
+          {topQueries&&topQueries.length>0&&<div className="diag-section"><div className="diag-title">Top queries de esta pagina</div><div className="top-queries-list">
+            {topQueries.map((q,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{q.keys[0]}</div><div className="row-meta">{fmt(q.clicks)} clicks / {fmt(q.impressions)} impr / pos {q.position.toFixed(1)}</div></div><span className={`score ${q.position<=3?'s-hi':q.position<=10?'s-md':'s-lo'}`}>P{Math.round(q.position)}</span></div>)}</div></div>}
           <div style={{marginTop:16,display:'flex',gap:8}}>
-            <button className="btn-primary" style={{fontSize:12,padding:'9px 18px'}} onClick={()=>window.open('https://claude.ai/new?q='+encodeURIComponent('Analisis SEO para '+(page||'paislector.com')+'. Query: "'+(query||title)+'". Pos: '+avgPos.toFixed(1)+'. CTR: '+avgCtr.toFixed(1)+'%. Impr: '+totalImpr+'. Diagnostico: '+diag.map(a=>a.text).join(' | ')+'. Dame plan de accion: title, meta, contenido, internal links.'),'_blank')}>Abrir brief en Claude</button>
+            <button className="btn-primary" style={{fontSize:12,padding:'9px 18px'}} onClick={()=>window.open('https://claude.ai/new?q='+encodeURIComponent('Analisis SEO para '+(page||'paislector.com')+'. Query: "'+(query||title)+'". Pos: '+avgPos.toFixed(1)+'. CTR: '+avgCtr.toFixed(1)+'%. Impr: '+totalImpr+'. Diagnostico: '+diag.map(a=>a.text).join(' | ')+'. Plan de accion: title, meta, contenido, internal links.'),'_blank')}>Brief en Claude</button>
             <button className="btn-secondary" onClick={onClose}>Cerrar</button>
-          </div>
-          </>}
+          </div></>}
         </div>
       </div>
     </div>,document.body);
+}
+
+// =========== DISCOVERY PANEL ===========
+function Discovery({gscRows,onOpenDetail}){
+  const[seed,setSeed]=useState('');const[searching,setSearching]=useState(false);const[results,setResults]=useState(null);const[expanded,setExpanded]=useState({});
+  const gscMap=useRef({});
+  useEffect(()=>{if(gscRows){const m={};gscRows.forEach(r=>{const k=r.keys[0].toLowerCase();m[k]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});gscMap.current=m}},[gscRows]);
+
+  async function fetchSuggestions(query){
+    try{const r=await fetch(SUGGEST_API+'?q='+encodeURIComponent(query)+'&lang=es');if(!r.ok)return[];const d=await r.json();return d.suggestions||[]}catch{return[]}}
+
+  async function runDiscovery(){
+    if(!seed.trim())return;setSearching(true);setResults(null);setExpanded({});
+    // Fetch suggestions for seed + seed + " " (a-z alphabet soup)
+    const queries=[seed.trim()];
+    const alpha='abcdefghijklmnopqrstuvwxyz'.split('');
+    // Add top 5 alphabet expansions for breadth
+    const alphaQueries=alpha.slice(0,10).map(l=>seed.trim()+' '+l);
+    queries.push(...alphaQueries);
+    const allSuggestions=new Set();
+    const batches=[];
+    // Fetch in parallel batches of 4
+    for(let i=0;i<queries.length;i+=4){batches.push(queries.slice(i,i+4))}
+    for(const batch of batches){
+      const batchResults=await Promise.all(batch.map(q=>fetchSuggestions(q)));
+      batchResults.forEach(suggestions=>suggestions.forEach(s=>allSuggestions.add(s.toLowerCase().trim())));
+    }
+    // Remove exact seed
+    allSuggestions.delete(seed.trim().toLowerCase());
+    // Cross-reference against GSC
+    const analyzed=Array.from(allSuggestions).map(kw=>{
+      const exact=gscMap.current[kw];
+      if(exact)return{kw,status:'ranking',clicks:exact.clicks,impressions:exact.impressions,position:exact.position,ctr:exact.ctr};
+      // Partial match
+      const partials=Object.keys(gscMap.current).filter(q=>q.includes(kw)||kw.includes(q));
+      if(partials.length>0){
+        const best=partials.reduce((a,b)=>gscMap.current[a].impressions>gscMap.current[b].impressions?a:b);
+        const d=gscMap.current[best];
+        return{kw,status:'partial',matchedQuery:best,clicks:d.clicks,impressions:d.impressions,position:d.position,ctr:d.ctr};
+      }
+      return{kw,status:'gap',clicks:0,impressions:0,position:0,ctr:0};
+    });
+    // Sort: gaps first, then partials, then ranking
+    analyzed.sort((a,b)=>{const order={gap:0,partial:1,ranking:2};return order[a.status]-order[b.status]||b.impressions-a.impressions});
+    setResults(analyzed);setSearching(false);
+  }
+
+  function handleExpand(kw){
+    if(expanded[kw])return;
+    setExpanded(prev=>({...prev,[kw]:'loading'}));
+    fetchSuggestions(kw).then(suggestions=>{
+      const sub=suggestions.filter(s=>s.toLowerCase()!==kw).map(s=>{
+        const k=s.toLowerCase().trim();const exact=gscMap.current[k];
+        if(exact)return{kw:k,status:'ranking',clicks:exact.clicks,impressions:exact.impressions,position:exact.position};
+        return{kw:k,status:'gap',clicks:0,impressions:0,position:0};
+      });
+      setExpanded(prev=>({...prev,[kw]:sub}));
+    });
+  }
+
+  const gaps=results?results.filter(r=>r.status==='gap'):[];
+  const partials=results?results.filter(r=>r.status==='partial'):[];
+  const ranking=results?results.filter(r=>r.status==='ranking'):[];
+
+  return(<div className="panel"><div className="panel-head"><h3>Discovery</h3><span className="pill pill-purple">Autocomplete + GSC</span></div><div className="panel-body">
+    <div className="disc-input-row">
+      <input className="disc-input" placeholder='Tema seed: "poemas de amor", "sylvia plath"...' value={seed} onChange={e=>setSeed(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')runDiscovery()}}/>
+      <button className="btn-primary" style={{padding:'9px 16px',fontSize:'12px',whiteSpace:'nowrap'}} onClick={runDiscovery} disabled={searching}>{searching?'...':'Descubrir'}</button>
+    </div>
+    <div className="disc-chips">
+      {['poemas de amor','pablo neruda','cuentos cortos','sylvia plath','sor juana','haiku','poesia','frases de libros'].map(s=><span key={s} className="disc-chip" onClick={()=>{setSeed(s);}}>{s}</span>)}
+    </div>
+    {searching&&<div className="disc-searching"><div className="spinner"/>Buscando en Google Autocomplete y cruzando con GSC...</div>}
+    {results&&results.length>0&&<>
+      <div style={{marginTop:12,display:'flex',gap:6}}>
+        <span className="score s-lo" style={{fontSize:11,height:22,minWidth:40}}>{gaps.length} gaps</span>
+        <span className="score s-md" style={{fontSize:11,height:22,minWidth:50}}>{partials.length} parcial</span>
+        <span className="score s-hi" style={{fontSize:11,height:22,minWidth:55}}>{ranking.length} ranking</span>
+        <span style={{fontSize:10,color:'var(--hint)',marginLeft:'auto'}}>{results.length} total</span>
+      </div>
+      {/* GAPS */}
+      {gaps.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6}}>No rankeas ({gaps.length})</div>
+        {gaps.map((r,i)=><div key={'dg'+i}><div className="row" onClick={()=>handleExpand(r.kw)}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">Sin datos en GSC — click para expandir</div></div><span className="score s-new">GAP</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Content brief para "'+r.kw+'" para paislector.com. Incluye: search intent, estructura H2, keywords secundarias, meta description sugerida.'),'_blank')}}>Brief</button></div>
+          {expanded[r.kw]==='loading'&&<div className="disc-searching" style={{paddingLeft:12}}><div className="spinner"/>Expandiendo...</div>}
+          {Array.isArray(expanded[r.kw])&&expanded[r.kw].length>0&&<div style={{paddingLeft:16,borderLeft:'2px solid var(--purple-light)',marginLeft:6,marginBottom:4}}>
+            {expanded[r.kw].map((sub,j)=><div className="row" key={'sub'+j} style={{padding:'4px 0'}}><div className="row-left"><div className="row-kw" style={{fontSize:11}}>{sub.kw}</div>{sub.status==='ranking'&&<div className="row-meta">pos {sub.position.toFixed(1)} / {fmt(sub.clicks)} clicks</div>}</div><span className={`score ${sub.status==='gap'?'s-new':sub.position<=10?'s-md':'s-lo'}`}>{sub.status==='gap'?'GAP':'P'+Math.round(sub.position)}</span></div>)}
+          </div>}
+        </div>)}
+      </div>}
+      {/* PARTIALS */}
+      {partials.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--amber)',marginBottom:6}}>Parcial ({partials.length})</div>
+        {partials.map((r,i)=><div className="row" key={'dp'+i} onClick={()=>onOpenDetail&&onOpenDetail({query:r.matchedQuery,page:null,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">~"{r.matchedQuery}" / pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr</div></div><span className="score s-md">~{r.position.toFixed(0)}</span></div>)}
+      </div>}
+      {/* RANKING */}
+      {ranking.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--green)',marginBottom:6}}>Ya rankeas ({ranking.length})</div>
+        {ranking.map((r,i)=><div className="row" key={'dr'+i} onClick={()=>onOpenDetail&&onOpenDetail({query:r.kw,page:null,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">pos {r.position.toFixed(1)} / {fmt(r.clicks)} clicks / {fmt(r.impressions)} impr</div></div><span className={`score ${r.position<=3?'s-hi':r.position<=10?'s-md':'s-lo'}`}>P{r.position.toFixed(0)}</span></div>)}
+      </div>}
+      <div className="explain">Datos de Google Autocomplete cruzados con tu GSC. GAP = Google sugiere pero no apareces. Parcial = match similar. Click en GAP para expandir sub-queries. Orden de sugerencias refleja popularidad relativa.</div>
+    </>}
+    {results&&results.length===0&&<div style={{fontSize:12,color:'var(--hint)',padding:'12px 0'}}>Sin sugerencias para "{seed}". Prueba otro seed.</div>}
+  </div></div>);
 }
 
 function ConfigScreen({onSave}){
@@ -310,29 +399,26 @@ function App(){
       const prevAllQ=await gsc({startDate:psd,endDate:ped,dimensions:['query'],type:'web',rowLimit:5000});
       const rows=allQ.rows||[];const prevMap={};(prevAllQ.rows||[]).forEach(r=>{prevMap[r.keys[0]]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});
       const queryPageResp=await gsc({startDate:sd,endDate:ed,dimensions:['query','page'],type:'web',rowLimit:5000});
-      const queryPageRows=queryPageResp.rows||[];
-      const queryToPage={};
-      queryPageRows.forEach(r=>{const q=r.keys[0],pg=r.keys[1];if(!queryToPage[q]||r.clicks>queryToPage[q].clicks){queryToPage[q]={page:pg,clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}}});
+      const queryToPage={};(queryPageResp.rows||[]).forEach(r=>{const q=r.keys[0],pg=r.keys[1];if(!queryToPage[q]||r.clicks>queryToPage[q].clicks){queryToPage[q]={page:pg,clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}}});
       const allP=await gsc({startDate:sd,endDate:ed,dimensions:['page'],type:'web',rowLimit:5000});
       const prevAllP=await gsc({startDate:psd,endDate:ped,dimensions:['page'],type:'web',rowLimit:5000});
       const pages=allP.rows||[];const prevPageMap={};(prevAllP.rows||[]).forEach(r=>{prevPageMap[r.keys[0]]={clicks:r.clicks,position:r.position}});
       const candidates=rows.filter(r=>r.impressions>300&&r.position>7);
       const escribir=[];const hasPageOpt=[];
-      candidates.forEach(r=>{const q=r.keys[0];const pageInfo=queryToPage[q];if(pageInfo){hasPageOpt.push({query:q,page:pageInfo.page,impressions:r.impressions,position:r.position,clicks:r.clicks,ctr:r.ctr,action:suggestAction(r.position),type:'HAS_PAGE'})}else{escribir.push({...r,score:Math.round(r.impressions*(1/r.position)*10)})}});
+      candidates.forEach(r=>{const q=r.keys[0];const pi=queryToPage[q];if(pi){hasPageOpt.push({query:q,page:pi.page,impressions:r.impressions,position:r.position,clicks:r.clicks,ctr:r.ctr,action:suggestAction(r.position),type:'HAS_PAGE'})}else{escribir.push({...r,score:Math.round(r.impressions*(1/r.position)*10)})}});
       const finalEscribir=[...escribir];const finalHasPage=[];
       hasPageOpt.forEach(item=>{const path=shortPath(item.page);if(path==='/'||path===''||path==='/index.html'){finalEscribir.push({keys:[item.query],impressions:item.impressions,position:item.position,clicks:item.clicks,ctr:item.ctr,score:Math.round(item.impressions*(1/item.position)*10)})}else{finalHasPage.push(item)}});
       finalEscribir.sort((a,b)=>(b.score||0)-(a.score||0));finalHasPage.sort((a,b)=>b.impressions-a.impressions);
-      const optimizar=[];rows.forEach(r=>{const exp=getExpectedCtr(r.position);if(r.impressions>200&&r.ctr<exp*0.6){const pageInfo=queryToPage[r.keys[0]];optimizar.push({...r,type:'CTR',expected:(exp*100).toFixed(1),page:pageInfo?pageInfo.page:null})}});
+      const optimizar=[];rows.forEach(r=>{const exp=getExpectedCtr(r.position);if(r.impressions>200&&r.ctr<exp*0.6){const pi=queryToPage[r.keys[0]];optimizar.push({...r,type:'CTR',expected:(exp*100).toFixed(1),page:pi?pi.page:null})}});
       const dropping=[];pages.forEach(r=>{const p=prevPageMap[r.keys[0]];if(p&&r.position-p.position>2&&r.clicks>20)dropping.push({page:r.keys[0],curPos:r.position,prevPos:p.position,clicks:r.clicks,lostClicks:p.clicks-r.clicks})});dropping.sort((a,b)=>b.lostClicks-a.lostClicks);
-      const quickWins=rows.filter(r=>r.position>=2&&r.position<=20&&r.impressions>50).sort((a,b)=>b.impressions-a.impressions).slice(0,15).map(r=>{let a='protect';if(r.position>10)a='create';else if(r.position>3)a='push';const pageInfo=queryToPage[r.keys[0]];return{...r,action:a,page:pageInfo?pageInfo.page:null}});
+      const quickWins=rows.filter(r=>r.position>=2&&r.position<=20&&r.impressions>50).sort((a,b)=>b.impressions-a.impressions).slice(0,15).map(r=>{let a='protect';if(r.position>10)a='create';else if(r.position>3)a='push';const pi=queryToPage[r.keys[0]];return{...r,action:a,page:pi?pi.page:null}});
       const clusters={};rows.forEach(r=>{const w=r.keys[0].split(' ');let s=w.slice(0,2).join(' ');if(w.length===1)s=w[0];if(!clusters[s])clusters[s]={queries:[],clicks:0,impressions:0};clusters[s].queries.push(r);clusters[s].clicks+=r.clicks;clusters[s].impressions+=r.impressions});
       const clusterArr=Object.entries(clusters).filter(([,v])=>v.queries.length>=3).map(([n,v])=>({name:n,count:v.queries.length,clicks:v.clicks,impressions:v.impressions})).sort((a,b)=>b.clicks-a.clicks).slice(0,8);
       let ga4Data=null,ga4Pages=null,dailySessions=null;
       if(config.ga4){try{
         const[pgResp,dailyResp]=await Promise.all([
           ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'pagePath'}],metrics:[{name:'sessions'},{name:'totalUsers'},{name:'engagementRate'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:20}),
-          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'date'}],metrics:[{name:'sessions'}],orderBys:[{dimension:{dimensionName:'date'}}]})
-        ]);
+          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'date'}],metrics:[{name:'sessions'}],orderBys:[{dimension:{dimensionName:'date'}}]})]);
         if(pgResp?.rows){ga4Data=pgResp.rows.map(r=>({page:r.dimensionValues[0].value,sessions:parseInt(r.metricValues[0].value),users:parseInt(r.metricValues[1].value),engRate:(parseFloat(r.metricValues[2].value)*100).toFixed(1)}));ga4Pages=ga4Data}
         if(dailyResp?.rows){const sm={};dailyResp.rows.forEach(r=>{const d=r.dimensionValues[0].value;const dt=d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8);sm[dt]=parseInt(r.metricValues[0].value)});dailySessions=sm}
       }catch(e){console.warn('GA4:',e.message)}}
@@ -347,7 +433,7 @@ function App(){
   if(!config)return(<div className="app"><header><h1>SEO <em>Pulse</em></h1></header><ConfigScreen onSave={setConfig}/></div>);
   if(!token)return(<div className="app"><header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot"/></div></header><div className="auth-screen"><h2>Conecta tu cuenta</h2><p>Acceso de lectura a Search Console y Analytics.</p><button className="auth-btn" onClick={startAuth}>Conectar con Google</button><button className="btn-secondary" onClick={()=>{localStorage.removeItem('sp2_config');setConfig(null)}}>Cambiar config</button></div></div>);
 
-  const d=data;const maxCountryClicks=d&&d.countries&&d.countries[0]?d.countries[0].clicks:1;
+  const d=data;const maxCC=d&&d.countries&&d.countries[0]?d.countries[0].clicks:1;
   function openDetail(item){setDetailItem(item)}
   return(<div className="app">
     <header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot on"/></div></header>
@@ -364,12 +450,14 @@ function App(){
     {d.dailyData&&d.dailyData.length>0&&<div className="panel"><div className="panel-head"><h3>Tendencia</h3><span className="pill pill-green">Clicks + Sessions</span></div><div className="panel-body"><TrendChart dailyData={d.dailyData}/></div></div>}
     <div className="two-col">
       {d.countries&&d.countries.length>0&&<div className="panel"><div className="panel-head"><h3>Top paises</h3><span className="pill pill-blue">GSC</span></div><div className="panel-body">
-        {d.countries.map((c,i)=><div className="country-bar" key={i}><span className="country-name">{COUNTRY_NAMES[c.code]||c.code}</span><div className="country-track"><div className="country-fill" style={{width:Math.round(c.clicks/maxCountryClicks*100)+'%'}}/></div><span className="country-val">{fmt(c.clicks)}</span></div>)}
-      </div></div>}
+        {d.countries.map((c,i)=><div className="country-bar" key={i}><span className="country-name">{COUNTRY_NAMES[c.code]||c.code}</span><div className="country-track"><div className="country-fill" style={{width:Math.round(c.clicks/maxCC*100)+'%'}}/></div><span className="country-val">{fmt(c.clicks)}</span></div>)}</div></div>}
       {d.ga4Pages&&d.ga4Pages.length>0&&<div className="panel"><div className="panel-head"><h3>Top pages</h3><span className="pill pill-blue">GA4</span></div><div className="panel-body">
-        {d.ga4Pages.slice(0,10).map((p,i)=><div className="row" key={i} style={{padding:'5px 0'}} onClick={()=>openDetail({page:'https://paislector.com'+p.page,query:null,position:0,clicks:0,impressions:0})}><div className="row-left"><div className="row-kw">{p.page}</div><div className="row-meta">{fmt(p.sessions)} sess / {fmt(p.users)} users / {p.engRate}% eng</div></div></div>)}
-      </div></div>}
+        {d.ga4Pages.slice(0,10).map((p,i)=><div className="row" key={i} style={{padding:'5px 0'}} onClick={()=>openDetail({page:'https://paislector.com'+p.page,query:null,position:0,clicks:0,impressions:0})}><div className="row-left"><div className="row-kw">{p.page}</div><div className="row-meta">{fmt(p.sessions)} sess / {fmt(p.users)} users / {p.engRate}% eng</div></div></div>)}</div></div>}
     </div>
+
+    {/* DISCOVERY — new in v2.6 */}
+    <Discovery gscRows={d.allRows} onOpenDetail={openDetail}/>
+
     <KwAnalyzer gscRows={d.allRows}/>
     <div className="panel"><div className="panel-head"><h3>Escribir next</h3><span className="pill pill-green">{d.escribir.length} oportunidades</span></div><div className="panel-body">
       {d.escribir.length===0&&<div style={{fontSize:12,color:'var(--hint)',padding:'8px 0'}}>No hay queries sin pagina dedicada que cumplan el umbral.</div>}
@@ -382,7 +470,7 @@ function App(){
       {d.optimizar.map((r,i)=><div className="row" key={'o'+i} onClick={()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / CTR {(r.ctr*100).toFixed(1)}% vs esperado {r.expected}% / pos {r.position.toFixed(1)}</div></div><span className="score s-lo">CTR</span></div>)}</>}
       {d.dropping.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6,marginTop:10}}>Cayendo ({d.dropping.length})</div>
       {d.dropping.map((r,i)=><div className="row" key={'d'+i} onClick={()=>openDetail({query:null,page:r.page,position:r.curPos,clicks:r.clicks,impressions:0})}><div className="row-left"><div className="row-kw">{shortPath(r.page)}</div><div className="row-meta">pos {r.prevPos.toFixed(1)} &rarr; {r.curPos.toFixed(1)} / -{Math.max(0,r.lostClicks)} clicks</div></div><span className="score s-lo">DROP</span></div>)}</>}
-      <div className="explain">Click en fila para ver grafico diario y diagnostico.</div></div></div>
+      <div className="explain">Click en fila para diagnostico detallado.</div></div></div>
     <div className="panel"><div className="panel-head"><h3>Quick wins</h3><span className="pill pill-amber">{d.quickWins.length} keywords</span></div><div className="panel-body">
       {d.quickWins.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / CTR {(r.ctr*100).toFixed(1)}%</div></div><span className={`score ${r.action==='protect'?'s-hi':r.action==='push'?'s-md':'s-lo'}`}>{r.action==='protect'?'TOP3':r.action==='push'?'PUSH':'NEW'}</span></div>)}
       <div className="explain">TOP3: proteger. PUSH: internal links. NEW: articulo nuevo.</div></div></div>
