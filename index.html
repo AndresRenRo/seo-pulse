@@ -619,56 +619,73 @@ function App() {
       const prevStart = daysAgo(period * 2);
       const prevEnd = daysAgo(period + 1);
 
-      // TRUE TOTALS: use 'date' dimension and sum — this includes anonymous queries
-      // unlike 'query' dimension which excludes them
-      const [totCurrent, totPrevious] = await Promise.all([
-        fetchGSC('searchAnalytics/query', {
-          startDate, endDate,
-          dimensions: ['date'],
-          aggregationType: 'auto',
-        }),
-        fetchGSC('searchAnalytics/query', {
-          startDate: prevStart, endDate: prevEnd,
-          dimensions: ['date'],
-          aggregationType: 'auto',
-        }),
+      // TRUE TOTALS: NO dimensions at all, NO filters
+      // Per Google docs: "For accurate counts, you must omit the page and query dimensions"
+      // We fetch each search type separately and sum them
+      const fetchTotals = async (start, end) => {
+        const types = ['web', 'image', 'video'];
+        const results = await Promise.all(types.map(t =>
+          fetchGSC('searchAnalytics/query', {
+            startDate: start,
+            endDate: end,
+            type: t,
+          }).catch(() => ({ rows: [] }))
+        ));
+        // Also try discover (may fail for non-domain properties)
+        const discoverResult = await fetchGSC('searchAnalytics/query', {
+          startDate: start,
+          endDate: end,
+          type: 'discover',
+        }).catch(() => ({ rows: [] }));
+        results.push(discoverResult);
+
+        let totalClicks = 0, totalImpressions = 0;
+        let webCtr = 0, webPos = 0;
+        for (const resp of results) {
+          if (resp.rows && resp.rows.length > 0) {
+            for (const row of resp.rows) {
+              totalClicks += row.clicks || 0;
+              totalImpressions += row.impressions || 0;
+            }
+          }
+        }
+        // CTR and position from web only (that's what GSC shows)
+        const webResp = results[0];
+        if (webResp.rows && webResp.rows.length > 0) {
+          webCtr = webResp.rows[0].ctr || 0;
+          webPos = webResp.rows[0].position || 0;
+        }
+        return { clicks: totalClicks, impressions: totalImpressions, ctr: webCtr, position: webPos };
+      };
+
+      const [curTotals, prevTotals] = await Promise.all([
+        fetchTotals(startDate, endDate),
+        fetchTotals(prevStart, prevEnd),
       ]);
-
-      // Sum daily rows for true totals
-      const sumRows = (rows) => (rows || []).reduce((acc, r) => ({
-        clicks: acc.clicks + r.clicks,
-        impressions: acc.impressions + r.impressions,
-        ctrSum: acc.ctrSum + r.ctr,
-        posSum: acc.posSum + r.position,
-        count: acc.count + 1,
-      }), { clicks: 0, impressions: 0, ctrSum: 0, posSum: 0, count: 0 });
-
-      const curTotals = sumRows(totCurrent.rows);
-      const prevTotals = sumRows(totPrevious.rows);
 
       setSummary({
         clicks: curTotals.clicks,
         impressions: curTotals.impressions,
-        avgCtr: curTotals.count ? (curTotals.ctrSum / curTotals.count * 100) : 0,
-        avgPos: curTotals.count ? (curTotals.posSum / curTotals.count) : 0,
+        avgCtr: curTotals.ctr * 100,
+        avgPos: curTotals.position,
         clicksChange: pctChange(curTotals.clicks, prevTotals.clicks),
         impressionsChange: pctChange(curTotals.impressions, prevTotals.impressions),
       });
 
-      // Top queries for display
+      // Top queries for display (web only, with query dimension)
       const topQ = await fetchGSC('searchAnalytics/query', {
         startDate, endDate,
         dimensions: ['query'],
+        type: 'web',
         rowLimit: 25,
-        aggregationType: 'auto',
       });
 
       // All queries for quick wins (max 5000)
       const qw = await fetchGSC('searchAnalytics/query', {
         startDate, endDate,
         dimensions: ['query'],
+        type: 'web',
         rowLimit: 5000,
-        aggregationType: 'auto',
       });
       const quickWinRows = (qw.rows || [])
         .filter(r => r.position >= 4 && r.position <= 20 && r.impressions > 50)
@@ -679,8 +696,8 @@ function App() {
       const pages = await fetchGSC('searchAnalytics/query', {
         startDate, endDate,
         dimensions: ['page'],
+        type: 'web',
         rowLimit: 15,
-        aggregationType: 'auto',
       });
 
       setTopQueries(topQ.rows || []);
