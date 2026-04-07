@@ -3,281 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SEO Pulse — País Lector</title>
+<title>SEO Pulse v2 — País Lector</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap');
-
 :root {
-  --bg: #FAF8F3;
-  --surface: #FFFFFF;
-  --surface-alt: #F3F0E8;
-  --text: #1A1A18;
-  --text-muted: #6B6A65;
-  --text-hint: #9C9A92;
-  --accent: #2D5A27;
-  --accent-light: #E8F0E6;
-  --coral: #D85A30;
-  --coral-light: #FAECE7;
-  --blue: #185FA5;
-  --blue-light: #E6F1FB;
-  --amber: #BA7517;
-  --amber-light: #FAEEDA;
-  --border: rgba(0,0,0,0.08);
-  --radius: 12px;
-  --font-display: 'Instrument Serif', Georgia, serif;
-  --font-body: 'DM Sans', -apple-system, sans-serif;
+  --bg:#FAF8F3;--surface:#FFFFFF;--surface-alt:#F3F0E8;
+  --text:#1A1A18;--muted:#6B6A65;--hint:#9C9A92;
+  --green:#2D5A27;--green-light:#E8F0E6;
+  --coral:#D85A30;--coral-light:#FAECE7;
+  --blue:#185FA5;--blue-light:#E6F1FB;
+  --amber:#BA7517;--amber-light:#FAEEDA;
+  --purple:#534AB7;--purple-light:#EEEDFE;
+  --red:#A32D2D;--red-light:#FCEBEB;
+  --border:rgba(0,0,0,0.08);--radius:12px;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'DM Sans',-apple-system,sans-serif;
 }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.app{max-width:720px;margin:0 auto;padding:20px 16px 40px}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 20px;border-bottom:1px solid var(--border);margin-bottom:20px}
+header h1{font-family:var(--serif);font-size:26px;font-weight:400;letter-spacing:-0.02em}
+header h1 em{color:var(--green);font-style:normal}
+.header-right{display:flex;align-items:center;gap:10px}
+.ver{font-size:10px;color:var(--hint)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--hint);transition:background 0.3s}
+.dot.on{background:var(--green)}
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+.auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:55vh;text-align:center;gap:20px}
+.auth-screen h2{font-family:var(--serif);font-size:28px;font-weight:400}
+.auth-screen p{color:var(--muted);font-size:14px;max-width:380px;line-height:1.6}
+.auth-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:14px;font-weight:500;color:var(--text);cursor:pointer;transition:all 0.2s}
+.auth-btn:hover{border-color:var(--green)}
+.setup-note{background:var(--surface-alt);border-radius:var(--radius);padding:16px;text-align:left;max-width:440px;width:100%}
+.setup-note h3{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:10px}
+.setup-note ol{font-size:13px;color:var(--muted);line-height:1.8;padding-left:18px}
+.setup-note code{background:var(--bg);padding:2px 5px;border-radius:4px;font-size:12px}
+.config-form{display:flex;flex-direction:column;gap:10px;max-width:440px;width:100%}
+.config-form label{font-size:12px;font-weight:500;color:var(--muted)}
+.config-form input{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:var(--sans);background:var(--surface)}
+.config-form input:focus{outline:none;border-color:var(--green)}
+.config-row{display:flex;gap:10px}
+.config-row>div{flex:1;display:flex;flex-direction:column;gap:4px}
+.btn-primary{padding:11px 22px;border-radius:var(--radius);border:none;background:var(--green);color:white;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer}
+.btn-primary:hover{opacity:0.9}
+.btn-secondary{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:12px;color:var(--muted);cursor:pointer}
 
-body {
-  font-family: var(--font-body);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
+.controls{display:flex;gap:6px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.per-btn{padding:5px 12px;border-radius:18px;border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:12px;color:var(--muted);cursor:pointer}
+.per-btn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.ref-btn{margin-left:auto;padding:5px 12px;border-radius:18px;border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:12px;color:var(--muted);cursor:pointer}
+.ref-btn:hover{border-color:var(--green);color:var(--green)}
 
-.app { max-width: 720px; margin: 0 auto; padding: 20px 16px 40px; }
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.stat{background:var(--surface-alt);border-radius:var(--radius);padding:12px 14px}
+.stat-label{font-size:11px;color:var(--hint);margin-bottom:2px}
+.stat-val{font-family:var(--serif);font-size:22px}
+.stat-chg{font-size:11px;margin-top:2px}
+.up{color:var(--green)}.down{color:var(--coral)}
 
-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 0 24px; border-bottom: 1px solid var(--border);
-  margin-bottom: 24px;
-}
-header h1 {
-  font-family: var(--font-display);
-  font-size: 28px; font-weight: 400; letter-spacing: -0.02em;
-}
-header h1 span { color: var(--accent); }
+.panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:0.5px solid var(--border)}
+.panel-head h3{font-size:13px;font-weight:600}
+.pill{font-size:10px;padding:3px 9px;border-radius:14px;font-weight:500}
+.pill-green{background:var(--green-light);color:var(--green)}
+.pill-coral{background:var(--coral-light);color:var(--coral)}
+.pill-blue{background:var(--blue-light);color:var(--blue)}
+.pill-amber{background:var(--amber-light);color:var(--amber)}
+.pill-purple{background:var(--purple-light);color:var(--purple)}
+.pill-red{background:var(--red-light);color:var(--red)}
+.panel-body{padding:10px 14px}
+.row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border)}
+.row:last-child{border-bottom:none}
+.row-left{flex:1;min-width:0}
+.row-kw{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-meta{font-size:10px;color:var(--hint);margin-top:1px;line-height:1.4}
+.row-btn{font-size:10px;padding:3px 8px;border-radius:6px;border:0.5px solid var(--border);background:transparent;cursor:pointer;white-space:nowrap;color:var(--muted)}
+.row-btn:hover{border-color:var(--green);color:var(--green)}
+.score{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:20px;border-radius:5px;font-size:10px;font-weight:600;padding:0 5px}
+.s-hi{background:var(--green-light);color:var(--green)}
+.s-md{background:var(--amber-light);color:var(--amber)}
+.s-lo{background:var(--coral-light);color:var(--coral)}
+.explain{font-size:11px;color:var(--hint);padding:6px 0 2px;line-height:1.5;border-top:0.5px solid var(--border);margin-top:6px}
 
-.status-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--text-hint);
-  transition: background 0.3s;
-}
-.status-dot.connected { background: var(--accent); }
+.bar-track{flex:1;height:5px;background:var(--surface-alt);border-radius:3px;overflow:hidden;max-width:120px}
+.bar-fill{height:100%;border-radius:3px}
 
-/* Auth screen */
-.auth-screen {
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center; min-height: 60vh; text-align: center;
-  gap: 24px;
-}
-.auth-screen h2 {
-  font-family: var(--font-display);
-  font-size: 32px; font-weight: 400;
-}
-.auth-screen p {
-  color: var(--text-muted); font-size: 15px;
-  max-width: 400px; line-height: 1.6;
-}
-.auth-btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 14px 28px; border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  font-family: var(--font-body);
-  font-size: 15px; font-weight: 500;
-  color: var(--text); cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.auth-btn:hover {
-  border-color: var(--accent);
-  box-shadow: 0 2px 8px rgba(45,90,39,0.1);
-}
-.setup-note {
-  background: var(--surface-alt); border-radius: var(--radius);
-  padding: 20px; text-align: left; max-width: 480px; width: 100%;
-}
-.setup-note h3 {
-  font-size: 13px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 12px;
-}
-.setup-note ol {
-  font-size: 14px; color: var(--text-muted); line-height: 1.8;
-  padding-left: 20px;
-}
-.setup-note code {
-  background: var(--bg); padding: 2px 6px; border-radius: 4px;
-  font-size: 13px;
-}
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--hint);font-size:13px;gap:8px}
+.spinner{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin 0.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{padding:12px 14px;background:var(--coral-light);border-radius:var(--radius);color:var(--coral);font-size:12px;margin-bottom:12px}
+.footer{text-align:center;padding:20px 0;font-size:11px;color:var(--hint)}
 
-/* Config form */
-.config-form {
-  display: flex; flex-direction: column; gap: 12px;
-  max-width: 480px; width: 100%;
-}
-.config-form label {
-  font-size: 13px; font-weight: 500; color: var(--text-muted);
-}
-.config-form input {
-  width: 100%; padding: 10px 14px; border-radius: 8px;
-  border: 1px solid var(--border); font-size: 14px;
-  font-family: var(--font-body); background: var(--surface);
-  transition: border-color 0.2s;
-}
-.config-form input:focus {
-  outline: none; border-color: var(--accent);
-}
-.config-row { display: flex; gap: 12px; }
-.config-row > div { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-
-.btn-primary {
-  padding: 12px 24px; border-radius: var(--radius);
-  border: none; background: var(--accent); color: white;
-  font-family: var(--font-body); font-size: 14px; font-weight: 500;
-  cursor: pointer; transition: opacity 0.2s;
-}
-.btn-primary:hover { opacity: 0.9; }
-.btn-secondary {
-  padding: 8px 16px; border-radius: 8px;
-  border: 1px solid var(--border); background: var(--surface);
-  font-family: var(--font-body); font-size: 13px;
-  color: var(--text-muted); cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-secondary:hover { border-color: var(--text-hint); }
-
-/* Dashboard */
-.metrics-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr);
-  gap: 12px; margin-bottom: 20px;
-}
-.metric-card {
-  background: var(--surface); border-radius: var(--radius);
-  padding: 16px 18px; border: 1px solid var(--border);
-  transition: transform 0.15s;
-}
-.metric-card:hover { transform: translateY(-1px); }
-.metric-label {
-  font-size: 12px; font-weight: 500; color: var(--text-hint);
-  text-transform: uppercase; letter-spacing: 0.04em;
-  margin-bottom: 6px;
-}
-.metric-value {
-  font-family: var(--font-display); font-size: 28px;
-  letter-spacing: -0.02em;
-}
-.metric-change {
-  font-size: 12px; margin-top: 4px; font-weight: 500;
-}
-.metric-change.up { color: var(--accent); }
-.metric-change.down { color: var(--coral); }
-
-/* Sections */
-.section {
-  background: var(--surface); border-radius: var(--radius);
-  border: 1px solid var(--border); margin-bottom: 16px;
-  overflow: hidden;
-}
-.section-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 18px; border-bottom: 1px solid var(--border);
-  cursor: pointer; user-select: none;
-}
-.section-header h3 {
-  font-size: 14px; font-weight: 600;
-}
-.section-header .badge {
-  font-size: 11px; padding: 3px 8px; border-radius: 20px;
-  font-weight: 500;
-}
-.badge-green { background: var(--accent-light); color: var(--accent); }
-.badge-coral { background: var(--coral-light); color: var(--coral); }
-.badge-blue { background: var(--blue-light); color: var(--blue); }
-
-.section-body { padding: 0; }
-
-/* Table */
-.data-table { width: 100%; border-collapse: collapse; }
-.data-table th {
-  text-align: left; font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.04em;
-  color: var(--text-hint); padding: 10px 18px;
-  border-bottom: 1px solid var(--border);
-}
-.data-table td {
-  padding: 10px 18px; font-size: 13px;
-  border-bottom: 1px solid var(--border);
-  vertical-align: middle;
-}
-.data-table tr:last-child td { border-bottom: none; }
-.data-table .kw { font-weight: 500; max-width: 200px; }
-.data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
-.data-table th.num { text-align: right; }
-
-.pos-pill {
-  display: inline-block; padding: 2px 8px; border-radius: 10px;
-  font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums;
-}
-.pos-top3 { background: var(--accent-light); color: var(--accent); }
-.pos-top10 { background: var(--blue-light); color: var(--blue); }
-.pos-top20 { background: var(--amber-light); color: var(--amber); }
-.pos-rest { background: var(--surface-alt); color: var(--text-muted); }
-
-/* Controls */
-.controls {
-  display: flex; gap: 8px; align-items: center;
-  margin-bottom: 20px; flex-wrap: wrap;
-}
-.period-btn {
-  padding: 6px 14px; border-radius: 20px;
-  border: 1px solid var(--border); background: var(--surface);
-  font-family: var(--font-body); font-size: 13px;
-  color: var(--text-muted); cursor: pointer;
-  transition: all 0.2s;
-}
-.period-btn.active {
-  background: var(--text); color: var(--bg);
-  border-color: var(--text);
-}
-.refresh-btn {
-  margin-left: auto; padding: 6px 14px;
-  border-radius: 20px; border: 1px solid var(--border);
-  background: var(--surface); font-family: var(--font-body);
-  font-size: 13px; color: var(--text-muted); cursor: pointer;
-}
-.refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-/* Loading */
-.loading {
-  display: flex; align-items: center; justify-content: center;
-  padding: 40px; color: var(--text-hint); font-size: 14px;
-  gap: 8px;
-}
-.spinner {
-  width: 16px; height: 16px; border: 2px solid var(--border);
-  border-top-color: var(--accent); border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Error */
-.error-msg {
-  padding: 16px 18px; background: var(--coral-light);
-  border-radius: var(--radius); color: var(--coral);
-  font-size: 13px; margin-bottom: 16px;
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-  .metrics-grid { grid-template-columns: 1fr; }
-  .metric-value { font-size: 24px; }
-  header h1 { font-size: 22px; }
-  .data-table td, .data-table th { padding: 8px 12px; }
-}
-
-/* Scroll shadow for tables */
-.table-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.footer {
-  text-align: center; padding: 24px 0;
-  font-size: 12px; color: var(--text-hint);
+@media(max-width:480px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat-val{font-size:18px}
+  header h1{font-size:20px}
 }
 </style>
 </head>
@@ -287,596 +108,379 @@ header h1 span { color: var(--accent); }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
-const { useState, useEffect, useCallback } = React;
+const {useState,useEffect,useCallback}=React;
+const VERSION='v2.1';
+const REDIRECT_URI='https://seo-pulse-6mk47auzk-andres-rendons-projects.vercel.app';
+const SCOPES='https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly';
+const GSC_API='https://www.googleapis.com/webmasters/v3';
+const GA4_API='https://analyticsdata.googleapis.com/v1beta';
 
-// ============ CONFIG ============
-const SCOPES = 'https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly';
-const GSC_API = 'https://www.googleapis.com/webmasters/v3';
-const GA4_API = 'https://analyticsdata.googleapis.com/v1beta';
+function fmt(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return Math.round(n).toLocaleString()}
+function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().split('T')[0]}
+function pct(c,p){if(!p)return null;return((c-p)/p*100).toFixed(1)}
+function getConfig(){try{return JSON.parse(localStorage.getItem('sp2_config')||'null')}catch{return null}}
+function getToken(){try{const t=JSON.parse(localStorage.getItem('sp2_token')||'null');if(t&&t.exp>Date.now())return t;return null}catch{return null}}
 
-// ============ UTILS ============
-function formatNum(n) {
-  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
-  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
-  return Math.round(n).toLocaleString();
-}
+// Expected CTR by position (industry averages)
+const expectedCtr=[0,0.396,0.187,0.110,0.076,0.053,0.044,0.032,0.024,0.020,0.016,0.014,0.012,0.010,0.009,0.008,0.007,0.006,0.006,0.005,0.005];
+function getExpectedCtr(pos){const p=Math.round(Math.min(Math.max(pos,1),20));return expectedCtr[p]||0.005}
 
-function daysAgo(n) {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d.toISOString().split('T')[0];
-}
-
-function pctChange(current, previous) {
-  if (!previous) return null;
-  return ((current - previous) / previous * 100).toFixed(1);
-}
-
-// ============ AUTH HELPERS ============
-function getStoredConfig() {
-  try {
-    return JSON.parse(localStorage.getItem('seopulse_config') || 'null');
-  } catch { return null; }
-}
-
-function getStoredToken() {
-  try {
-    const t = JSON.parse(localStorage.getItem('seopulse_token') || 'null');
-    if (t && t.expires_at > Date.now()) return t;
-    return null;
-  } catch { return null; }
-}
-
-// ============ COMPONENTS ============
-
-function ConfigScreen({ onSave }) {
-  const [clientId, setClientId] = useState('');
-  const [siteUrl, setSiteUrl] = useState('https://paislector.com/');
-  const [propertyId, setPropertyId] = useState('');
-
-  return (
+function ConfigScreen({onSave}){
+  const[cid,setCid]=useState('');
+  const[site,setSite]=useState('sc-domain:paislector.com');
+  const[ga4,setGa4]=useState('');
+  return(
     <div className="auth-screen">
-      <h2>Configura tu SEO Pulse</h2>
-      <p>Necesitas un proyecto en Google Cloud Console con las APIs de Search Console y GA4 habilitadas.</p>
-
+      <h2>Configura SEO Pulse</h2>
+      <p>Conecta tu Google Cloud Console con las APIs de Search Console y GA4.</p>
       <div className="setup-note">
         <h3>Setup (una sola vez)</h3>
         <ol>
           <li>Ve a <strong>console.cloud.google.com</strong></li>
-          <li>Crea un proyecto o usa uno existente</li>
           <li>Habilita <strong>Search Console API</strong> y <strong>Google Analytics Data API</strong></li>
-          <li>En Credentials, crea un <strong>OAuth 2.0 Client ID</strong> tipo "Web application"</li>
-          <li>Agrega como Authorized redirect URI: <code>{window.location.origin}</code></li>
-          <li>Copia tu Client ID abajo</li>
+          <li>Crea un <strong>OAuth 2.0 Client ID</strong> tipo Web application</li>
+          <li>Redirect URI: <code>{REDIRECT_URI}</code></li>
         </ol>
       </div>
-
       <div className="config-form">
-        <div>
-          <label>Google OAuth Client ID</label>
-          <input
-            type="text"
-            placeholder="123456789-xxxxx.apps.googleusercontent.com"
-            value={clientId}
-            onChange={e => setClientId(e.target.value)}
-          />
-        </div>
+        <div><label>OAuth Client ID</label><input placeholder="264065...googleusercontent.com" value={cid} onChange={e=>setCid(e.target.value)}/></div>
         <div className="config-row">
-          <div>
-            <label>Site URL (GSC)</label>
-            <input
-              type="text"
-              placeholder="https://paislector.com/"
-              value={siteUrl}
-              onChange={e => setSiteUrl(e.target.value)}
-            />
-          </div>
-          <div>
-            <label>GA4 Property ID</label>
-            <input
-              type="text"
-              placeholder="properties/123456789"
-              value={propertyId}
-              onChange={e => setPropertyId(e.target.value)}
-            />
-          </div>
+          <div><label>Site URL (GSC)</label><input value={site} onChange={e=>setSite(e.target.value)}/></div>
+          <div><label>GA4 Property ID</label><input placeholder="properties/405100005" value={ga4} onChange={e=>setGa4(e.target.value)}/></div>
         </div>
-        <button
-          className="btn-primary"
-          onClick={() => {
-            if (!clientId) return alert('Client ID requerido');
-            const config = { clientId, siteUrl, propertyId };
-            localStorage.setItem('seopulse_config', JSON.stringify(config));
-            onSave(config);
-          }}
-        >
-          Guardar y conectar
-        </button>
+        <button className="btn-primary" onClick={()=>{if(!cid)return alert('Client ID requerido');const c={cid,site,ga4};localStorage.setItem('sp2_config',JSON.stringify(c));onSave(c)}}>Guardar y conectar</button>
       </div>
     </div>
   );
 }
 
-function MetricCard({ label, value, change, prefix }) {
-  const changeClass = change > 0 ? 'up' : change < 0 ? 'down' : '';
-  return (
-    <div className="metric-card">
-      <div className="metric-label">{label}</div>
-      <div className="metric-value">{prefix}{value}</div>
-      {change !== null && change !== undefined && (
-        <div className={`metric-change ${changeClass}`}>
-          {change > 0 ? '+' : ''}{change}% vs periodo anterior
-        </div>
-      )}
-    </div>
-  );
-}
+function App(){
+  const[config,setConfig]=useState(getConfig);
+  const[token,setToken]=useState(getToken);
+  const[period,setPeriod]=useState(28);
+  const[loading,setLoading]=useState(false);
+  const[error,setError]=useState(null);
+  const[data,setData]=useState(null);
 
-function PosPill({ pos }) {
-  const p = Math.round(pos);
-  let cls = 'pos-rest';
-  if (p <= 3) cls = 'pos-top3';
-  else if (p <= 10) cls = 'pos-top10';
-  else if (p <= 20) cls = 'pos-top20';
-  return <span className={`pos-pill ${cls}`}>{p.toFixed(1)}</span>;
-}
-
-function QueryTable({ title, badge, badgeClass, rows, emptyMsg }) {
-  return (
-    <div className="section">
-      <div className="section-header">
-        <h3>{title}</h3>
-        {badge && <span className={`badge ${badgeClass}`}>{badge}</span>}
-      </div>
-      <div className="section-body table-scroll">
-        {rows && rows.length > 0 ? (
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Query</th>
-                <th className="num">Clicks</th>
-                <th className="num">Impr.</th>
-                <th className="num">CTR</th>
-                <th className="num">Pos.</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r, i) => (
-                <tr key={i}>
-                  <td className="kw">{r.keys[0]}</td>
-                  <td className="num">{formatNum(r.clicks)}</td>
-                  <td className="num">{formatNum(r.impressions)}</td>
-                  <td className="num">{(r.ctr * 100).toFixed(1)}%</td>
-                  <td className="num"><PosPill pos={r.position} /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <div className="loading">{emptyMsg || 'Sin datos'}</div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function PagesTable({ title, badge, badgeClass, rows }) {
-  return (
-    <div className="section">
-      <div className="section-header">
-        <h3>{title}</h3>
-        {badge && <span className={`badge ${badgeClass}`}>{badge}</span>}
-      </div>
-      <div className="section-body table-scroll">
-        {rows && rows.length > 0 ? (
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Pagina</th>
-                <th className="num">Clicks</th>
-                <th className="num">Impr.</th>
-                <th className="num">CTR</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r, i) => {
-                const path = r.keys[0].replace(/https?:\/\/[^/]+/, '') || '/';
-                return (
-                  <tr key={i}>
-                    <td className="kw" title={r.keys[0]}>{path.length > 40 ? path.slice(0,40)+'...' : path}</td>
-                    <td className="num">{formatNum(r.clicks)}</td>
-                    <td className="num">{formatNum(r.impressions)}</td>
-                    <td className="num">{(r.ctr * 100).toFixed(1)}%</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        ) : (
-          <div className="loading">Sin datos</div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function GA4Section({ data }) {
-  if (!data) return null;
-  return (
-    <div className="section">
-      <div className="section-header">
-        <h3>GA4 — Top pages by sessions</h3>
-        <span className="badge badge-blue">Analytics</span>
-      </div>
-      <div className="section-body table-scroll">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Page</th>
-              <th className="num">Sessions</th>
-              <th className="num">Users</th>
-              <th className="num">Eng. rate</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((r, i) => (
-              <tr key={i}>
-                <td className="kw">{r.page.length > 40 ? r.page.slice(0,40)+'...' : r.page}</td>
-                <td className="num">{formatNum(r.sessions)}</td>
-                <td className="num">{formatNum(r.users)}</td>
-                <td className="num">{r.engRate}%</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-// ============ MAIN APP ============
-function App() {
-  const [config, setConfig] = useState(getStoredConfig);
-  const [token, setToken] = useState(getStoredToken);
-  const [period, setPeriod] = useState(28);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  // Data
-  const [summary, setSummary] = useState(null);
-  const [topQueries, setTopQueries] = useState(null);
-  const [quickWins, setQuickWins] = useState(null);
-  const [topPages, setTopPages] = useState(null);
-  const [ga4Data, setGa4Data] = useState(null);
-
-  // OAuth flow
-  function startAuth() {
-    if (!config?.clientId) return;
-    const redirectUri = 'https://seo-pulse-6mk47auzk-andres-rendons-projects.vercel.app';
-    const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
-      + '?client_id=' + encodeURIComponent(config.clientId)
-      + '&redirect_uri=' + encodeURIComponent(redirectUri)
-      + '&response_type=token'
-      + '&scope=' + encodeURIComponent(SCOPES)
-      + '&include_granted_scopes=true'
-      + '&prompt=consent';
-    window.location.href = authUrl;
+  function startAuth(){
+    if(!config?.cid)return;
+    window.location.href='https://accounts.google.com/o/oauth2/v2/auth'
+      +'?client_id='+encodeURIComponent(config.cid)
+      +'&redirect_uri='+encodeURIComponent(REDIRECT_URI)
+      +'&response_type=token'
+      +'&scope='+encodeURIComponent(SCOPES)
+      +'&include_granted_scopes=true'
+      +'&prompt=consent';
   }
 
-  // Handle OAuth redirect
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (hash.includes('access_token')) {
-      const params = new URLSearchParams(hash.slice(1));
-      const tokenData = {
-        access_token: params.get('access_token'),
-        expires_at: Date.now() + parseInt(params.get('expires_in')) * 1000,
-      };
-      localStorage.setItem('seopulse_token', JSON.stringify(tokenData));
-      setToken(tokenData);
-      window.history.replaceState(null, '', window.location.pathname);
+  useEffect(()=>{
+    const h=window.location.hash;
+    if(h.includes('access_token')){
+      const p=new URLSearchParams(h.slice(1));
+      const t={tk:p.get('access_token'),exp:Date.now()+parseInt(p.get('expires_in'))*1000};
+      localStorage.setItem('sp2_token',JSON.stringify(t));
+      setToken(t);
+      window.history.replaceState(null,'',window.location.pathname);
     }
-  }, []);
+  },[]);
 
-  // API calls
-  const fetchGSC = useCallback(async (endpoint, body) => {
-    const resp = await fetch(`${GSC_API}/sites/${encodeURIComponent(config.siteUrl)}/${endpoint}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token.access_token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
+  const gsc=useCallback(async(body)=>{
+    const r=await fetch(`${GSC_API}/sites/${encodeURIComponent(config.site)}/searchAnalytics/query`,{
+      method:'POST',headers:{'Authorization':`Bearer ${token.tk}`,'Content-Type':'application/json'},
+      body:JSON.stringify(body)
     });
-    if (!resp.ok) throw new Error(`GSC error ${resp.status}: ${await resp.text()}`);
-    return resp.json();
-  }, [config, token]);
+    if(!r.ok)throw new Error(`GSC ${r.status}: ${await r.text()}`);
+    return r.json();
+  },[config,token]);
 
-  const fetchGA4 = useCallback(async (body) => {
-    if (!config?.propertyId) return null;
-    const resp = await fetch(`${GA4_API}/${config.propertyId}:runReport`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token.access_token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
+  const ga4Fetch=useCallback(async(body)=>{
+    if(!config?.ga4)return null;
+    const r=await fetch(`${GA4_API}/${config.ga4}:runReport`,{
+      method:'POST',headers:{'Authorization':`Bearer ${token.tk}`,'Content-Type':'application/json'},
+      body:JSON.stringify(body)
     });
-    if (!resp.ok) {
-      console.warn('GA4 error:', resp.status);
-      return null;
-    }
-    return resp.json();
-  }, [config, token]);
+    if(!r.ok)return null;
+    return r.json();
+  },[config,token]);
 
-  const loadData = useCallback(async () => {
-    if (!token || !config) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const startDate = daysAgo(period);
-      const endDate = daysAgo(1);
-      const prevStart = daysAgo(period * 2);
-      const prevEnd = daysAgo(period + 1);
+  const loadData=useCallback(async()=>{
+    if(!token||!config)return;
+    setLoading(true);setError(null);
+    try{
+      const sd=daysAgo(period),ed=daysAgo(1),psd=daysAgo(period*2),ped=daysAgo(period+1);
 
-      // TRUE TOTALS: NO dimensions at all, NO filters
-      // Per Google docs: "For accurate counts, you must omit the page and query dimensions"
-      // We fetch each search type separately and sum them
-      const fetchTotals = async (start, end) => {
-        const types = ['web', 'image', 'video'];
-        const results = await Promise.all(types.map(t =>
-          fetchGSC('searchAnalytics/query', {
-            startDate: start,
-            endDate: end,
-            type: t,
-          }).catch(() => ({ rows: [] }))
-        ));
-        // Also try discover (may fail for non-domain properties)
-        const discoverResult = await fetchGSC('searchAnalytics/query', {
-          startDate: start,
-          endDate: end,
-          type: 'discover',
-        }).catch(() => ({ rows: [] }));
-        results.push(discoverResult);
-
-        let totalClicks = 0, totalImpressions = 0;
-        let webCtr = 0, webPos = 0;
-        for (const resp of results) {
-          if (resp.rows && resp.rows.length > 0) {
-            for (const row of resp.rows) {
-              totalClicks += row.clicks || 0;
-              totalImpressions += row.impressions || 0;
-            }
-          }
-        }
-        // CTR and position from web only (that's what GSC shows)
-        const webResp = results[0];
-        if (webResp.rows && webResp.rows.length > 0) {
-          webCtr = webResp.rows[0].ctr || 0;
-          webPos = webResp.rows[0].position || 0;
-        }
-        return { clicks: totalClicks, impressions: totalImpressions, ctr: webCtr, position: webPos };
+      // 1. TRUE TOTALS — no dimensions, each search type
+      const fetchTotals=async(s,e)=>{
+        const types=['web','image','video','discover'];
+        const results=await Promise.all(types.map(t=>gsc({startDate:s,endDate:e,type:t}).catch(()=>({rows:[]}))));
+        let clicks=0,impressions=0,webCtr=0,webPos=0;
+        results.forEach((resp,i)=>{
+          if(resp.rows){resp.rows.forEach(row=>{clicks+=row.clicks||0;impressions+=row.impressions||0})}
+          if(i===0&&resp.rows&&resp.rows[0]){webCtr=resp.rows[0].ctr||0;webPos=resp.rows[0].position||0}
+        });
+        return{clicks,impressions,ctr:webCtr,pos:webPos};
       };
+      const[cur,prev]=await Promise.all([fetchTotals(sd,ed),fetchTotals(psd,ped)]);
 
-      const [curTotals, prevTotals] = await Promise.all([
-        fetchTotals(startDate, endDate),
-        fetchTotals(prevStart, prevEnd),
-      ]);
+      // 2. ALL QUERIES (5000 max) for analysis
+      const allQ=await gsc({startDate:sd,endDate:ed,dimensions:['query'],type:'web',rowLimit:5000});
+      const prevAllQ=await gsc({startDate:psd,endDate:ped,dimensions:['query'],type:'web',rowLimit:5000});
+      const rows=allQ.rows||[];
+      const prevRows=prevAllQ.rows||[];
+      const prevMap={};prevRows.forEach(r=>{prevMap[r.keys[0]]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});
 
-      setSummary({
-        clicks: curTotals.clicks,
-        impressions: curTotals.impressions,
-        avgCtr: curTotals.ctr * 100,
-        avgPos: curTotals.position,
-        clicksChange: pctChange(curTotals.clicks, prevTotals.clicks),
-        impressionsChange: pctChange(curTotals.impressions, prevTotals.impressions),
+      // 3. ALL PAGES
+      const allP=await gsc({startDate:sd,endDate:ed,dimensions:['page'],type:'web',rowLimit:5000});
+      const prevAllP=await gsc({startDate:psd,endDate:ped,dimensions:['page'],type:'web',rowLimit:5000});
+      const pages=allP.rows||[];
+      const prevPageMap={};(prevAllP.rows||[]).forEach(r=>{prevPageMap[r.keys[0]]={clicks:r.clicks,position:r.position}});
+
+      // 4. TOP QUERIES
+      const topQueries=rows.slice(0,25);
+
+      // 5. ESCRIBIR NEXT — high impressions, low position, no dedicated page
+      // Heuristic: if query has >300 impr and pos >7, it's likely an opportunity
+      const escribir=rows
+        .filter(r=>r.impressions>300&&r.position>7)
+        .map(r=>({...r,score:Math.round(r.impressions*(1/r.position)*10)}))
+        .sort((a,b)=>b.score-a.score)
+        .slice(0,8);
+
+      // 6. OPTIMIZAR — CTR below expected for position, or position dropping
+      const optimizar=[];
+      rows.forEach(r=>{
+        const exp=getExpectedCtr(r.position);
+        if(r.impressions>200&&r.ctr<exp*0.6){
+          optimizar.push({...r,type:'CTR',expected:(exp*100).toFixed(1)});
+        }
       });
-
-      // Top queries for display (web only, with query dimension)
-      const topQ = await fetchGSC('searchAnalytics/query', {
-        startDate, endDate,
-        dimensions: ['query'],
-        type: 'web',
-        rowLimit: 25,
+      // Pages dropping position
+      const dropping=[];
+      pages.forEach(r=>{
+        const p=prevPageMap[r.keys[0]];
+        if(p&&r.position-p.position>2&&r.clicks>20){
+          dropping.push({page:r.keys[0],curPos:r.position,prevPos:p.position,clicks:r.clicks,lostClicks:p.clicks-r.clicks});
+        }
       });
+      dropping.sort((a,b)=>b.lostClicks-a.lostClicks);
 
-      // All queries for quick wins (max 5000)
-      const qw = await fetchGSC('searchAnalytics/query', {
-        startDate, endDate,
-        dimensions: ['query'],
-        type: 'web',
-        rowLimit: 5000,
+      // 7. QUICK WINS — pos 1-3 (protect), 4-10 (push), 11-20 (create)
+      const quickWins=rows
+        .filter(r=>r.position>=2&&r.position<=20&&r.impressions>50)
+        .sort((a,b)=>b.impressions-a.impressions)
+        .slice(0,15)
+        .map(r=>{
+          let action='protect';
+          if(r.position>10)action='create';
+          else if(r.position>3)action='push';
+          return{...r,action};
+        });
+
+      // 8. CLUSTER MAP — group queries by common stem
+      const clusters={};
+      rows.forEach(r=>{
+        const q=r.keys[0];
+        const words=q.split(' ');
+        // Find matching page from pages array
+        let stem=words.slice(0,2).join(' ');
+        if(words.length===1)stem=words[0];
+        if(!clusters[stem])clusters[stem]={queries:[],clicks:0,impressions:0};
+        clusters[stem].queries.push(r);
+        clusters[stem].clicks+=r.clicks;
+        clusters[stem].impressions+=r.impressions;
       });
-      const quickWinRows = (qw.rows || [])
-        .filter(r => r.position >= 4 && r.position <= 20 && r.impressions > 50)
-        .sort((a, b) => b.impressions - a.impressions)
-        .slice(0, 15);
+      const clusterArr=Object.entries(clusters)
+        .filter(([,v])=>v.queries.length>=3)
+        .map(([name,v])=>({name,count:v.queries.length,clicks:v.clicks,impressions:v.impressions}))
+        .sort((a,b)=>b.clicks-a.clicks)
+        .slice(0,8);
 
-      // Top pages
-      const pages = await fetchGSC('searchAnalytics/query', {
-        startDate, endDate,
-        dimensions: ['page'],
-        type: 'web',
-        rowLimit: 15,
-      });
-
-      setTopQueries(topQ.rows || []);
-      setQuickWins(quickWinRows);
-      setTopPages(pages.rows || []);
-
-      // GA4 — separate try/catch so GSC still works if GA4 fails
-      if (config.propertyId) {
-        try {
-          const ga4Resp = await fetchGA4({
-            dateRanges: [{ startDate, endDate }],
-            dimensions: [{ name: 'pagePath' }],
-            metrics: [
-              { name: 'sessions' },
-              { name: 'totalUsers' },
-              { name: 'engagementRate' },
-            ],
-            orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
-            limit: 15,
+      // 9. GA4 data for content vs traffic
+      let ga4Data=null;
+      if(config.ga4){
+        try{
+          const resp=await ga4Fetch({
+            dateRanges:[{startDate:sd,endDate:ed}],
+            dimensions:[{name:'pagePath'}],
+            metrics:[{name:'sessions'},{name:'totalUsers'},{name:'engagementRate'}],
+            orderBys:[{metric:{metricName:'sessions'},desc:true}],
+            limit:20
           });
-          if (ga4Resp?.rows) {
-            setGa4Data(ga4Resp.rows.map(r => ({
-              page: r.dimensionValues[0].value,
-              sessions: parseInt(r.metricValues[0].value),
-              users: parseInt(r.metricValues[1].value),
-              engRate: (parseFloat(r.metricValues[2].value) * 100).toFixed(1),
-            })));
+          if(resp?.rows){
+            ga4Data=resp.rows.map(r=>({
+              page:r.dimensionValues[0].value,
+              sessions:parseInt(r.metricValues[0].value),
+              users:parseInt(r.metricValues[1].value),
+              engRate:(parseFloat(r.metricValues[2].value)*100).toFixed(1)
+            }));
           }
-        } catch (ga4Err) {
-          console.warn('GA4 failed (GSC data still loaded):', ga4Err.message);
-        }
+        }catch(e){console.warn('GA4:',e.message)}
       }
-    } catch (err) {
+
+      // 10. CONTENT VS TRAFFIC — cross GSC pages with GA4
+      let contentVsTraffic=[];
+      if(ga4Data){
+        const ga4Map={};
+        ga4Data.forEach(g=>{ga4Map[g.page]=g});
+        pages.slice(0,30).forEach(r=>{
+          const path=r.keys[0].replace(/https?:\/\/[^/]+/,'');
+          const ga=ga4Map[path];
+          if(ga&&r.clicks>10){
+            const ratio=ga.sessions/Math.max(r.clicks,1);
+            contentVsTraffic.push({page:path,gscClicks:r.clicks,gaSessions:ga.sessions,ratio,engRate:ga.engRate});
+          }
+        });
+        contentVsTraffic.sort((a,b)=>b.ratio-a.ratio);
+        contentVsTraffic=contentVsTraffic.slice(0,10);
+      }
+
+      setData({
+        summary:{clicks:cur.clicks,impressions:cur.impressions,ctr:cur.ctr*100,pos:cur.pos,
+          clicksChg:pct(cur.clicks,prev.clicks),imprChg:pct(cur.impressions,prev.impressions)},
+        topQueries,escribir,
+        optimizar:optimizar.sort((a,b)=>b.impressions-a.impressions).slice(0,8),
+        dropping:dropping.slice(0,5),
+        quickWins,clusterArr,contentVsTraffic,ga4Data
+      });
+    }catch(err){
       console.error(err);
       setError(err.message);
-      if (err.message.includes('401')) {
-        localStorage.removeItem('seopulse_token');
-        setToken(null);
-      }
+      if(err.message.includes('401')){localStorage.removeItem('sp2_token');setToken(null)}
     }
     setLoading(false);
-  }, [token, config, period, fetchGSC, fetchGA4]);
+  },[token,config,period,gsc,ga4Fetch]);
 
-  useEffect(() => {
-    if (token && config) loadData();
-  }, [token, config, period]);
+  useEffect(()=>{if(token&&config)loadData()},[token,config,period]);
 
-  // ============ RENDER ============
+  // ====== RENDER ======
+  if(!config)return(<div className="app"><header><h1>SEO <em>Pulse</em></h1></header><ConfigScreen onSave={setConfig}/></div>);
 
-  // No config
-  if (!config) {
-    return (
-      <div className="app">
-        <header>
-          <h1>SEO <span>Pulse</span></h1>
-        </header>
-        <ConfigScreen onSave={setConfig} />
-      </div>
-    );
-  }
-
-  // Config but no token
-  if (!token) {
-    return (
-      <div className="app">
-        <header>
-          <h1>SEO <span>Pulse</span></h1>
-          <div className="status-dot" />
-        </header>
-        <div className="auth-screen">
-          <h2>Conecta tu cuenta</h2>
-          <p>SEO Pulse necesita acceso de lectura a tu Search Console y Google Analytics.</p>
-          <button className="auth-btn" onClick={startAuth}>
-            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            Conectar con Google
-          </button>
-          <button className="btn-secondary" onClick={() => {
-            localStorage.removeItem('seopulse_config');
-            setConfig(null);
-          }}>
-            Cambiar configuracion
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Dashboard
-  return (
+  if(!token)return(
     <div className="app">
-      <header>
-        <h1>SEO <span>Pulse</span></h1>
-        <div className="status-dot connected" title="Conectado" />
-      </header>
+      <header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot"/></div></header>
+      <div className="auth-screen">
+        <h2>Conecta tu cuenta</h2>
+        <p>Acceso de lectura a Search Console y Analytics.</p>
+        <button className="auth-btn" onClick={startAuth}>Conectar con Google</button>
+        <button className="btn-secondary" onClick={()=>{localStorage.removeItem('sp2_config');setConfig(null)}}>Cambiar config</button>
+      </div>
+    </div>
+  );
+
+  const d=data;
+  return(
+    <div className="app">
+      <header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot on"/></div></header>
 
       <div className="controls">
-        {[7, 14, 28, 90].map(d => (
-          <button
-            key={d}
-            className={`period-btn ${period === d ? 'active' : ''}`}
-            onClick={() => setPeriod(d)}
-          >
-            {d}d
-          </button>
-        ))}
-        <button className="refresh-btn" onClick={loadData} disabled={loading}>
-          {loading ? 'Cargando...' : 'Actualizar'}
-        </button>
+        {[7,14,28,90].map(n=><button key={n} className={`per-btn ${period===n?'active':''}`} onClick={()=>setPeriod(n)}>{n}d</button>)}
+        <button className="ref-btn" onClick={loadData} disabled={loading}>{loading?'...':'Actualizar'}</button>
       </div>
 
-      {error && <div className="error-msg">{error}</div>}
+      {error&&<div className="error-msg">{error}</div>}
+      {loading&&!d?<div className="loading"><div className="spinner"/>Cargando datos...</div>:d?<>
 
-      {loading && !summary ? (
-        <div className="loading"><div className="spinner" /> Cargando datos...</div>
-      ) : summary ? (
-        <>
-          <div className="metrics-grid">
-            <MetricCard
-              label="Clicks"
-              value={formatNum(summary.clicks)}
-              change={summary.clicksChange}
-            />
-            <MetricCard
-              label="Impresiones"
-              value={formatNum(summary.impressions)}
-              change={summary.impressionsChange}
-            />
-            <MetricCard
-              label="CTR promedio"
-              value={summary.avgCtr.toFixed(1) + '%'}
-            />
-            <MetricCard
-              label="Posicion promedio"
-              value={summary.avgPos.toFixed(1)}
-            />
-          </div>
+      {/* SUMMARY */}
+      <div className="stats">
+        <div className="stat"><div className="stat-label">Clicks</div><div className="stat-val">{fmt(d.summary.clicks)}</div>{d.summary.clicksChg&&<div className={`stat-chg ${d.summary.clicksChg>0?'up':'down'}`}>{d.summary.clicksChg>0?'+':''}{d.summary.clicksChg}%</div>}</div>
+        <div className="stat"><div className="stat-label">Impresiones</div><div className="stat-val">{fmt(d.summary.impressions)}</div>{d.summary.imprChg&&<div className={`stat-chg ${d.summary.imprChg>0?'up':'down'}`}>{d.summary.imprChg>0?'+':''}{d.summary.imprChg}%</div>}</div>
+        <div className="stat"><div className="stat-label">CTR prom.</div><div className="stat-val">{d.summary.ctr.toFixed(1)}%</div></div>
+        <div className="stat"><div className="stat-label">Pos. prom.</div><div className="stat-val">{d.summary.pos.toFixed(1)}</div></div>
+      </div>
 
-          <QueryTable
-            title="Top queries"
-            badge={`Top ${(topQueries||[]).length}`}
-            badgeClass="badge-green"
-            rows={topQueries}
-          />
+      {/* ESCRIBIR NEXT */}
+      <div className="panel">
+        <div className="panel-head"><h3>Escribir next</h3><span className="pill pill-green">{d.escribir.length} oportunidades</span></div>
+        <div className="panel-body">
+          {d.escribir.map((r,i)=><div className="row" key={i}>
+            <div className="row-left">
+              <div className="row-kw">{r.keys[0]}</div>
+              <div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / score {r.score}</div>
+            </div>
+            <span className={`score ${r.score>80?'s-hi':r.score>50?'s-md':'s-lo'}`}>{r.score}</span>
+            <button className="row-btn" onClick={()=>window.open(`https://claude.ai/new?q=${encodeURIComponent(`Genera un content brief para un articulo sobre "${r.keys[0]}" para paislector.com. Incluye: keyword principal, secondarias, intent, estructura H2, word count, internal links sugeridos.`)}`,'_blank')}>Brief</button>
+          </div>)}
+          <div className="explain">Keywords con +300 impr donde probablemente no tienes articulo dedicado. Score = impressions x (1/posicion).</div>
+        </div>
+      </div>
 
-          <QueryTable
-            title="Quick wins (pos 4-20, impr. >50)"
-            badge={`${(quickWins||[]).length} oportunidades`}
-            badgeClass="badge-coral"
-            rows={quickWins}
-            emptyMsg="No se encontraron quick wins"
-          />
+      {/* OPTIMIZAR AHORA */}
+      <div className="panel">
+        <div className="panel-head"><h3>Optimizar ahora</h3><span className="pill pill-coral">{d.optimizar.length+d.dropping.length} acciones</span></div>
+        <div className="panel-body">
+          {d.optimizar.map((r,i)=><div className="row" key={'o'+i}>
+            <div className="row-left">
+              <div className="row-kw">{r.keys[0]}</div>
+              <div className="row-meta">{fmt(r.impressions)} impr / CTR {(r.ctr*100).toFixed(1)}% vs esperado {r.expected}% / pos {r.position.toFixed(1)}</div>
+            </div>
+            <span className="score s-lo">CTR</span>
+          </div>)}
+          {d.dropping.map((r,i)=><div className="row" key={'d'+i}>
+            <div className="row-left">
+              <div className="row-kw">{r.page.replace(/https?:\/\/[^/]+/,'')}</div>
+              <div className="row-meta">pos {r.prevPos.toFixed(1)} &#8594; {r.curPos.toFixed(1)} / perdiendo ~{Math.max(0,r.lostClicks)} clicks</div>
+            </div>
+            <span className="score s-lo">DROP</span>
+          </div>)}
+          <div className="explain">CTR: tu click-through esta muy por debajo de lo esperado para tu posicion (title/meta no compite). DROP: paginas perdiendo posicion vs periodo anterior.</div>
+        </div>
+      </div>
 
-          <PagesTable
-            title="Top pages"
-            badge="GSC"
-            badgeClass="badge-green"
-            rows={topPages}
-          />
+      {/* QUICK WINS */}
+      <div className="panel">
+        <div className="panel-head"><h3>Quick wins</h3><span className="pill pill-amber">{d.quickWins.length} keywords</span></div>
+        <div className="panel-body">
+          {d.quickWins.map((r,i)=><div className="row" key={i}>
+            <div className="row-left">
+              <div className="row-kw">{r.keys[0]}</div>
+              <div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / CTR {(r.ctr*100).toFixed(1)}%</div>
+            </div>
+            <span className={`score ${r.action==='protect'?'s-hi':r.action==='push'?'s-md':'s-lo'}`}>{r.action==='protect'?'TOP3':r.action==='push'?'PUSH':'NEW'}</span>
+          </div>)}
+          <div className="explain">TOP3: proteger posicion. PUSH: interno links + content update para subir. NEW: necesita articulo dedicado.</div>
+        </div>
+      </div>
 
-          <GA4Section data={ga4Data} />
-        </>
-      ) : null}
+      {/* CLUSTER MAP */}
+      <div className="panel">
+        <div className="panel-head"><h3>Cluster map</h3><span className="pill pill-purple">{d.clusterArr.length} clusters</span></div>
+        <div className="panel-body">
+          {d.clusterArr.map((c,i)=><div className="row" key={i}>
+            <div className="row-left">
+              <div className="row-kw">{c.name}</div>
+              <div className="row-meta">{c.count} queries / {fmt(c.clicks)} clicks / {fmt(c.impressions)} impr</div>
+            </div>
+            <span className={`score ${c.count>5?'s-hi':c.count>3?'s-md':'s-lo'}`}>{c.count}q</span>
+          </div>)}
+          <div className="explain">Queries agrupadas por tema. Mas queries en un cluster = mas oportunidad de construir un hub completo.</div>
+        </div>
+      </div>
+
+      {/* CONTENIDO VS TRAFICO */}
+      {d.contentVsTraffic.length>0&&<div className="panel">
+        <div className="panel-head"><h3>Contenido vs trafico</h3><span className="pill pill-blue">GSC + GA4</span></div>
+        <div className="panel-body">
+          {d.contentVsTraffic.map((r,i)=><div className="row" key={i}>
+            <div className="row-left">
+              <div className="row-kw">{r.page.length>45?r.page.slice(0,45)+'...':r.page}</div>
+              <div className="row-meta">GSC: {fmt(r.gscClicks)} clicks / GA4: {fmt(r.gaSessions)} sessions / ratio {r.ratio.toFixed(1)}x{r.ratio>1.5?' — trafico no-SEO fuerte':r.ratio<0.8?' — depende de Google':''}</div>
+            </div>
+          </div>)}
+          <div className="explain">Ratio GA4/GSC: mayor a 1.5 = trafico social/directo fuerte. Cerca de 1 = depende de Google. Menor a 0.8 = posible bounce issue.</div>
+        </div>
+      </div>}
+
+      </>:null}
 
       <div className="footer">
-        SEO Pulse &middot; Datos de Google Search Console + GA4 &middot; Costo: $0
-        <br/>
-        <button className="btn-secondary" style={{marginTop: 8}} onClick={() => {
-          localStorage.clear();
-          setConfig(null);
-          setToken(null);
-        }}>
-          Resetear todo
-        </button>
+        SEO Pulse {VERSION} / Costo: $0
+        <br/><button className="btn-secondary" style={{marginTop:6}} onClick={()=>{localStorage.clear();setConfig(null);setToken(null);setData(null)}}>Resetear todo</button>
       </div>
     </div>
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
