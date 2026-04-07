@@ -552,7 +552,7 @@ function App() {
   // OAuth flow
   function startAuth() {
     if (!config?.clientId) return;
-    const redirectUri = window.location.origin.replace(/\/+$/, '');
+    const redirectUri = 'https://seo-pulse-6mk47auzk-andres-rendons-projects.vercel.app';
     const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
       + '?client_id=' + encodeURIComponent(config.clientId)
       + '&redirect_uri=' + encodeURIComponent(redirectUri)
@@ -619,29 +619,19 @@ function App() {
       const prevStart = daysAgo(period * 2);
       const prevEnd = daysAgo(period + 1);
 
-      // Current period totals
-      const [current, previous] = await Promise.all([
+      // TRUE TOTALS: no dimensions = includes anonymous queries
+      const [totCurrent, totPrevious] = await Promise.all([
         fetchGSC('searchAnalytics/query', {
           startDate, endDate,
-          dimensions: ['query'],
-          rowLimit: 1,
           aggregationType: 'auto',
         }),
         fetchGSC('searchAnalytics/query', {
           startDate: prevStart, endDate: prevEnd,
-          dimensions: ['query'],
-          rowLimit: 1,
           aggregationType: 'auto',
         }),
       ]);
 
-      // Calculate totals from response
-      const curTotals = current.rows ? current.rows.reduce((acc, r) => ({
-        clicks: acc.clicks + r.clicks,
-        impressions: acc.impressions + r.impressions,
-      }), { clicks: 0, impressions: 0 }) : { clicks: 0, impressions: 0 };
-
-      // Fetch actual top queries
+      // Top queries (desglosadas, top 25 for display)
       const topQ = await fetchGSC('searchAnalytics/query', {
         startDate, endDate,
         dimensions: ['query'],
@@ -649,11 +639,11 @@ function App() {
         aggregationType: 'auto',
       });
 
-      // Quick wins: pos 4-20, impressions > 50
+      // All queries for quick wins (max 5000)
       const qw = await fetchGSC('searchAnalytics/query', {
         startDate, endDate,
         dimensions: ['query'],
-        rowLimit: 500,
+        rowLimit: 5000,
         aggregationType: 'auto',
       });
       const quickWinRows = (qw.rows || [])
@@ -669,48 +659,17 @@ function App() {
         aggregationType: 'auto',
       });
 
-      // Summary with previous period
-      const prevQ = await fetchGSC('searchAnalytics/query', {
-        startDate: prevStart, endDate: prevEnd,
-        dimensions: ['query'],
-        rowLimit: 500,
-        aggregationType: 'auto',
-      });
-      const prevTotals = prevQ.rows ? prevQ.rows.reduce((acc, r) => ({
-        clicks: acc.clicks + r.clicks,
-        impressions: acc.impressions + r.impressions,
-      }), { clicks: 0, impressions: 0 }) : { clicks: 0, impressions: 0 };
-
-      const curFull = (topQ.rows || []).reduce((acc, r) => ({
-        clicks: acc.clicks + r.clicks,
-        impressions: acc.impressions + r.impressions,
-        ctrSum: acc.ctrSum + r.ctr,
-        posSum: acc.posSum + r.position,
-        count: acc.count + 1,
-      }), { clicks: 0, impressions: 0, ctrSum: 0, posSum: 0, count: 0 });
-
-      // Actually get full current totals
-      const allCurrent = (qw.rows || []).reduce((acc, r) => ({
-        clicks: acc.clicks + r.clicks,
-        impressions: acc.impressions + r.impressions,
-        ctrSum: acc.ctrSum + r.ctr,
-        posSum: acc.posSum + r.position,
-        count: acc.count + 1,
-      }), { clicks: 0, impressions: 0, ctrSum: 0, posSum: 0, count: 0 });
-
-      const allPrevious = (prevQ.rows || []).reduce((acc, r) => ({
-        clicks: acc.clicks + r.clicks,
-        impressions: acc.impressions + r.impressions,
-        count: acc.count + 1,
-      }), { clicks: 0, impressions: 0, count: 0 });
+      // Extract true totals from undimensioned response
+      const cur = totCurrent.rows ? totCurrent.rows[0] : { clicks: 0, impressions: 0, ctr: 0, position: 0 };
+      const prev = totPrevious.rows ? totPrevious.rows[0] : { clicks: 0, impressions: 0, ctr: 0, position: 0 };
 
       setSummary({
-        clicks: allCurrent.clicks,
-        impressions: allCurrent.impressions,
-        avgCtr: allCurrent.count ? (allCurrent.ctrSum / allCurrent.count * 100) : 0,
-        avgPos: allCurrent.count ? (allCurrent.posSum / allCurrent.count) : 0,
-        clicksChange: pctChange(allCurrent.clicks, allPrevious.clicks),
-        impressionsChange: pctChange(allCurrent.impressions, allPrevious.impressions),
+        clicks: cur.clicks,
+        impressions: cur.impressions,
+        avgCtr: cur.ctr * 100,
+        avgPos: cur.position,
+        clicksChange: pctChange(cur.clicks, prev.clicks),
+        impressionsChange: pctChange(cur.impressions, prev.impressions),
       });
 
       setTopQueries(topQ.rows || []);
