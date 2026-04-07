@@ -552,15 +552,15 @@ function App() {
   // OAuth flow
   function startAuth() {
     if (!config?.clientId) return;
-    const params = new URLSearchParams({
-      client_id: config.clientId,
-      redirect_uri: window.location.origin,
-      response_type: 'token',
-      scope: SCOPES,
-      include_granted_scopes: 'true',
-      prompt: 'consent',
-    });
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
+    const redirectUri = window.location.origin.replace(/\/+$/, '');
+    const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
+      + '?client_id=' + encodeURIComponent(config.clientId)
+      + '&redirect_uri=' + encodeURIComponent(redirectUri)
+      + '&response_type=token'
+      + '&scope=' + encodeURIComponent(SCOPES)
+      + '&include_granted_scopes=true'
+      + '&prompt=consent';
+    window.location.href = authUrl;
   }
 
   // Handle OAuth redirect
