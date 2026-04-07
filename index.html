@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SEO Pulse v2.6 — País Lector</title>
+<title>SEO Pulse v2.7 — País Lector</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap');
 :root{--bg:#FAF8F3;--surface:#FFFFFF;--surface-alt:#F3F0E8;--text:#1A1A18;--muted:#6B6A65;--hint:#9C9A92;--green:#2D5A27;--green-light:#E8F0E6;--coral:#D85A30;--coral-light:#FAECE7;--blue:#185FA5;--blue-light:#E6F1FB;--amber:#BA7517;--amber-light:#FAEEDA;--purple:#534AB7;--purple-light:#EEEDFE;--red:#A32D2D;--red-light:#FCEBEB;--border:rgba(0,0,0,0.08);--radius:12px;--serif:'Instrument Serif',Georgia,serif;--sans:'DM Sans',-apple-system,sans-serif}
@@ -90,6 +90,14 @@ header h1 em{color:var(--green);font-style:normal}
 .disc-chip{font-size:11px;padding:4px 10px;border-radius:14px;border:0.5px solid var(--border);background:var(--surface-alt);cursor:pointer;color:var(--muted);transition:all 0.15s}.disc-chip:hover{border-color:var(--green);color:var(--green)}
 .disc-rank{font-size:9px;color:var(--hint);margin-left:2px}
 .disc-searching{font-size:11px;color:var(--hint);padding:8px 0;display:flex;align-items:center;gap:6px}
+/* REVENUE */
+.rev-total{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}.rev-amount{font-family:var(--serif);font-size:28px;color:var(--green)}.rev-sub{font-size:11px;color:var(--hint)}
+.rev-bar{display:flex;align-items:center;gap:6px;padding:4px 0}
+.rev-bar-track{flex:1;height:8px;background:var(--surface-alt);border-radius:4px;overflow:hidden}
+.rev-bar-fill{height:100%;border-radius:4px;background:var(--amber)}
+.rev-val{font-size:10px;color:var(--hint);min-width:50px;text-align:right;font-weight:500}
+.rev-page{font-size:11px;min-width:0;flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adsense-warn{padding:8px 12px;background:var(--amber-light);border-radius:8px;color:var(--amber);font-size:11px;margin-bottom:8px}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @media(max-width:480px){.stats{grid-template-columns:repeat(2,1fr)}.stat-val{font-size:18px}header h1{font-size:20px}.two-col{grid-template-columns:1fr}.url-tag{max-width:120px}.drawer-stats{grid-template-columns:repeat(2,1fr)}}
@@ -103,12 +111,13 @@ header h1 em{color:var(--green);font-style:normal}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v2.6';
+const VERSION='v2.7';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SUGGEST_API=REDIRECT_URI+'/api/suggest';
-const SCOPES='https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly';
+const SCOPES='https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly https://www.googleapis.com/auth/adsense.readonly';
 const GSC_API='https://www.googleapis.com/webmasters/v3';
 const GA4_API='https://analyticsdata.googleapis.com/v1beta';
+const ADSENSE_API='https://adsense.googleapis.com/v2';
 const COUNTRY_NAMES={MEX:'Mexico',USA:'USA',ARG:'Argentina',COL:'Colombia',ESP:'Spain',PER:'Peru',CHL:'Chile',ECU:'Ecuador',VEN:'Venezuela',BOL:'Bolivia',GTM:'Guatemala',DOM:'Rep. Dom.',CRI:'Costa Rica',PAN:'Panama',URY:'Uruguay',PRY:'Paraguay',HND:'Honduras',SLV:'El Salvador',NIC:'Nicaragua',CUB:'Cuba',BRA:'Brasil',DEU:'Alemania',FRA:'Francia',GBR:'UK',ITA:'Italia',JPN:'Japon'};
 
 function fmt(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return Math.round(n).toLocaleString()}
@@ -118,6 +127,9 @@ function getConfig(){try{return JSON.parse(localStorage.getItem('sp2_config')||'
 function getToken(){try{const t=JSON.parse(localStorage.getItem('sp2_token')||'null');if(t&&t.exp>Date.now())return t;return null}catch{return null}}
 function getSavedKws(){try{return JSON.parse(localStorage.getItem('sp2_extrakws')||'null')}catch{return null}}
 function shortPath(url){return url.replace(/https?:\/\/[^/]+/,'')}
+function fmtMoney(n){if(n>=1000)return'$'+(n/1000).toFixed(1)+'K';if(n>=1)return'$'+n.toFixed(2);if(n>=0.01)return'$'+n.toFixed(2);return'$'+n.toFixed(3)}
+function getAdsenseAccountId(){try{return localStorage.getItem('sp2_adsense_account')||null}catch{return null}}
+function setAdsenseAccountId(id){try{localStorage.setItem('sp2_adsense_account',id)}catch{}}
 const expectedCtr=[0,0.396,0.187,0.110,0.076,0.053,0.044,0.032,0.024,0.020,0.016,0.014,0.012,0.010,0.009,0.008,0.007,0.006,0.006,0.005,0.005];
 function getExpectedCtr(pos){const p=Math.round(Math.min(Math.max(pos,1),20));return expectedCtr[p]||0.005}
 function suggestAction(pos){if(pos<=3)return'Mejorar CTR (title/meta)';if(pos<=7)return'Push a top 3 (internal links + contenido)';if(pos<=15)return'Expandir contenido + links internos';return'Reescribir o nuevo articulo dedicado'}
@@ -377,7 +389,7 @@ function App(){
   const[config,setConfig]=useState(getConfig);const[token,setToken]=useState(getToken);
   const[period,setPeriod]=useState(28);const[loading,setLoading]=useState(false);
   const[error,setError]=useState(null);const[ga4Warn,setGa4Warn]=useState(null);const[data,setData]=useState(null);
-  const[detailItem,setDetailItem]=useState(null);
+  const[detailItem,setDetailItem]=useState(null);const[adsenseWarn,setAdsenseWarn]=useState(null);
 
   function startAuth(){if(!config?.cid)return;window.location.href='https://accounts.google.com/o/oauth2/v2/auth?client_id='+encodeURIComponent(config.cid)+'&redirect_uri='+encodeURIComponent(REDIRECT_URI)+'&response_type=token&scope='+encodeURIComponent(SCOPES)+'&include_granted_scopes=true&prompt=consent'}
   useEffect(()=>{const h=window.location.hash;if(h.includes('access_token')){const p=new URLSearchParams(h.slice(1));const t={tk:p.get('access_token'),exp:Date.now()+parseInt(p.get('expires_in'))*1000};localStorage.setItem('sp2_token',JSON.stringify(t));setToken(t);window.history.replaceState(null,'',window.location.pathname)}},[]);
@@ -422,9 +434,60 @@ function App(){
         if(pgResp?.rows){ga4Data=pgResp.rows.map(r=>({page:r.dimensionValues[0].value,sessions:parseInt(r.metricValues[0].value),users:parseInt(r.metricValues[1].value),engRate:(parseFloat(r.metricValues[2].value)*100).toFixed(1)}));ga4Pages=ga4Data}
         if(dailyResp?.rows){const sm={};dailyResp.rows.forEach(r=>{const d=r.dimensionValues[0].value;const dt=d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8);sm[dt]=parseInt(r.metricValues[0].value)});dailySessions=sm}
       }catch(e){console.warn('GA4:',e.message)}}
+      // ========== ADSENSE ==========
+      let adsenseData=null;
+      try{
+        let accId=getAdsenseAccountId();
+        if(!accId){
+          const accResp=await fetch(ADSENSE_API+'/accounts',{headers:{'Authorization':'Bearer '+token.tk}});
+          if(accResp.ok){const accJson=await accResp.json();if(accJson.accounts&&accJson.accounts[0]){accId=accJson.accounts[0].name;setAdsenseAccountId(accId)}}
+        }
+        if(accId){
+          const adsParams=new URLSearchParams();
+          adsParams.append('metrics','ESTIMATED_EARNINGS');adsParams.append('metrics','PAGE_VIEWS');adsParams.append('metrics','IMPRESSIONS');adsParams.append('metrics','CLICKS');adsParams.append('metrics','PAGE_VIEWS_RPM');
+          adsParams.append('dimensions','PAGE_URL');
+          adsParams.append('startDate.year',sd.split('-')[0]);adsParams.append('startDate.month',parseInt(sd.split('-')[1]));adsParams.append('startDate.day',parseInt(sd.split('-')[2]));
+          adsParams.append('endDate.year',ed.split('-')[0]);adsParams.append('endDate.month',parseInt(ed.split('-')[1]));adsParams.append('endDate.day',parseInt(ed.split('-')[2]));
+          adsParams.append('orderBy','-ESTIMATED_EARNINGS');adsParams.append('limit','50');
+          const adsResp=await fetch(ADSENSE_API+'/'+accId+'/reports:generate?'+adsParams.toString(),{headers:{'Authorization':'Bearer '+token.tk}});
+          if(adsResp.ok){
+            const adsJson=await adsResp.json();
+            if(adsJson.rows&&adsJson.headers){
+              const hi={};adsJson.headers.forEach((h,i)=>{hi[h.name]=i});
+              const totalEarnings=adsJson.totals?.cells?.[hi['ESTIMATED_EARNINGS']]?.value||0;
+              adsenseData={totalEarnings:parseFloat(totalEarnings),pages:adsJson.rows.map(r=>({
+                page:r.cells[hi['PAGE_URL']]?.value||'',
+                earnings:parseFloat(r.cells[hi['ESTIMATED_EARNINGS']]?.value||0),
+                pageViews:parseInt(r.cells[hi['PAGE_VIEWS']]?.value||0),
+                impressions:parseInt(r.cells[hi['IMPRESSIONS']]?.value||0),
+                clicks:parseInt(r.cells[hi['CLICKS']]?.value||0),
+                rpm:parseFloat(r.cells[hi['PAGE_VIEWS_RPM']]?.value||0)
+              })).filter(p=>p.earnings>0)};
+            }
+          }else if(adsResp.status===403){setAdsenseWarn('AdSense 403: Verifica permisos de la API o re-autoriza.')}
+          else{setAdsenseWarn('AdSense error '+adsResp.status)}
+          // Also fetch daily earnings for trend
+          if(accId){
+            const dailyParams=new URLSearchParams();
+            dailyParams.append('metrics','ESTIMATED_EARNINGS');
+            dailyParams.append('dimensions','DATE');
+            dailyParams.append('startDate.year',sd.split('-')[0]);dailyParams.append('startDate.month',parseInt(sd.split('-')[1]));dailyParams.append('startDate.day',parseInt(sd.split('-')[2]));
+            dailyParams.append('endDate.year',ed.split('-')[0]);dailyParams.append('endDate.month',parseInt(ed.split('-')[1]));dailyParams.append('endDate.day',parseInt(ed.split('-')[2]));
+            dailyParams.append('orderBy','+DATE');
+            const dailyAdsResp=await fetch(ADSENSE_API+'/'+accId+'/reports:generate?'+dailyParams.toString(),{headers:{'Authorization':'Bearer '+token.tk}});
+            if(dailyAdsResp.ok){
+              const dJson=await dailyAdsResp.json();
+              if(dJson.rows&&dJson.headers&&adsenseData){
+                const dhi={};dJson.headers.forEach((h,i)=>{dhi[h.name]=i});
+                adsenseData.daily=dJson.rows.map(r=>{const dv=r.cells[dhi['DATE']]?.value||'';return{date:dv,earnings:parseFloat(r.cells[dhi['ESTIMATED_EARNINGS']]?.value||0)}});
+              }
+            }
+          }
+        }
+      }catch(e){console.warn('AdSense:',e.message);setAdsenseWarn('AdSense: '+e.message)}
       const dailyData=Object.keys(dailyMap).sort().map(date=>({date,clicks:dailyMap[date].clicks,sessions:dailySessions?dailySessions[date]||0:0}));
       let contentVsTraffic=[];if(ga4Data){const gm={};ga4Data.forEach(g=>{gm[g.page]=g});pages.slice(0,30).forEach(r=>{const path=r.keys[0].replace(/https?:\/\/[^/]+/,'');const ga=gm[path];if(ga&&r.clicks>10){const ratio=ga.sessions/Math.max(r.clicks,1);contentVsTraffic.push({page:path,gscClicks:r.clicks,gaSessions:ga.sessions,ratio,engRate:ga.engRate})}});contentVsTraffic.sort((a,b)=>b.ratio-a.ratio);contentVsTraffic=contentVsTraffic.slice(0,10)}
-      setData({summary:{clicks:cur.clicks,impressions:cur.impressions,ctr:cur.ctr*100,pos:cur.pos,clicksChg:pct(cur.clicks,prev.clicks),imprChg:pct(cur.impressions,prev.impressions)},escribir:finalEscribir.slice(0,8),hasPageOpt:finalHasPage.slice(0,8),optimizar:optimizar.sort((a,b)=>b.impressions-a.impressions).slice(0,8),dropping:dropping.slice(0,5),quickWins,clusterArr,contentVsTraffic,ga4Pages,countries,dailyData,allRows:rows});
+      setData({summary:{clicks:cur.clicks,impressions:cur.impressions,ctr:cur.ctr*100,pos:cur.pos,clicksChg:pct(cur.clicks,prev.clicks),imprChg:pct(cur.impressions,prev.impressions)},escribir:finalEscribir.slice(0,8),hasPageOpt:finalHasPage.slice(0,8),optimizar:optimizar.sort((a,b)=>b.impressions-a.impressions).slice(0,8),dropping:dropping.slice(0,5),quickWins,clusterArr,contentVsTraffic,ga4Pages,countries,dailyData,allRows:rows,adsense:adsenseData});
     }catch(err){console.error(err);setError(err.message);if(err.message.includes('401')){localStorage.removeItem('sp2_token');setToken(null)}}
     setLoading(false);
   },[token,config,period,gsc,ga4Fetch]);
@@ -440,6 +503,7 @@ function App(){
     <div className="controls">{[7,14,28,90].map(n=><button key={n} className={`per-btn ${period===n?'active':''}`} onClick={()=>setPeriod(n)}>{n}d</button>)}<button className="ref-btn" onClick={loadData} disabled={loading}>{loading?'...':'Actualizar'}</button></div>
     {error&&<div className="error-msg">{error}</div>}
     {ga4Warn&&<div className="warn-msg">{ga4Warn}</div>}
+    {adsenseWarn&&<div className="warn-msg">{adsenseWarn}</div>}
     {loading&&!d?<div className="loading"><div className="spinner"/>Cargando...</div>:d?<>
     <div className="stats">
       <div className="stat"><div className="stat-label">Clicks</div><div className="stat-val">{fmt(d.summary.clicks)}</div>{d.summary.clicksChg&&<div className={`stat-chg ${d.summary.clicksChg>0?'up':'down'}`}>{d.summary.clicksChg>0?'+':''}{d.summary.clicksChg}%</div>}</div>
@@ -448,6 +512,17 @@ function App(){
       <div className="stat"><div className="stat-label">Pos. prom.</div><div className="stat-val">{d.summary.pos.toFixed(1)}</div></div>
     </div>
     {d.dailyData&&d.dailyData.length>0&&<div className="panel"><div className="panel-head"><h3>Tendencia</h3><span className="pill pill-green">Clicks + Sessions</span></div><div className="panel-body"><TrendChart dailyData={d.dailyData}/></div></div>}
+
+    {/* ====== REVENUE (AdSense) — v2.7 ====== */}
+    {d.adsense&&<div className="panel"><div className="panel-head"><h3>Revenue</h3><span className="pill pill-amber">AdSense</span></div><div className="panel-body">
+      <div className="rev-total"><span className="rev-amount">{fmtMoney(d.adsense.totalEarnings)}</span><span className="rev-sub">{period}d / {d.adsense.pages.length} paginas con revenue</span></div>
+      {d.adsense.pages.slice(0,10).map((p,i)=>{const maxE=d.adsense.pages[0]?.earnings||1;return<div className="rev-bar" key={i} style={{cursor:'pointer'}} onClick={()=>openDetail({page:p.page,query:null,position:0,clicks:p.clicks,impressions:p.impressions})}><span className="rev-page">{shortPath(p.page)}</span><div className="rev-bar-track"><div className="rev-bar-fill" style={{width:Math.round(p.earnings/maxE*100)+'%'}}/></div><span className="rev-val">{fmtMoney(p.earnings)}</span></div>})}
+      {d.adsense.pages.length>0&&<div style={{marginTop:8,display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}}>
+        {d.adsense.pages.slice(0,6).map((p,i)=><div key={i} style={{fontSize:10,color:'var(--hint)'}}><span style={{fontWeight:500,color:'var(--text)'}}>{shortPath(p.page).slice(0,30)}</span><br/>{fmt(p.pageViews)} views / RPM {fmtMoney(p.rpm)} / {p.clicks} clicks</div>)}
+      </div>}
+      <div className="explain">Revenue estimado por pagina. RPM = revenue por 1K page views. Click en fila para detalle.</div>
+    </div></div>}
+
     <div className="two-col">
       {d.countries&&d.countries.length>0&&<div className="panel"><div className="panel-head"><h3>Top paises</h3><span className="pill pill-blue">GSC</span></div><div className="panel-body">
         {d.countries.map((c,i)=><div className="country-bar" key={i}><span className="country-name">{COUNTRY_NAMES[c.code]||c.code}</span><div className="country-track"><div className="country-fill" style={{width:Math.round(c.clicks/maxCC*100)+'%'}}/></div><span className="country-val">{fmt(c.clicks)}</span></div>)}</div></div>}
@@ -481,7 +556,7 @@ function App(){
       {d.contentVsTraffic.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({page:'https://paislector.com'+r.page,query:null,position:0,clicks:r.gscClicks,impressions:0})}><div className="row-left"><div className="row-kw">{r.page.length>45?r.page.slice(0,45)+'...':r.page}</div><div className="row-meta">GSC: {fmt(r.gscClicks)} / GA4: {fmt(r.gaSessions)} / ratio {r.ratio.toFixed(1)}x{r.ratio>1.5?' \u2014 social fuerte':''}</div></div></div>)}
       <div className="explain">Ratio +1.5 = trafico no-SEO. ~1 = depende de Google.</div></div></div>}
     </>:null}
-    <div className="footer">SEO Pulse {VERSION} / $0<br/><button className="btn-secondary" style={{marginTop:6}} onClick={()=>{localStorage.clear();setConfig(null);setToken(null);setData(null);setGa4Warn(null)}}>Resetear todo</button></div>
+    <div className="footer">SEO Pulse {VERSION} / $0<br/><button className="btn-secondary" style={{marginTop:6}} onClick={()=>{localStorage.clear();setConfig(null);setToken(null);setData(null);setGa4Warn(null);setAdsenseWarn(null)}}>Resetear todo</button></div>
     {detailItem&&<PageDetailDrawer item={detailItem} onClose={()=>setDetailItem(null)} gscFn={gsc} period={period}/>}
   </div>);
 }
