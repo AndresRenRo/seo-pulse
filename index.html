@@ -290,7 +290,7 @@ header h1 span { color: var(--accent); }
 const { useState, useEffect, useCallback } = React;
 
 // ============ CONFIG ============
-const SCOPES = 'https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics.readonly';
+const SCOPES = 'https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly';
 const GSC_API = 'https://www.googleapis.com/webmasters/v3';
 const GA4_API = 'https://analyticsdata.googleapis.com/v1beta';
 
@@ -619,19 +619,43 @@ function App() {
       const prevStart = daysAgo(period * 2);
       const prevEnd = daysAgo(period + 1);
 
-      // TRUE TOTALS: no dimensions = includes anonymous queries
+      // TRUE TOTALS: use 'date' dimension and sum — this includes anonymous queries
+      // unlike 'query' dimension which excludes them
       const [totCurrent, totPrevious] = await Promise.all([
         fetchGSC('searchAnalytics/query', {
           startDate, endDate,
+          dimensions: ['date'],
           aggregationType: 'auto',
         }),
         fetchGSC('searchAnalytics/query', {
           startDate: prevStart, endDate: prevEnd,
+          dimensions: ['date'],
           aggregationType: 'auto',
         }),
       ]);
 
-      // Top queries (desglosadas, top 25 for display)
+      // Sum daily rows for true totals
+      const sumRows = (rows) => (rows || []).reduce((acc, r) => ({
+        clicks: acc.clicks + r.clicks,
+        impressions: acc.impressions + r.impressions,
+        ctrSum: acc.ctrSum + r.ctr,
+        posSum: acc.posSum + r.position,
+        count: acc.count + 1,
+      }), { clicks: 0, impressions: 0, ctrSum: 0, posSum: 0, count: 0 });
+
+      const curTotals = sumRows(totCurrent.rows);
+      const prevTotals = sumRows(totPrevious.rows);
+
+      setSummary({
+        clicks: curTotals.clicks,
+        impressions: curTotals.impressions,
+        avgCtr: curTotals.count ? (curTotals.ctrSum / curTotals.count * 100) : 0,
+        avgPos: curTotals.count ? (curTotals.posSum / curTotals.count) : 0,
+        clicksChange: pctChange(curTotals.clicks, prevTotals.clicks),
+        impressionsChange: pctChange(curTotals.impressions, prevTotals.impressions),
+      });
+
+      // Top queries for display
       const topQ = await fetchGSC('searchAnalytics/query', {
         startDate, endDate,
         dimensions: ['query'],
@@ -659,43 +683,34 @@ function App() {
         aggregationType: 'auto',
       });
 
-      // Extract true totals from undimensioned response
-      const cur = totCurrent.rows ? totCurrent.rows[0] : { clicks: 0, impressions: 0, ctr: 0, position: 0 };
-      const prev = totPrevious.rows ? totPrevious.rows[0] : { clicks: 0, impressions: 0, ctr: 0, position: 0 };
-
-      setSummary({
-        clicks: cur.clicks,
-        impressions: cur.impressions,
-        avgCtr: cur.ctr * 100,
-        avgPos: cur.position,
-        clicksChange: pctChange(cur.clicks, prev.clicks),
-        impressionsChange: pctChange(cur.impressions, prev.impressions),
-      });
-
       setTopQueries(topQ.rows || []);
       setQuickWins(quickWinRows);
       setTopPages(pages.rows || []);
 
-      // GA4
+      // GA4 — separate try/catch so GSC still works if GA4 fails
       if (config.propertyId) {
-        const ga4Resp = await fetchGA4({
-          dateRanges: [{ startDate, endDate }],
-          dimensions: [{ name: 'pagePath' }],
-          metrics: [
-            { name: 'sessions' },
-            { name: 'totalUsers' },
-            { name: 'engagementRate' },
-          ],
-          orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
-          limit: 15,
-        });
-        if (ga4Resp?.rows) {
-          setGa4Data(ga4Resp.rows.map(r => ({
-            page: r.dimensionValues[0].value,
-            sessions: parseInt(r.metricValues[0].value),
-            users: parseInt(r.metricValues[1].value),
-            engRate: (parseFloat(r.metricValues[2].value) * 100).toFixed(1),
-          })));
+        try {
+          const ga4Resp = await fetchGA4({
+            dateRanges: [{ startDate, endDate }],
+            dimensions: [{ name: 'pagePath' }],
+            metrics: [
+              { name: 'sessions' },
+              { name: 'totalUsers' },
+              { name: 'engagementRate' },
+            ],
+            orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
+            limit: 15,
+          });
+          if (ga4Resp?.rows) {
+            setGa4Data(ga4Resp.rows.map(r => ({
+              page: r.dimensionValues[0].value,
+              sessions: parseInt(r.metricValues[0].value),
+              users: parseInt(r.metricValues[1].value),
+              engRate: (parseFloat(r.metricValues[2].value) * 100).toFixed(1),
+            })));
+          }
+        } catch (ga4Err) {
+          console.warn('GA4 failed (GSC data still loaded):', ga4Err.message);
         }
       }
     } catch (err) {
