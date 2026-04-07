@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SEO Pulse v2 — País Lector</title>
+<title>SEO Pulse v2.2 — País Lector</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap');
 :root {
@@ -29,11 +29,10 @@ header h1 em{color:var(--green);font-style:normal}
 .ver{font-size:10px;color:var(--hint)}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--hint);transition:background 0.3s}
 .dot.on{background:var(--green)}
-
 .auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:55vh;text-align:center;gap:20px}
 .auth-screen h2{font-family:var(--serif);font-size:28px;font-weight:400}
 .auth-screen p{color:var(--muted);font-size:14px;max-width:380px;line-height:1.6}
-.auth-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:14px;font-weight:500;color:var(--text);cursor:pointer;transition:all 0.2s}
+.auth-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:14px;font-weight:500;color:var(--text);cursor:pointer}
 .auth-btn:hover{border-color:var(--green)}
 .setup-note{background:var(--surface-alt);border-radius:var(--radius);padding:16px;text-align:left;max-width:440px;width:100%}
 .setup-note h3{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:10px}
@@ -48,20 +47,17 @@ header h1 em{color:var(--green);font-style:normal}
 .btn-primary{padding:11px 22px;border-radius:var(--radius);border:none;background:var(--green);color:white;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer}
 .btn-primary:hover{opacity:0.9}
 .btn-secondary{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:12px;color:var(--muted);cursor:pointer}
-
 .controls{display:flex;gap:6px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
 .per-btn{padding:5px 12px;border-radius:18px;border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:12px;color:var(--muted);cursor:pointer}
 .per-btn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
 .ref-btn{margin-left:auto;padding:5px 12px;border-radius:18px;border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:12px;color:var(--muted);cursor:pointer}
 .ref-btn:hover{border-color:var(--green);color:var(--green)}
-
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
 .stat{background:var(--surface-alt);border-radius:var(--radius);padding:12px 14px}
 .stat-label{font-size:11px;color:var(--hint);margin-bottom:2px}
 .stat-val{font-family:var(--serif);font-size:22px}
 .stat-chg{font-size:11px;margin-top:2px}
 .up{color:var(--green)}.down{color:var(--coral)}
-
 .panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden}
 .panel-head{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:0.5px solid var(--border)}
 .panel-head h3{font-size:13px;font-weight:600}
@@ -84,22 +80,19 @@ header h1 em{color:var(--green);font-style:normal}
 .s-hi{background:var(--green-light);color:var(--green)}
 .s-md{background:var(--amber-light);color:var(--amber)}
 .s-lo{background:var(--coral-light);color:var(--coral)}
+.s-new{background:var(--purple-light);color:var(--purple)}
 .explain{font-size:11px;color:var(--hint);padding:6px 0 2px;line-height:1.5;border-top:0.5px solid var(--border);margin-top:6px}
-
-.bar-track{flex:1;height:5px;background:var(--surface-alt);border-radius:3px;overflow:hidden;max-width:120px}
-.bar-fill{height:100%;border-radius:3px}
-
 .loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--hint);font-size:13px;gap:8px}
 .spinner{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin 0.6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .error-msg{padding:12px 14px;background:var(--coral-light);border-radius:var(--radius);color:var(--coral);font-size:12px;margin-bottom:12px}
+.warn-msg{padding:10px 14px;background:var(--amber-light);border-radius:var(--radius);color:var(--amber);font-size:11px;margin-bottom:12px}
 .footer{text-align:center;padding:20px 0;font-size:11px;color:var(--hint)}
-
-@media(max-width:480px){
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .stat-val{font-size:18px}
-  header h1{font-size:20px}
-}
+.kw-textarea{width:100%;min-height:80px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-size:12px;font-family:var(--sans);background:var(--surface);resize:vertical;line-height:1.6}
+.kw-textarea:focus{outline:none;border-color:var(--green)}
+.kw-actions{display:flex;gap:8px;margin-top:8px;align-items:center}
+.kw-count{font-size:11px;color:var(--hint);margin-left:auto}
+@media(max-width:480px){.stats{grid-template-columns:repeat(2,1fr)}.stat-val{font-size:18px}header h1{font-size:20px}}
 </style>
 </head>
 <body>
@@ -108,8 +101,8 @@ header h1 em{color:var(--green);font-style:normal}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
-const {useState,useEffect,useCallback}=React;
-const VERSION='v2.1';
+const {useState,useEffect,useCallback,useRef}=React;
+const VERSION='v2.2';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SCOPES='https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly';
 const GSC_API='https://www.googleapis.com/webmasters/v3';
@@ -120,366 +113,141 @@ function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOSt
 function pct(c,p){if(!p)return null;return((c-p)/p*100).toFixed(1)}
 function getConfig(){try{return JSON.parse(localStorage.getItem('sp2_config')||'null')}catch{return null}}
 function getToken(){try{const t=JSON.parse(localStorage.getItem('sp2_token')||'null');if(t&&t.exp>Date.now())return t;return null}catch{return null}}
+function getSavedKws(){try{return JSON.parse(localStorage.getItem('sp2_extrakws')||'null')}catch{return null}}
 
-// Expected CTR by position (industry averages)
 const expectedCtr=[0,0.396,0.187,0.110,0.076,0.053,0.044,0.032,0.024,0.020,0.016,0.014,0.012,0.010,0.009,0.008,0.007,0.006,0.006,0.005,0.005];
 function getExpectedCtr(pos){const p=Math.round(Math.min(Math.max(pos,1),20));return expectedCtr[p]||0.005}
 
 function ConfigScreen({onSave}){
   const[cid,setCid]=useState('');
   const[site,setSite]=useState('sc-domain:paislector.com');
-  const[ga4,setGa4]=useState('');
-  return(
-    <div className="auth-screen">
-      <h2>Configura SEO Pulse</h2>
-      <p>Conecta tu Google Cloud Console con las APIs de Search Console y GA4.</p>
-      <div className="setup-note">
-        <h3>Setup (una sola vez)</h3>
-        <ol>
-          <li>Ve a <strong>console.cloud.google.com</strong></li>
-          <li>Habilita <strong>Search Console API</strong> y <strong>Google Analytics Data API</strong></li>
-          <li>Crea un <strong>OAuth 2.0 Client ID</strong> tipo Web application</li>
-          <li>Redirect URI: <code>{REDIRECT_URI}</code></li>
-        </ol>
-      </div>
-      <div className="config-form">
-        <div><label>OAuth Client ID</label><input placeholder="264065...googleusercontent.com" value={cid} onChange={e=>setCid(e.target.value)}/></div>
-        <div className="config-row">
-          <div><label>Site URL (GSC)</label><input value={site} onChange={e=>setSite(e.target.value)}/></div>
-          <div><label>GA4 Property ID</label><input placeholder="properties/405100005" value={ga4} onChange={e=>setGa4(e.target.value)}/></div>
-        </div>
-        <button className="btn-primary" onClick={()=>{if(!cid)return alert('Client ID requerido');const c={cid,site,ga4};localStorage.setItem('sp2_config',JSON.stringify(c));onSave(c)}}>Guardar y conectar</button>
-      </div>
-    </div>
-  );
+  const[ga4,setGa4]=useState('properties/405100005');
+  return(<div className="auth-screen"><h2>Configura SEO Pulse</h2><p>Conecta Google Cloud Console con GSC y GA4.</p>
+    <div className="setup-note"><h3>Setup (una sola vez)</h3><ol><li>Ve a <strong>console.cloud.google.com</strong></li><li>Habilita <strong>Search Console API</strong> y <strong>Google Analytics Data API</strong></li><li>OAuth 2.0 Client ID tipo Web application</li><li>Redirect URI: <code>{REDIRECT_URI}</code></li></ol></div>
+    <div className="config-form"><div><label>OAuth Client ID</label><input placeholder="264065...googleusercontent.com" value={cid} onChange={e=>setCid(e.target.value)}/></div>
+    <div className="config-row"><div><label>Site URL (GSC)</label><input value={site} onChange={e=>setSite(e.target.value)}/></div><div><label>GA4 Property ID</label><input value={ga4} onChange={e=>setGa4(e.target.value)}/></div></div>
+    <button className="btn-primary" onClick={()=>{if(!cid)return alert('Client ID requerido');const c={cid,site,ga4};localStorage.setItem('sp2_config',JSON.stringify(c));onSave(c)}}>Guardar y conectar</button></div></div>);
+}
+
+function KwAnalyzer({gscRows}){
+  const[text,setText]=useState('');
+  const[results,setResults]=useState(getSavedKws);
+  const gscMap=useRef({});
+  useEffect(()=>{if(gscRows){const m={};gscRows.forEach(r=>{m[r.keys[0].toLowerCase()]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});gscMap.current=m;if(results)analyzeKws(results.map(r=>r.kw))}},[gscRows]);
+
+  function analyzeKws(kwList){
+    const analyzed=kwList.map(kw=>{
+      const k=kw.toLowerCase().trim();
+      const exact=gscMap.current[k];
+      if(exact)return{kw:k,status:'ranking',clicks:exact.clicks,impressions:exact.impressions,position:exact.position,ctr:exact.ctr};
+      const partial=Object.keys(gscMap.current).filter(q=>q.includes(k)||k.includes(q));
+      if(partial.length>0){const best=partial.reduce((a,b)=>gscMap.current[a].impressions>gscMap.current[b].impressions?a:b);const d=gscMap.current[best];return{kw:k,status:'partial',matchedQuery:best,clicks:d.clicks,impressions:d.impressions,position:d.position,ctr:d.ctr}}
+      return{kw:k,status:'gap',clicks:0,impressions:0,position:0,ctr:0};
+    });
+    analyzed.sort((a,b)=>{const order={gap:0,partial:1,ranking:2};return order[a.status]-order[b.status]||b.impressions-a.impressions});
+    setResults(analyzed);localStorage.setItem('sp2_extrakws',JSON.stringify(analyzed));
+  }
+  function handleAnalyze(){const kws=text.split('\n').map(l=>l.replace(/["\t,;]/g,'').trim()).filter(l=>l.length>2);if(kws.length===0)return;analyzeKws(kws)}
+  const gaps=results?results.filter(r=>r.status==='gap'):[];
+  const partials=results?results.filter(r=>r.status==='partial'):[];
+  const ranking=results?results.filter(r=>r.status==='ranking'):[];
+
+  return(<div className="panel"><div className="panel-head"><h3>KW Analyzer</h3><span className="pill pill-red">Semrush / externo</span></div><div className="panel-body">
+    <textarea className="kw-textarea" placeholder="Pega keywords (una por linea). De Semrush, competidores, o donde sea." value={text} onChange={e=>setText(e.target.value)}/>
+    <div className="kw-actions"><button className="btn-primary" style={{padding:'7px 16px',fontSize:'12px'}} onClick={handleAnalyze}>Analizar vs GSC</button>
+    {results&&<button className="btn-secondary" onClick={()=>{setResults(null);setText('');localStorage.removeItem('sp2_extrakws')}}>Limpiar</button>}
+    <span className="kw-count">{text.split('\n').filter(l=>l.trim().length>2).length} keywords</span></div>
+    {results&&results.length>0&&<><div style={{marginTop:12,display:'flex',gap:6}}>
+      <span className="score s-lo" style={{fontSize:11,height:22,minWidth:40}}>{gaps.length} gaps</span>
+      <span className="score s-md" style={{fontSize:11,height:22,minWidth:50}}>{partials.length} parcial</span>
+      <span className="score s-hi" style={{fontSize:11,height:22,minWidth:55}}>{ranking.length} ranking</span></div>
+    {gaps.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6}}>No rankeas para estas ({gaps.length})</div>
+      {gaps.slice(0,10).map((r,i)=><div className="row" key={'g'+i}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">Sin datos en GSC — oportunidad nueva</div></div><span className="score s-new">GAP</span>
+      <button className="row-btn" onClick={()=>window.open('https://claude.ai/new?q='+encodeURIComponent('Genera un content brief para "'+r.kw+'" para paislector.com. Keyword principal, secundarias, intent, H2s, word count, internal links.'),'_blank')}>Brief</button></div>)}</div>}
+    {partials.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--amber)',marginBottom:6}}>Match parcial ({partials.length})</div>
+      {partials.slice(0,10).map((r,i)=><div className="row" key={'p'+i}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">Similar: "{r.matchedQuery}" / pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr</div></div><span className="score s-md">~{r.position.toFixed(0)}</span></div>)}</div>}
+    {ranking.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--green)',marginBottom:6}}>Ya rankeas ({ranking.length})</div>
+      {ranking.slice(0,10).map((r,i)=><div className="row" key={'r'+i}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">pos {r.position.toFixed(1)} / {fmt(r.clicks)} clicks / {fmt(r.impressions)} impr</div></div><span className={`score ${r.position<=3?'s-hi':r.position<=10?'s-md':'s-lo'}`}>P{r.position.toFixed(0)}</span></div>)}</div>}
+    <div className="explain">GAP = sin presencia, contenido nuevo. Parcial = rankeas algo similar. Ranking = ya compites. Datos persisten entre sesiones.</div></>}
+  </div></div>);
 }
 
 function App(){
-  const[config,setConfig]=useState(getConfig);
-  const[token,setToken]=useState(getToken);
-  const[period,setPeriod]=useState(28);
-  const[loading,setLoading]=useState(false);
-  const[error,setError]=useState(null);
-  const[data,setData]=useState(null);
+  const[config,setConfig]=useState(getConfig);const[token,setToken]=useState(getToken);
+  const[period,setPeriod]=useState(28);const[loading,setLoading]=useState(false);
+  const[error,setError]=useState(null);const[ga4Warn,setGa4Warn]=useState(null);const[data,setData]=useState(null);
 
-  function startAuth(){
-    if(!config?.cid)return;
-    window.location.href='https://accounts.google.com/o/oauth2/v2/auth'
-      +'?client_id='+encodeURIComponent(config.cid)
-      +'&redirect_uri='+encodeURIComponent(REDIRECT_URI)
-      +'&response_type=token'
-      +'&scope='+encodeURIComponent(SCOPES)
-      +'&include_granted_scopes=true'
-      +'&prompt=consent';
-  }
+  function startAuth(){if(!config?.cid)return;window.location.href='https://accounts.google.com/o/oauth2/v2/auth?client_id='+encodeURIComponent(config.cid)+'&redirect_uri='+encodeURIComponent(REDIRECT_URI)+'&response_type=token&scope='+encodeURIComponent(SCOPES)+'&include_granted_scopes=true&prompt=consent'}
 
-  useEffect(()=>{
-    const h=window.location.hash;
-    if(h.includes('access_token')){
-      const p=new URLSearchParams(h.slice(1));
-      const t={tk:p.get('access_token'),exp:Date.now()+parseInt(p.get('expires_in'))*1000};
-      localStorage.setItem('sp2_token',JSON.stringify(t));
-      setToken(t);
-      window.history.replaceState(null,'',window.location.pathname);
-    }
-  },[]);
+  useEffect(()=>{const h=window.location.hash;if(h.includes('access_token')){const p=new URLSearchParams(h.slice(1));const t={tk:p.get('access_token'),exp:Date.now()+parseInt(p.get('expires_in'))*1000};localStorage.setItem('sp2_token',JSON.stringify(t));setToken(t);window.history.replaceState(null,'',window.location.pathname)}},[]);
 
-  const gsc=useCallback(async(body)=>{
-    const r=await fetch(`${GSC_API}/sites/${encodeURIComponent(config.site)}/searchAnalytics/query`,{
-      method:'POST',headers:{'Authorization':`Bearer ${token.tk}`,'Content-Type':'application/json'},
-      body:JSON.stringify(body)
-    });
-    if(!r.ok)throw new Error(`GSC ${r.status}: ${await r.text()}`);
-    return r.json();
-  },[config,token]);
+  const gsc=useCallback(async(body)=>{const r=await fetch(GSC_API+'/sites/'+encodeURIComponent(config.site)+'/searchAnalytics/query',{method:'POST',headers:{'Authorization':'Bearer '+token.tk,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error('GSC '+r.status+': '+await r.text());return r.json()},[config,token]);
 
-  const ga4Fetch=useCallback(async(body)=>{
-    if(!config?.ga4)return null;
-    const r=await fetch(`${GA4_API}/${config.ga4}:runReport`,{
-      method:'POST',headers:{'Authorization':`Bearer ${token.tk}`,'Content-Type':'application/json'},
-      body:JSON.stringify(body)
-    });
-    if(!r.ok)return null;
-    return r.json();
-  },[config,token]);
+  const ga4Fetch=useCallback(async(body)=>{if(!config?.ga4)return null;const r=await fetch(GA4_API+'/'+config.ga4+':runReport',{method:'POST',headers:{'Authorization':'Bearer '+token.tk,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok){const t=await r.text().catch(()=>'');if(r.status===403)setGa4Warn('GA4 403: Verifica permisos de Viewer en GA4 Admin > Property Access Management');else if(r.status===401)setGa4Warn('GA4 401: Token expirado, reconecta');else setGa4Warn('GA4 error '+r.status);return null}setGa4Warn(null);return r.json()},[config,token]);
 
   const loadData=useCallback(async()=>{
-    if(!token||!config)return;
-    setLoading(true);setError(null);
+    if(!token||!config)return;setLoading(true);setError(null);setGa4Warn(null);
     try{
       const sd=daysAgo(period),ed=daysAgo(1),psd=daysAgo(period*2),ped=daysAgo(period+1);
-
-      // 1. TRUE TOTALS — no dimensions, each search type
-      const fetchTotals=async(s,e)=>{
-        const types=['web','image','video','discover'];
-        const results=await Promise.all(types.map(t=>gsc({startDate:s,endDate:e,type:t}).catch(()=>({rows:[]}))));
-        let clicks=0,impressions=0,webCtr=0,webPos=0;
-        results.forEach((resp,i)=>{
-          if(resp.rows){resp.rows.forEach(row=>{clicks+=row.clicks||0;impressions+=row.impressions||0})}
-          if(i===0&&resp.rows&&resp.rows[0]){webCtr=resp.rows[0].ctr||0;webPos=resp.rows[0].position||0}
-        });
-        return{clicks,impressions,ctr:webCtr,pos:webPos};
-      };
+      const fetchTotals=async(s,e)=>{const types=['web','image','video','discover'];const res=await Promise.all(types.map(t=>gsc({startDate:s,endDate:e,type:t}).catch(()=>({rows:[]}))));let cl=0,im=0,wc=0,wp=0;res.forEach((r,i)=>{if(r.rows)r.rows.forEach(row=>{cl+=row.clicks||0;im+=row.impressions||0});if(i===0&&r.rows&&r.rows[0]){wc=r.rows[0].ctr||0;wp=r.rows[0].position||0}});return{clicks:cl,impressions:im,ctr:wc,pos:wp}};
       const[cur,prev]=await Promise.all([fetchTotals(sd,ed),fetchTotals(psd,ped)]);
-
-      // 2. ALL QUERIES (5000 max) for analysis
       const allQ=await gsc({startDate:sd,endDate:ed,dimensions:['query'],type:'web',rowLimit:5000});
       const prevAllQ=await gsc({startDate:psd,endDate:ped,dimensions:['query'],type:'web',rowLimit:5000});
-      const rows=allQ.rows||[];
-      const prevRows=prevAllQ.rows||[];
-      const prevMap={};prevRows.forEach(r=>{prevMap[r.keys[0]]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});
-
-      // 3. ALL PAGES
+      const rows=allQ.rows||[];const prevMap={};(prevAllQ.rows||[]).forEach(r=>{prevMap[r.keys[0]]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});
       const allP=await gsc({startDate:sd,endDate:ed,dimensions:['page'],type:'web',rowLimit:5000});
       const prevAllP=await gsc({startDate:psd,endDate:ped,dimensions:['page'],type:'web',rowLimit:5000});
-      const pages=allP.rows||[];
-      const prevPageMap={};(prevAllP.rows||[]).forEach(r=>{prevPageMap[r.keys[0]]={clicks:r.clicks,position:r.position}});
-
-      // 4. TOP QUERIES
-      const topQueries=rows.slice(0,25);
-
-      // 5. ESCRIBIR NEXT — high impressions, low position, no dedicated page
-      // Heuristic: if query has >300 impr and pos >7, it's likely an opportunity
-      const escribir=rows
-        .filter(r=>r.impressions>300&&r.position>7)
-        .map(r=>({...r,score:Math.round(r.impressions*(1/r.position)*10)}))
-        .sort((a,b)=>b.score-a.score)
-        .slice(0,8);
-
-      // 6. OPTIMIZAR — CTR below expected for position, or position dropping
-      const optimizar=[];
-      rows.forEach(r=>{
-        const exp=getExpectedCtr(r.position);
-        if(r.impressions>200&&r.ctr<exp*0.6){
-          optimizar.push({...r,type:'CTR',expected:(exp*100).toFixed(1)});
-        }
-      });
-      // Pages dropping position
-      const dropping=[];
-      pages.forEach(r=>{
-        const p=prevPageMap[r.keys[0]];
-        if(p&&r.position-p.position>2&&r.clicks>20){
-          dropping.push({page:r.keys[0],curPos:r.position,prevPos:p.position,clicks:r.clicks,lostClicks:p.clicks-r.clicks});
-        }
-      });
-      dropping.sort((a,b)=>b.lostClicks-a.lostClicks);
-
-      // 7. QUICK WINS — pos 1-3 (protect), 4-10 (push), 11-20 (create)
-      const quickWins=rows
-        .filter(r=>r.position>=2&&r.position<=20&&r.impressions>50)
-        .sort((a,b)=>b.impressions-a.impressions)
-        .slice(0,15)
-        .map(r=>{
-          let action='protect';
-          if(r.position>10)action='create';
-          else if(r.position>3)action='push';
-          return{...r,action};
-        });
-
-      // 8. CLUSTER MAP — group queries by common stem
-      const clusters={};
-      rows.forEach(r=>{
-        const q=r.keys[0];
-        const words=q.split(' ');
-        // Find matching page from pages array
-        let stem=words.slice(0,2).join(' ');
-        if(words.length===1)stem=words[0];
-        if(!clusters[stem])clusters[stem]={queries:[],clicks:0,impressions:0};
-        clusters[stem].queries.push(r);
-        clusters[stem].clicks+=r.clicks;
-        clusters[stem].impressions+=r.impressions;
-      });
-      const clusterArr=Object.entries(clusters)
-        .filter(([,v])=>v.queries.length>=3)
-        .map(([name,v])=>({name,count:v.queries.length,clicks:v.clicks,impressions:v.impressions}))
-        .sort((a,b)=>b.clicks-a.clicks)
-        .slice(0,8);
-
-      // 9. GA4 data for content vs traffic
-      let ga4Data=null;
-      if(config.ga4){
-        try{
-          const resp=await ga4Fetch({
-            dateRanges:[{startDate:sd,endDate:ed}],
-            dimensions:[{name:'pagePath'}],
-            metrics:[{name:'sessions'},{name:'totalUsers'},{name:'engagementRate'}],
-            orderBys:[{metric:{metricName:'sessions'},desc:true}],
-            limit:20
-          });
-          if(resp?.rows){
-            ga4Data=resp.rows.map(r=>({
-              page:r.dimensionValues[0].value,
-              sessions:parseInt(r.metricValues[0].value),
-              users:parseInt(r.metricValues[1].value),
-              engRate:(parseFloat(r.metricValues[2].value)*100).toFixed(1)
-            }));
-          }
-        }catch(e){console.warn('GA4:',e.message)}
-      }
-
-      // 10. CONTENT VS TRAFFIC — cross GSC pages with GA4
-      let contentVsTraffic=[];
-      if(ga4Data){
-        const ga4Map={};
-        ga4Data.forEach(g=>{ga4Map[g.page]=g});
-        pages.slice(0,30).forEach(r=>{
-          const path=r.keys[0].replace(/https?:\/\/[^/]+/,'');
-          const ga=ga4Map[path];
-          if(ga&&r.clicks>10){
-            const ratio=ga.sessions/Math.max(r.clicks,1);
-            contentVsTraffic.push({page:path,gscClicks:r.clicks,gaSessions:ga.sessions,ratio,engRate:ga.engRate});
-          }
-        });
-        contentVsTraffic.sort((a,b)=>b.ratio-a.ratio);
-        contentVsTraffic=contentVsTraffic.slice(0,10);
-      }
-
-      setData({
-        summary:{clicks:cur.clicks,impressions:cur.impressions,ctr:cur.ctr*100,pos:cur.pos,
-          clicksChg:pct(cur.clicks,prev.clicks),imprChg:pct(cur.impressions,prev.impressions)},
-        topQueries,escribir,
-        optimizar:optimizar.sort((a,b)=>b.impressions-a.impressions).slice(0,8),
-        dropping:dropping.slice(0,5),
-        quickWins,clusterArr,contentVsTraffic,ga4Data
-      });
-    }catch(err){
-      console.error(err);
-      setError(err.message);
-      if(err.message.includes('401')){localStorage.removeItem('sp2_token');setToken(null)}
-    }
+      const pages=allP.rows||[];const prevPageMap={};(prevAllP.rows||[]).forEach(r=>{prevPageMap[r.keys[0]]={clicks:r.clicks,position:r.position}});
+      const escribir=rows.filter(r=>r.impressions>300&&r.position>7).map(r=>({...r,score:Math.round(r.impressions*(1/r.position)*10)})).sort((a,b)=>b.score-a.score).slice(0,8);
+      const optimizar=[];rows.forEach(r=>{const exp=getExpectedCtr(r.position);if(r.impressions>200&&r.ctr<exp*0.6)optimizar.push({...r,type:'CTR',expected:(exp*100).toFixed(1)})});
+      const dropping=[];pages.forEach(r=>{const p=prevPageMap[r.keys[0]];if(p&&r.position-p.position>2&&r.clicks>20)dropping.push({page:r.keys[0],curPos:r.position,prevPos:p.position,clicks:r.clicks,lostClicks:p.clicks-r.clicks})});dropping.sort((a,b)=>b.lostClicks-a.lostClicks);
+      const quickWins=rows.filter(r=>r.position>=2&&r.position<=20&&r.impressions>50).sort((a,b)=>b.impressions-a.impressions).slice(0,15).map(r=>{let a='protect';if(r.position>10)a='create';else if(r.position>3)a='push';return{...r,action:a}});
+      const clusters={};rows.forEach(r=>{const w=r.keys[0].split(' ');let s=w.slice(0,2).join(' ');if(w.length===1)s=w[0];if(!clusters[s])clusters[s]={queries:[],clicks:0,impressions:0};clusters[s].queries.push(r);clusters[s].clicks+=r.clicks;clusters[s].impressions+=r.impressions});
+      const clusterArr=Object.entries(clusters).filter(([,v])=>v.queries.length>=3).map(([n,v])=>({name:n,count:v.queries.length,clicks:v.clicks,impressions:v.impressions})).sort((a,b)=>b.clicks-a.clicks).slice(0,8);
+      let ga4Data=null;if(config.ga4){try{const resp=await ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'pagePath'}],metrics:[{name:'sessions'},{name:'totalUsers'},{name:'engagementRate'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:20});if(resp?.rows)ga4Data=resp.rows.map(r=>({page:r.dimensionValues[0].value,sessions:parseInt(r.metricValues[0].value),users:parseInt(r.metricValues[1].value),engRate:(parseFloat(r.metricValues[2].value)*100).toFixed(1)}))}catch(e){console.warn('GA4:',e.message)}}
+      let contentVsTraffic=[];if(ga4Data){const gm={};ga4Data.forEach(g=>{gm[g.page]=g});pages.slice(0,30).forEach(r=>{const path=r.keys[0].replace(/https?:\/\/[^/]+/,'');const ga=gm[path];if(ga&&r.clicks>10){const ratio=ga.sessions/Math.max(r.clicks,1);contentVsTraffic.push({page:path,gscClicks:r.clicks,gaSessions:ga.sessions,ratio,engRate:ga.engRate})}});contentVsTraffic.sort((a,b)=>b.ratio-a.ratio);contentVsTraffic=contentVsTraffic.slice(0,10)}
+      setData({summary:{clicks:cur.clicks,impressions:cur.impressions,ctr:cur.ctr*100,pos:cur.pos,clicksChg:pct(cur.clicks,prev.clicks),imprChg:pct(cur.impressions,prev.impressions)},escribir,optimizar:optimizar.sort((a,b)=>b.impressions-a.impressions).slice(0,8),dropping:dropping.slice(0,5),quickWins,clusterArr,contentVsTraffic,ga4Data,allRows:rows});
+    }catch(err){console.error(err);setError(err.message);if(err.message.includes('401')){localStorage.removeItem('sp2_token');setToken(null)}}
     setLoading(false);
   },[token,config,period,gsc,ga4Fetch]);
 
   useEffect(()=>{if(token&&config)loadData()},[token,config,period]);
-
-  // ====== RENDER ======
   if(!config)return(<div className="app"><header><h1>SEO <em>Pulse</em></h1></header><ConfigScreen onSave={setConfig}/></div>);
-
-  if(!token)return(
-    <div className="app">
-      <header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot"/></div></header>
-      <div className="auth-screen">
-        <h2>Conecta tu cuenta</h2>
-        <p>Acceso de lectura a Search Console y Analytics.</p>
-        <button className="auth-btn" onClick={startAuth}>Conectar con Google</button>
-        <button className="btn-secondary" onClick={()=>{localStorage.removeItem('sp2_config');setConfig(null)}}>Cambiar config</button>
-      </div>
-    </div>
-  );
+  if(!token)return(<div className="app"><header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot"/></div></header><div className="auth-screen"><h2>Conecta tu cuenta</h2><p>Acceso de lectura a Search Console y Analytics.</p><button className="auth-btn" onClick={startAuth}>Conectar con Google</button><button className="btn-secondary" onClick={()=>{localStorage.removeItem('sp2_config');setConfig(null)}}>Cambiar config</button></div></div>);
 
   const d=data;
-  return(
-    <div className="app">
-      <header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot on"/></div></header>
-
-      <div className="controls">
-        {[7,14,28,90].map(n=><button key={n} className={`per-btn ${period===n?'active':''}`} onClick={()=>setPeriod(n)}>{n}d</button>)}
-        <button className="ref-btn" onClick={loadData} disabled={loading}>{loading?'...':'Actualizar'}</button>
-      </div>
-
-      {error&&<div className="error-msg">{error}</div>}
-      {loading&&!d?<div className="loading"><div className="spinner"/>Cargando datos...</div>:d?<>
-
-      {/* SUMMARY */}
-      <div className="stats">
-        <div className="stat"><div className="stat-label">Clicks</div><div className="stat-val">{fmt(d.summary.clicks)}</div>{d.summary.clicksChg&&<div className={`stat-chg ${d.summary.clicksChg>0?'up':'down'}`}>{d.summary.clicksChg>0?'+':''}{d.summary.clicksChg}%</div>}</div>
-        <div className="stat"><div className="stat-label">Impresiones</div><div className="stat-val">{fmt(d.summary.impressions)}</div>{d.summary.imprChg&&<div className={`stat-chg ${d.summary.imprChg>0?'up':'down'}`}>{d.summary.imprChg>0?'+':''}{d.summary.imprChg}%</div>}</div>
-        <div className="stat"><div className="stat-label">CTR prom.</div><div className="stat-val">{d.summary.ctr.toFixed(1)}%</div></div>
-        <div className="stat"><div className="stat-label">Pos. prom.</div><div className="stat-val">{d.summary.pos.toFixed(1)}</div></div>
-      </div>
-
-      {/* ESCRIBIR NEXT */}
-      <div className="panel">
-        <div className="panel-head"><h3>Escribir next</h3><span className="pill pill-green">{d.escribir.length} oportunidades</span></div>
-        <div className="panel-body">
-          {d.escribir.map((r,i)=><div className="row" key={i}>
-            <div className="row-left">
-              <div className="row-kw">{r.keys[0]}</div>
-              <div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / score {r.score}</div>
-            </div>
-            <span className={`score ${r.score>80?'s-hi':r.score>50?'s-md':'s-lo'}`}>{r.score}</span>
-            <button className="row-btn" onClick={()=>window.open(`https://claude.ai/new?q=${encodeURIComponent(`Genera un content brief para un articulo sobre "${r.keys[0]}" para paislector.com. Incluye: keyword principal, secondarias, intent, estructura H2, word count, internal links sugeridos.`)}`,'_blank')}>Brief</button>
-          </div>)}
-          <div className="explain">Keywords con +300 impr donde probablemente no tienes articulo dedicado. Score = impressions x (1/posicion).</div>
-        </div>
-      </div>
-
-      {/* OPTIMIZAR AHORA */}
-      <div className="panel">
-        <div className="panel-head"><h3>Optimizar ahora</h3><span className="pill pill-coral">{d.optimizar.length+d.dropping.length} acciones</span></div>
-        <div className="panel-body">
-          {d.optimizar.map((r,i)=><div className="row" key={'o'+i}>
-            <div className="row-left">
-              <div className="row-kw">{r.keys[0]}</div>
-              <div className="row-meta">{fmt(r.impressions)} impr / CTR {(r.ctr*100).toFixed(1)}% vs esperado {r.expected}% / pos {r.position.toFixed(1)}</div>
-            </div>
-            <span className="score s-lo">CTR</span>
-          </div>)}
-          {d.dropping.map((r,i)=><div className="row" key={'d'+i}>
-            <div className="row-left">
-              <div className="row-kw">{r.page.replace(/https?:\/\/[^/]+/,'')}</div>
-              <div className="row-meta">pos {r.prevPos.toFixed(1)} &#8594; {r.curPos.toFixed(1)} / perdiendo ~{Math.max(0,r.lostClicks)} clicks</div>
-            </div>
-            <span className="score s-lo">DROP</span>
-          </div>)}
-          <div className="explain">CTR: tu click-through esta muy por debajo de lo esperado para tu posicion (title/meta no compite). DROP: paginas perdiendo posicion vs periodo anterior.</div>
-        </div>
-      </div>
-
-      {/* QUICK WINS */}
-      <div className="panel">
-        <div className="panel-head"><h3>Quick wins</h3><span className="pill pill-amber">{d.quickWins.length} keywords</span></div>
-        <div className="panel-body">
-          {d.quickWins.map((r,i)=><div className="row" key={i}>
-            <div className="row-left">
-              <div className="row-kw">{r.keys[0]}</div>
-              <div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / CTR {(r.ctr*100).toFixed(1)}%</div>
-            </div>
-            <span className={`score ${r.action==='protect'?'s-hi':r.action==='push'?'s-md':'s-lo'}`}>{r.action==='protect'?'TOP3':r.action==='push'?'PUSH':'NEW'}</span>
-          </div>)}
-          <div className="explain">TOP3: proteger posicion. PUSH: interno links + content update para subir. NEW: necesita articulo dedicado.</div>
-        </div>
-      </div>
-
-      {/* CLUSTER MAP */}
-      <div className="panel">
-        <div className="panel-head"><h3>Cluster map</h3><span className="pill pill-purple">{d.clusterArr.length} clusters</span></div>
-        <div className="panel-body">
-          {d.clusterArr.map((c,i)=><div className="row" key={i}>
-            <div className="row-left">
-              <div className="row-kw">{c.name}</div>
-              <div className="row-meta">{c.count} queries / {fmt(c.clicks)} clicks / {fmt(c.impressions)} impr</div>
-            </div>
-            <span className={`score ${c.count>5?'s-hi':c.count>3?'s-md':'s-lo'}`}>{c.count}q</span>
-          </div>)}
-          <div className="explain">Queries agrupadas por tema. Mas queries en un cluster = mas oportunidad de construir un hub completo.</div>
-        </div>
-      </div>
-
-      {/* CONTENIDO VS TRAFICO */}
-      {d.contentVsTraffic.length>0&&<div className="panel">
-        <div className="panel-head"><h3>Contenido vs trafico</h3><span className="pill pill-blue">GSC + GA4</span></div>
-        <div className="panel-body">
-          {d.contentVsTraffic.map((r,i)=><div className="row" key={i}>
-            <div className="row-left">
-              <div className="row-kw">{r.page.length>45?r.page.slice(0,45)+'...':r.page}</div>
-              <div className="row-meta">GSC: {fmt(r.gscClicks)} clicks / GA4: {fmt(r.gaSessions)} sessions / ratio {r.ratio.toFixed(1)}x{r.ratio>1.5?' — trafico no-SEO fuerte':r.ratio<0.8?' — depende de Google':''}</div>
-            </div>
-          </div>)}
-          <div className="explain">Ratio GA4/GSC: mayor a 1.5 = trafico social/directo fuerte. Cerca de 1 = depende de Google. Menor a 0.8 = posible bounce issue.</div>
-        </div>
-      </div>}
-
-      </>:null}
-
-      <div className="footer">
-        SEO Pulse {VERSION} / Costo: $0
-        <br/><button className="btn-secondary" style={{marginTop:6}} onClick={()=>{localStorage.clear();setConfig(null);setToken(null);setData(null)}}>Resetear todo</button>
-      </div>
+  return(<div className="app">
+    <header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot on"/></div></header>
+    <div className="controls">{[7,14,28,90].map(n=><button key={n} className={`per-btn ${period===n?'active':''}`} onClick={()=>setPeriod(n)}>{n}d</button>)}<button className="ref-btn" onClick={loadData} disabled={loading}>{loading?'...':'Actualizar'}</button></div>
+    {error&&<div className="error-msg">{error}</div>}
+    {ga4Warn&&<div className="warn-msg">{ga4Warn}</div>}
+    {loading&&!d?<div className="loading"><div className="spinner"/>Cargando...</div>:d?<>
+    <div className="stats">
+      <div className="stat"><div className="stat-label">Clicks</div><div className="stat-val">{fmt(d.summary.clicks)}</div>{d.summary.clicksChg&&<div className={`stat-chg ${d.summary.clicksChg>0?'up':'down'}`}>{d.summary.clicksChg>0?'+':''}{d.summary.clicksChg}%</div>}</div>
+      <div className="stat"><div className="stat-label">Impresiones</div><div className="stat-val">{fmt(d.summary.impressions)}</div>{d.summary.imprChg&&<div className={`stat-chg ${d.summary.imprChg>0?'up':'down'}`}>{d.summary.imprChg>0?'+':''}{d.summary.imprChg}%</div>}</div>
+      <div className="stat"><div className="stat-label">CTR prom.</div><div className="stat-val">{d.summary.ctr.toFixed(1)}%</div></div>
+      <div className="stat"><div className="stat-label">Pos. prom.</div><div className="stat-val">{d.summary.pos.toFixed(1)}</div></div>
     </div>
-  );
+    <KwAnalyzer gscRows={d.allRows}/>
+    <div className="panel"><div className="panel-head"><h3>Escribir next</h3><span className="pill pill-green">{d.escribir.length} oportunidades</span></div><div className="panel-body">
+      {d.escribir.map((r,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / score {r.score}</div></div><span className={`score ${r.score>80?'s-hi':r.score>50?'s-md':'s-lo'}`}>{r.score}</span><button className="row-btn" onClick={()=>window.open('https://claude.ai/new?q='+encodeURIComponent('Genera un content brief para "'+r.keys[0]+'" para paislector.com. Keyword principal, secundarias, intent, H2s, word count, internal links.'),'_blank')}>Brief</button></div>)}
+      <div className="explain">Keywords con +300 impr donde no tienes articulo dedicado. Score = impr x (1/pos).</div></div></div>
+    <div className="panel"><div className="panel-head"><h3>Optimizar ahora</h3><span className="pill pill-coral">{d.optimizar.length+d.dropping.length} acciones</span></div><div className="panel-body">
+      {d.optimizar.map((r,i)=><div className="row" key={'o'+i}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{fmt(r.impressions)} impr / CTR {(r.ctr*100).toFixed(1)}% vs esperado {r.expected}% / pos {r.position.toFixed(1)}</div></div><span className="score s-lo">CTR</span></div>)}
+      {d.dropping.map((r,i)=><div className="row" key={'d'+i}><div className="row-left"><div className="row-kw">{r.page.replace(/https?:\/\/[^/]+/,'')}</div><div className="row-meta">pos {r.prevPos.toFixed(1)} &rarr; {r.curPos.toFixed(1)} / perdiendo ~{Math.max(0,r.lostClicks)} clicks</div></div><span className="score s-lo">DROP</span></div>)}
+      <div className="explain">CTR: click-through bajo para tu posicion. DROP: paginas cayendo vs periodo anterior.</div></div></div>
+    <div className="panel"><div className="panel-head"><h3>Quick wins</h3><span className="pill pill-amber">{d.quickWins.length} keywords</span></div><div className="panel-body">
+      {d.quickWins.map((r,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / CTR {(r.ctr*100).toFixed(1)}%</div></div><span className={`score ${r.action==='protect'?'s-hi':r.action==='push'?'s-md':'s-lo'}`}>{r.action==='protect'?'TOP3':r.action==='push'?'PUSH':'NEW'}</span></div>)}
+      <div className="explain">TOP3: proteger. PUSH: internal links + update. NEW: articulo dedicado.</div></div></div>
+    <div className="panel"><div className="panel-head"><h3>Cluster map</h3><span className="pill pill-purple">{d.clusterArr.length} clusters</span></div><div className="panel-body">
+      {d.clusterArr.map((c,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{c.name}</div><div className="row-meta">{c.count} queries / {fmt(c.clicks)} clicks / {fmt(c.impressions)} impr</div></div><span className={`score ${c.count>5?'s-hi':c.count>3?'s-md':'s-lo'}`}>{c.count}q</span></div>)}
+      <div className="explain">Queries agrupadas por tema. Mas queries = mas oportunidad de hub.</div></div></div>
+    {d.contentVsTraffic&&d.contentVsTraffic.length>0&&<div className="panel"><div className="panel-head"><h3>Contenido vs trafico</h3><span className="pill pill-blue">GSC + GA4</span></div><div className="panel-body">
+      {d.contentVsTraffic.map((r,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{r.page.length>45?r.page.slice(0,45)+'...':r.page}</div><div className="row-meta">GSC: {fmt(r.gscClicks)} clicks / GA4: {fmt(r.gaSessions)} sessions / ratio {r.ratio.toFixed(1)}x{r.ratio>1.5?' — social/directo fuerte':r.ratio<0.8?' — depende de Google':''}</div></div></div>)}
+      <div className="explain">Ratio GA4/GSC: +1.5 = trafico no-SEO. ~1 = depende de Google.</div></div></div>}
+    </>:null}
+    <div className="footer">SEO Pulse {VERSION} / $0<br/><button className="btn-secondary" style={{marginTop:6}} onClick={()=>{localStorage.clear();setConfig(null);setToken(null);setData(null);setGa4Warn(null)}}>Resetear todo</button></div>
+  </div>);
 }
-
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
