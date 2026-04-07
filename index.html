@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Pulse — País Lector</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap');
+
+:root {
+  --bg: #FAF8F3;
+  --surface: #FFFFFF;
+  --surface-alt: #F3F0E8;
+  --text: #1A1A18;
+  --text-muted: #6B6A65;
+  --text-hint: #9C9A92;
+  --accent: #2D5A27;
+  --accent-light: #E8F0E6;
+  --coral: #D85A30;
+  --coral-light: #FAECE7;
+  --blue: #185FA5;
+  --blue-light: #E6F1FB;
+  --amber: #BA7517;
+  --amber-light: #FAEEDA;
+  --border: rgba(0,0,0,0.08);
+  --radius: 12px;
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app { max-width: 720px; margin: 0 auto; padding: 20px 16px 40px; }
+
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 0 24px; border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+header h1 {
+  font-family: var(--font-display);
+  font-size: 28px; font-weight: 400; letter-spacing: -0.02em;
+}
+header h1 span { color: var(--accent); }
+
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--text-hint);
+  transition: background 0.3s;
+}
+.status-dot.connected { background: var(--accent); }
+
+/* Auth screen */
+.auth-screen {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 60vh; text-align: center;
+  gap: 24px;
+}
+.auth-screen h2 {
+  font-family: var(--font-display);
+  font-size: 32px; font-weight: 400;
+}
+.auth-screen p {
+  color: var(--text-muted); font-size: 15px;
+  max-width: 400px; line-height: 1.6;
+}
+.auth-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 28px; border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: var(--font-body);
+  font-size: 15px; font-weight: 500;
+  color: var(--text); cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.auth-btn:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(45,90,39,0.1);
+}
+.setup-note {
+  background: var(--surface-alt); border-radius: var(--radius);
+  padding: 20px; text-align: left; max-width: 480px; width: 100%;
+}
+.setup-note h3 {
+  font-size: 13px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 12px;
+}
+.setup-note ol {
+  font-size: 14px; color: var(--text-muted); line-height: 1.8;
+  padding-left: 20px;
+}
+.setup-note code {
+  background: var(--bg); padding: 2px 6px; border-radius: 4px;
+  font-size: 13px;
+}
+
+/* Config form */
+.config-form {
+  display: flex; flex-direction: column; gap: 12px;
+  max-width: 480px; width: 100%;
+}
+.config-form label {
+  font-size: 13px; font-weight: 500; color: var(--text-muted);
+}
+.config-form input {
+  width: 100%; padding: 10px 14px; border-radius: 8px;
+  border: 1px solid var(--border); font-size: 14px;
+  font-family: var(--font-body); background: var(--surface);
+  transition: border-color 0.2s;
+}
+.config-form input:focus {
+  outline: none; border-color: var(--accent);
+}
+.config-row { display: flex; gap: 12px; }
+.config-row > div { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+
+.btn-primary {
+  padding: 12px 24px; border-radius: var(--radius);
+  border: none; background: var(--accent); color: white;
+  font-family: var(--font-body); font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: opacity 0.2s;
+}
+.btn-primary:hover { opacity: 0.9; }
+.btn-secondary {
+  padding: 8px 16px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface);
+  font-family: var(--font-body); font-size: 13px;
+  color: var(--text-muted); cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-secondary:hover { border-color: var(--text-hint); }
+
+/* Dashboard */
+.metrics-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 12px; margin-bottom: 20px;
+}
+.metric-card {
+  background: var(--surface); border-radius: var(--radius);
+  padding: 16px 18px; border: 1px solid var(--border);
+  transition: transform 0.15s;
+}
+.metric-card:hover { transform: translateY(-1px); }
+.metric-label {
+  font-size: 12px; font-weight: 500; color: var(--text-hint);
+  text-transform: uppercase; letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+.metric-value {
+  font-family: var(--font-display); font-size: 28px;
+  letter-spacing: -0.02em;
+}
+.metric-change {
+  font-size: 12px; margin-top: 4px; font-weight: 500;
+}
+.metric-change.up { color: var(--accent); }
+.metric-change.down { color: var(--coral); }
+
+/* Sections */
+.section {
+  background: var(--surface); border-radius: var(--radius);
+  border: 1px solid var(--border); margin-bottom: 16px;
+  overflow: hidden;
+}
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+  cursor: pointer; user-select: none;
+}
+.section-header h3 {
+  font-size: 14px; font-weight: 600;
+}
+.section-header .badge {
+  font-size: 11px; padding: 3px 8px; border-radius: 20px;
+  font-weight: 500;
+}
+.badge-green { background: var(--accent-light); color: var(--accent); }
+.badge-coral { background: var(--coral-light); color: var(--coral); }
+.badge-blue { background: var(--blue-light); color: var(--blue); }
+
+.section-body { padding: 0; }
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  text-align: left; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--text-hint); padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.data-table td {
+  padding: 10px 18px; font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table .kw { font-weight: 500; max-width: 200px; }
+.data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.data-table th.num { text-align: right; }
+
+.pos-pill {
+  display: inline-block; padding: 2px 8px; border-radius: 10px;
+  font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.pos-top3 { background: var(--accent-light); color: var(--accent); }
+.pos-top10 { background: var(--blue-light); color: var(--blue); }
+.pos-top20 { background: var(--amber-light); color: var(--amber); }
+.pos-rest { background: var(--surface-alt); color: var(--text-muted); }
+
+/* Controls */
+.controls {
+  display: flex; gap: 8px; align-items: center;
+  margin-bottom: 20px; flex-wrap: wrap;
+}
+.period-btn {
+  padding: 6px 14px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--surface);
+  font-family: var(--font-body); font-size: 13px;
+  color: var(--text-muted); cursor: pointer;
+  transition: all 0.2s;
+}
+.period-btn.active {
+  background: var(--text); color: var(--bg);
+  border-color: var(--text);
+}
+.refresh-btn {
+  margin-left: auto; padding: 6px 14px;
+  border-radius: 20px; border: 1px solid var(--border);
+  background: var(--surface); font-family: var(--font-body);
+  font-size: 13px; color: var(--text-muted); cursor: pointer;
+}
+.refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Loading */
+.loading {
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px; color: var(--text-hint); font-size: 14px;
+  gap: 8px;
+}
+.spinner {
+  width: 16px; height: 16px; border: 2px solid var(--border);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Error */
+.error-msg {
+  padding: 16px 18px; background: var(--coral-light);
+  border-radius: var(--radius); color: var(--coral);
+  font-size: 13px; margin-bottom: 16px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .metrics-grid { grid-template-columns: 1fr; }
+  .metric-value { font-size: 24px; }
+  header h1 { font-size: 22px; }
+  .data-table td, .data-table th { padding: 8px 12px; }
+}
+
+/* Scroll shadow for tables */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.footer {
+  text-align: center; padding: 24px 0;
+  font-size: 12px; color: var(--text-hint);
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+// ============ CONFIG ============
+const SCOPES = 'https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics.readonly';
+const GSC_API = 'https://www.googleapis.com/webmasters/v3';
+const GA4_API = 'https://analyticsdata.googleapis.com/v1beta';
+
+// ============ UTILS ============
+function formatNum(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return Math.round(n).toLocaleString();
+}
+
+function daysAgo(n) {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.toISOString().split('T')[0];
+}
+
+function pctChange(current, previous) {
+  if (!previous) return null;
+  return ((current - previous) / previous * 100).toFixed(1);
+}
+
+// ============ AUTH HELPERS ============
+function getStoredConfig() {
+  try {
+    return JSON.parse(localStorage.getItem('seopulse_config') || 'null');
+  } catch { return null; }
+}
+
+function getStoredToken() {
+  try {
+    const t = JSON.parse(localStorage.getItem('seopulse_token') || 'null');
+    if (t && t.expires_at > Date.now()) return t;
+    return null;
+  } catch { return null; }
+}
+
+// ============ COMPONENTS ============
+
+function ConfigScreen({ onSave }) {
+  const [clientId, setClientId] = useState('');
+  const [siteUrl, setSiteUrl] = useState('https://paislector.com/');
+  const [propertyId, setPropertyId] = useState('');
+
+  return (
+    <div className="auth-screen">
+      <h2>Configura tu SEO Pulse</h2>
+      <p>Necesitas un proyecto en Google Cloud Console con las APIs de Search Console y GA4 habilitadas.</p>
+
+      <div className="setup-note">
+        <h3>Setup (una sola vez)</h3>
+        <ol>
+          <li>Ve a <strong>console.cloud.google.com</strong></li>
+          <li>Crea un proyecto o usa uno existente</li>
+          <li>Habilita <strong>Search Console API</strong> y <strong>Google Analytics Data API</strong></li>
+          <li>En Credentials, crea un <strong>OAuth 2.0 Client ID</strong> tipo "Web application"</li>
+          <li>Agrega como Authorized redirect URI: <code>{window.location.origin}</code></li>
+          <li>Copia tu Client ID abajo</li>
+        </ol>
+      </div>
+
+      <div className="config-form">
+        <div>
+          <label>Google OAuth Client ID</label>
+          <input
+            type="text"
+            placeholder="123456789-xxxxx.apps.googleusercontent.com"
+            value={clientId}
+            onChange={e => setClientId(e.target.value)}
+          />
+        </div>
+        <div className="config-row">
+          <div>
+            <label>Site URL (GSC)</label>
+            <input
+              type="text"
+              placeholder="https://paislector.com/"
+              value={siteUrl}
+              onChange={e => setSiteUrl(e.target.value)}
+            />
+          </div>
+          <div>
+            <label>GA4 Property ID</label>
+            <input
+              type="text"
+              placeholder="properties/123456789"
+              value={propertyId}
+              onChange={e => setPropertyId(e.target.value)}
+            />
+          </div>
+        </div>
+        <button
+          className="btn-primary"
+          onClick={() => {
+            if (!clientId) return alert('Client ID requerido');
+            const config = { clientId, siteUrl, propertyId };
+            localStorage.setItem('seopulse_config', JSON.stringify(config));
+            onSave(config);
+          }}
+        >
+          Guardar y conectar
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function MetricCard({ label, value, change, prefix }) {
+  const changeClass = change > 0 ? 'up' : change < 0 ? 'down' : '';
+  return (
+    <div className="metric-card">
+      <div className="metric-label">{label}</div>
+      <div className="metric-value">{prefix}{value}</div>
+      {change !== null && change !== undefined && (
+        <div className={`metric-change ${changeClass}`}>
+          {change > 0 ? '+' : ''}{change}% vs periodo anterior
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PosPill({ pos }) {
+  const p = Math.round(pos);
+  let cls = 'pos-rest';
+  if (p <= 3) cls = 'pos-top3';
+  else if (p <= 10) cls = 'pos-top10';
+  else if (p <= 20) cls = 'pos-top20';
+  return <span className={`pos-pill ${cls}`}>{p.toFixed(1)}</span>;
+}
+
+function QueryTable({ title, badge, badgeClass, rows, emptyMsg }) {
+  return (
+    <div className="section">
+      <div className="section-header">
+        <h3>{title}</h3>
+        {badge && <span className={`badge ${badgeClass}`}>{badge}</span>}
+      </div>
+      <div className="section-body table-scroll">
+        {rows && rows.length > 0 ? (
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Query</th>
+                <th className="num">Clicks</th>
+                <th className="num">Impr.</th>
+                <th className="num">CTR</th>
+                <th className="num">Pos.</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r, i) => (
+                <tr key={i}>
+                  <td className="kw">{r.keys[0]}</td>
+                  <td className="num">{formatNum(r.clicks)}</td>
+                  <td className="num">{formatNum(r.impressions)}</td>
+                  <td className="num">{(r.ctr * 100).toFixed(1)}%</td>
+                  <td className="num"><PosPill pos={r.position} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div className="loading">{emptyMsg || 'Sin datos'}</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PagesTable({ title, badge, badgeClass, rows }) {
+  return (
+    <div className="section">
+      <div className="section-header">
+        <h3>{title}</h3>
+        {badge && <span className={`badge ${badgeClass}`}>{badge}</span>}
+      </div>
+      <div className="section-body table-scroll">
+        {rows && rows.length > 0 ? (
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Pagina</th>
+                <th className="num">Clicks</th>
+                <th className="num">Impr.</th>
+                <th className="num">CTR</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r, i) => {
+                const path = r.keys[0].replace(/https?:\/\/[^/]+/, '') || '/';
+                return (
+                  <tr key={i}>
+                    <td className="kw" title={r.keys[0]}>{path.length > 40 ? path.slice(0,40)+'...' : path}</td>
+                    <td className="num">{formatNum(r.clicks)}</td>
+                    <td className="num">{formatNum(r.impressions)}</td>
+                    <td className="num">{(r.ctr * 100).toFixed(1)}%</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        ) : (
+          <div className="loading">Sin datos</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function GA4Section({ data }) {
+  if (!data) return null;
+  return (
+    <div className="section">
+      <div className="section-header">
+        <h3>GA4 — Top pages by sessions</h3>
+        <span className="badge badge-blue">Analytics</span>
+      </div>
+      <div className="section-body table-scroll">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Page</th>
+              <th className="num">Sessions</th>
+              <th className="num">Users</th>
+              <th className="num">Eng. rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((r, i) => (
+              <tr key={i}>
+                <td className="kw">{r.page.length > 40 ? r.page.slice(0,40)+'...' : r.page}</td>
+                <td className="num">{formatNum(r.sessions)}</td>
+                <td className="num">{formatNum(r.users)}</td>
+                <td className="num">{r.engRate}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ============ MAIN APP ============
+function App() {
+  const [config, setConfig] = useState(getStoredConfig);
+  const [token, setToken] = useState(getStoredToken);
+  const [period, setPeriod] = useState(28);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Data
+  const [summary, setSummary] = useState(null);
+  const [topQueries, setTopQueries] = useState(null);
+  const [quickWins, setQuickWins] = useState(null);
+  const [topPages, setTopPages] = useState(null);
+  const [ga4Data, setGa4Data] = useState(null);
+
+  // OAuth flow
+  function startAuth() {
+    if (!config?.clientId) return;
+    const params = new URLSearchParams({
+      client_id: config.clientId,
+      redirect_uri: window.location.origin + window.location.pathname,
+      response_type: 'token',
+      scope: SCOPES,
+      include_granted_scopes: 'true',
+      prompt: 'consent',
+    });
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
+  }
+
+  // Handle OAuth redirect
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash.includes('access_token')) {
+      const params = new URLSearchParams(hash.slice(1));
+      const tokenData = {
+        access_token: params.get('access_token'),
+        expires_at: Date.now() + parseInt(params.get('expires_in')) * 1000,
+      };
+      localStorage.setItem('seopulse_token', JSON.stringify(tokenData));
+      setToken(tokenData);
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, []);
+
+  // API calls
+  const fetchGSC = useCallback(async (endpoint, body) => {
+    const resp = await fetch(`${GSC_API}/sites/${encodeURIComponent(config.siteUrl)}/${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token.access_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    if (!resp.ok) throw new Error(`GSC error ${resp.status}: ${await resp.text()}`);
+    return resp.json();
+  }, [config, token]);
+
+  const fetchGA4 = useCallback(async (body) => {
+    if (!config?.propertyId) return null;
+    const resp = await fetch(`${GA4_API}/${config.propertyId}:runReport`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token.access_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    if (!resp.ok) {
+      console.warn('GA4 error:', resp.status);
+      return null;
+    }
+    return resp.json();
+  }, [config, token]);
+
+  const loadData = useCallback(async () => {
+    if (!token || !config) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const startDate = daysAgo(period);
+      const endDate = daysAgo(1);
+      const prevStart = daysAgo(period * 2);
+      const prevEnd = daysAgo(period + 1);
+
+      // Current period totals
+      const [current, previous] = await Promise.all([
+        fetchGSC('searchAnalytics/query', {
+          startDate, endDate,
+          dimensions: ['query'],
+          rowLimit: 1,
+          aggregationType: 'auto',
+        }),
+        fetchGSC('searchAnalytics/query', {
+          startDate: prevStart, endDate: prevEnd,
+          dimensions: ['query'],
+          rowLimit: 1,
+          aggregationType: 'auto',
+        }),
+      ]);
+
+      // Calculate totals from response
+      const curTotals = current.rows ? current.rows.reduce((acc, r) => ({
+        clicks: acc.clicks + r.clicks,
+        impressions: acc.impressions + r.impressions,
+      }), { clicks: 0, impressions: 0 }) : { clicks: 0, impressions: 0 };
+
+      // Fetch actual top queries
+      const topQ = await fetchGSC('searchAnalytics/query', {
+        startDate, endDate,
+        dimensions: ['query'],
+        rowLimit: 25,
+        aggregationType: 'auto',
+      });
+
+      // Quick wins: pos 4-20, impressions > 50
+      const qw = await fetchGSC('searchAnalytics/query', {
+        startDate, endDate,
+        dimensions: ['query'],
+        rowLimit: 500,
+        aggregationType: 'auto',
+      });
+      const quickWinRows = (qw.rows || [])
+        .filter(r => r.position >= 4 && r.position <= 20 && r.impressions > 50)
+        .sort((a, b) => b.impressions - a.impressions)
+        .slice(0, 15);
+
+      // Top pages
+      const pages = await fetchGSC('searchAnalytics/query', {
+        startDate, endDate,
+        dimensions: ['page'],
+        rowLimit: 15,
+        aggregationType: 'auto',
+      });
+
+      // Summary with previous period
+      const prevQ = await fetchGSC('searchAnalytics/query', {
+        startDate: prevStart, endDate: prevEnd,
+        dimensions: ['query'],
+        rowLimit: 500,
+        aggregationType: 'auto',
+      });
+      const prevTotals = prevQ.rows ? prevQ.rows.reduce((acc, r) => ({
+        clicks: acc.clicks + r.clicks,
+        impressions: acc.impressions + r.impressions,
+      }), { clicks: 0, impressions: 0 }) : { clicks: 0, impressions: 0 };
+
+      const curFull = (topQ.rows || []).reduce((acc, r) => ({
+        clicks: acc.clicks + r.clicks,
+        impressions: acc.impressions + r.impressions,
+        ctrSum: acc.ctrSum + r.ctr,
+        posSum: acc.posSum + r.position,
+        count: acc.count + 1,
+      }), { clicks: 0, impressions: 0, ctrSum: 0, posSum: 0, count: 0 });
+
+      // Actually get full current totals
+      const allCurrent = (qw.rows || []).reduce((acc, r) => ({
+        clicks: acc.clicks + r.clicks,
+        impressions: acc.impressions + r.impressions,
+        ctrSum: acc.ctrSum + r.ctr,
+        posSum: acc.posSum + r.position,
+        count: acc.count + 1,
+      }), { clicks: 0, impressions: 0, ctrSum: 0, posSum: 0, count: 0 });
+
+      const allPrevious = (prevQ.rows || []).reduce((acc, r) => ({
+        clicks: acc.clicks + r.clicks,
+        impressions: acc.impressions + r.impressions,
+        count: acc.count + 1,
+      }), { clicks: 0, impressions: 0, count: 0 });
+
+      setSummary({
+        clicks: allCurrent.clicks,
+        impressions: allCurrent.impressions,
+        avgCtr: allCurrent.count ? (allCurrent.ctrSum / allCurrent.count * 100) : 0,
+        avgPos: allCurrent.count ? (allCurrent.posSum / allCurrent.count) : 0,
+        clicksChange: pctChange(allCurrent.clicks, allPrevious.clicks),
+        impressionsChange: pctChange(allCurrent.impressions, allPrevious.impressions),
+      });
+
+      setTopQueries(topQ.rows || []);
+      setQuickWins(quickWinRows);
+      setTopPages(pages.rows || []);
+
+      // GA4
+      if (config.propertyId) {
+        const ga4Resp = await fetchGA4({
+          dateRanges: [{ startDate, endDate }],
+          dimensions: [{ name: 'pagePath' }],
+          metrics: [
+            { name: 'sessions' },
+            { name: 'totalUsers' },
+            { name: 'engagementRate' },
+          ],
+          orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
+          limit: 15,
+        });
+        if (ga4Resp?.rows) {
+          setGa4Data(ga4Resp.rows.map(r => ({
+            page: r.dimensionValues[0].value,
+            sessions: parseInt(r.metricValues[0].value),
+            users: parseInt(r.metricValues[1].value),
+            engRate: (parseFloat(r.metricValues[2].value) * 100).toFixed(1),
+          })));
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+      if (err.message.includes('401')) {
+        localStorage.removeItem('seopulse_token');
+        setToken(null);
+      }
+    }
+    setLoading(false);
+  }, [token, config, period, fetchGSC, fetchGA4]);
+
+  useEffect(() => {
+    if (token && config) loadData();
+  }, [token, config, period]);
+
+  // ============ RENDER ============
+
+  // No config
+  if (!config) {
+    return (
+      <div className="app">
+        <header>
+          <h1>SEO <span>Pulse</span></h1>
+        </header>
+        <ConfigScreen onSave={setConfig} />
+      </div>
+    );
+  }
+
+  // Config but no token
+  if (!token) {
+    return (
+      <div className="app">
+        <header>
+          <h1>SEO <span>Pulse</span></h1>
+          <div className="status-dot" />
+        </header>
+        <div className="auth-screen">
+          <h2>Conecta tu cuenta</h2>
+          <p>SEO Pulse necesita acceso de lectura a tu Search Console y Google Analytics.</p>
+          <button className="auth-btn" onClick={startAuth}>
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Conectar con Google
+          </button>
+          <button className="btn-secondary" onClick={() => {
+            localStorage.removeItem('seopulse_config');
+            setConfig(null);
+          }}>
+            Cambiar configuracion
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Dashboard
+  return (
+    <div className="app">
+      <header>
+        <h1>SEO <span>Pulse</span></h1>
+        <div className="status-dot connected" title="Conectado" />
+      </header>
+
+      <div className="controls">
+        {[7, 14, 28, 90].map(d => (
+          <button
+            key={d}
+            className={`period-btn ${period === d ? 'active' : ''}`}
+            onClick={() => setPeriod(d)}
+          >
+            {d}d
+          </button>
+        ))}
+        <button className="refresh-btn" onClick={loadData} disabled={loading}>
+          {loading ? 'Cargando...' : 'Actualizar'}
+        </button>
+      </div>
+
+      {error && <div className="error-msg">{error}</div>}
+
+      {loading && !summary ? (
+        <div className="loading"><div className="spinner" /> Cargando datos...</div>
+      ) : summary ? (
+        <>
+          <div className="metrics-grid">
+            <MetricCard
+              label="Clicks"
+              value={formatNum(summary.clicks)}
+              change={summary.clicksChange}
+            />
+            <MetricCard
+              label="Impresiones"
+              value={formatNum(summary.impressions)}
+              change={summary.impressionsChange}
+            />
+            <MetricCard
+              label="CTR promedio"
+              value={summary.avgCtr.toFixed(1) + '%'}
+            />
+            <MetricCard
+              label="Posicion promedio"
+              value={summary.avgPos.toFixed(1)}
+            />
+          </div>
+
+          <QueryTable
+            title="Top queries"
+            badge={`Top ${(topQueries||[]).length}`}
+            badgeClass="badge-green"
+            rows={topQueries}
+          />
+
+          <QueryTable
+            title="Quick wins (pos 4-20, impr. >50)"
+            badge={`${(quickWins||[]).length} oportunidades`}
+            badgeClass="badge-coral"
+            rows={quickWins}
+            emptyMsg="No se encontraron quick wins"
+          />
+
+          <PagesTable
+            title="Top pages"
+            badge="GSC"
+            badgeClass="badge-green"
+            rows={topPages}
+          />
+
+          <GA4Section data={ga4Data} />
+        </>
+      ) : null}
+
+      <div className="footer">
+        SEO Pulse &middot; Datos de Google Search Console + GA4 &middot; Costo: $0
+        <br/>
+        <button className="btn-secondary" style={{marginTop: 8}} onClick={() => {
+          localStorage.clear();
+          setConfig(null);
+          setToken(null);
+        }}>
+          Resetear todo
+        </button>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
