@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SEO Pulse v2.4 — País Lector</title>
+<title>SEO Pulse v2.5 — País Lector</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap');
 :root{--bg:#FAF8F3;--surface:#FFFFFF;--surface-alt:#F3F0E8;--text:#1A1A18;--muted:#6B6A65;--hint:#9C9A92;--green:#2D5A27;--green-light:#E8F0E6;--coral:#D85A30;--coral-light:#FAECE7;--blue:#185FA5;--blue-light:#E6F1FB;--amber:#BA7517;--amber-light:#FAEEDA;--purple:#534AB7;--purple-light:#EEEDFE;--red:#A32D2D;--red-light:#FCEBEB;--border:rgba(0,0,0,0.08);--radius:12px;--serif:'Instrument Serif',Georgia,serif;--sans:'DM Sans',-apple-system,sans-serif}
@@ -46,7 +46,7 @@ header h1 em{color:var(--green);font-style:normal}
 .pill{font-size:10px;padding:3px 9px;border-radius:14px;font-weight:500}
 .pill-green{background:var(--green-light);color:var(--green)}.pill-coral{background:var(--coral-light);color:var(--coral)}.pill-blue{background:var(--blue-light);color:var(--blue)}.pill-amber{background:var(--amber-light);color:var(--amber)}.pill-purple{background:var(--purple-light);color:var(--purple)}.pill-red{background:var(--red-light);color:var(--red)}
 .panel-body{padding:10px 14px}
-.row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border)}.row:last-child{border-bottom:none}
+.row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background 0.15s}.row:last-child{border-bottom:none}.row:hover{background:var(--surface-alt)}
 .row-left{flex:1;min-width:0}.row-kw{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row-meta{font-size:10px;color:var(--hint);margin-top:1px;line-height:1.4}
 .row-btn{font-size:10px;padding:3px 8px;border-radius:6px;border:0.5px solid var(--border);background:transparent;cursor:pointer;white-space:nowrap;color:var(--muted)}.row-btn:hover{border-color:var(--green);color:var(--green)}
 .score{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:20px;border-radius:5px;font-size:10px;font-weight:600;padding:0 5px}
@@ -68,7 +68,25 @@ header h1 em{color:var(--green);font-style:normal}
 .country-fill{height:100%;border-radius:4px;background:var(--green)}
 .country-val{font-size:10px;color:var(--hint);min-width:40px;text-align:right}
 .url-tag{font-size:9px;color:var(--blue);background:var(--blue-light);padding:1px 5px;border-radius:3px;display:inline-block;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
-@media(max-width:480px){.stats{grid-template-columns:repeat(2,1fr)}.stat-val{font-size:18px}header h1{font-size:20px}.two-col{grid-template-columns:1fr}.url-tag{max-width:120px}}
+/* DRAWER */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:100;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s}
+.drawer{background:var(--bg);width:100%;max-width:720px;max-height:85vh;border-radius:16px 16px 0 0;overflow-y:auto;padding:0;animation:slideUp 0.25s ease-out}
+.drawer-handle{display:flex;justify-content:center;padding:10px 0 4px;cursor:pointer}.drawer-handle span{width:36px;height:4px;border-radius:2px;background:var(--border)}
+.drawer-header{padding:8px 18px 14px;border-bottom:1px solid var(--border)}
+.drawer-header h2{font-family:var(--serif);font-size:20px;font-weight:400;margin-bottom:2px}
+.drawer-header .drawer-url{font-size:11px;color:var(--blue);word-break:break-all}
+.drawer-body{padding:14px 18px 24px}
+.drawer-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.drawer-stats .stat{padding:10px 12px}.drawer-stats .stat-val{font-size:18px}
+.diag-section{margin-top:14px}
+.diag-title{font-size:12px;font-weight:600;margin-bottom:8px}
+.diag-item{padding:8px 12px;background:var(--surface);border-radius:8px;border:0.5px solid var(--border);margin-bottom:6px;font-size:12px;line-height:1.6}
+.diag-label{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;display:inline-block;margin-right:6px}
+.diag-urgent{background:var(--coral-light);color:var(--coral)}.diag-warn{background:var(--amber-light);color:var(--amber)}.diag-ok{background:var(--green-light);color:var(--green)}.diag-info{background:var(--blue-light);color:var(--blue)}
+.top-queries-list .row{cursor:default}.top-queries-list .row:hover{background:transparent}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@media(max-width:480px){.stats{grid-template-columns:repeat(2,1fr)}.stat-val{font-size:18px}header h1{font-size:20px}.two-col{grid-template-columns:1fr}.url-tag{max-width:120px}.drawer-stats{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -79,7 +97,7 @@ header h1 em{color:var(--green);font-style:normal}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v2.4';
+const VERSION='v2.5';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SCOPES='https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly';
 const GSC_API='https://www.googleapis.com/webmasters/v3';
@@ -96,6 +114,57 @@ function shortPath(url){return url.replace(/https?:\/\/[^/]+/,'')}
 const expectedCtr=[0,0.396,0.187,0.110,0.076,0.053,0.044,0.032,0.024,0.020,0.016,0.014,0.012,0.010,0.009,0.008,0.007,0.006,0.006,0.005,0.005];
 function getExpectedCtr(pos){const p=Math.round(Math.min(Math.max(pos,1),20));return expectedCtr[p]||0.005}
 function suggestAction(pos){if(pos<=3)return'Mejorar CTR (title/meta)';if(pos<=7)return'Push a top 3 (internal links + contenido)';if(pos<=15)return'Expandir contenido + links internos';return'Reescribir o nuevo articulo dedicado'}
+
+function diagnose(daily,topQueries,avgPos,avgCtr,totalClicks,totalImpr){
+  const actions=[];
+  if(daily&&daily.length>=6){
+    const mid=Math.floor(daily.length/2);
+    const h1Clicks=daily.slice(0,mid).reduce((s,d)=>s+d.clicks,0);
+    const h2Clicks=daily.slice(mid).reduce((s,d)=>s+d.clicks,0);
+    const h1Pos=daily.slice(0,mid).reduce((s,d)=>s+d.position,0)/mid;
+    const h2Pos=daily.slice(mid).reduce((s,d)=>s+d.position,0)/(daily.length-mid);
+    const clickDelta=h1Clicks>0?((h2Clicks-h1Clicks)/h1Clicks*100):0;
+    const posDelta=h2Pos-h1Pos;
+    if(posDelta>1.5)actions.push({level:'urgent',text:'Posicion cayendo: paso de '+h1Pos.toFixed(1)+' a '+h2Pos.toFixed(1)+' en el periodo. Revisa si hay contenido nuevo de competidores, si perdiste backlinks o si hubo un core update reciente.'});
+    else if(posDelta>0.5)actions.push({level:'warn',text:'Posicion en leve descenso ('+h1Pos.toFixed(1)+' \u2192 '+h2Pos.toFixed(1)+'). Monitorear y reforzar con internal links.'});
+    else if(posDelta<-1)actions.push({level:'ok',text:'Posicion mejorando: '+h1Pos.toFixed(1)+' \u2192 '+h2Pos.toFixed(1)+'. Buen momentum.'});
+    if(clickDelta<-25&&h1Clicks>10)actions.push({level:'urgent',text:'Clicks cayeron '+Math.abs(clickDelta).toFixed(0)+'% en la segunda mitad del periodo. Posible perdida de ranking o estacionalidad.'});
+    else if(clickDelta>25&&h2Clicks>10)actions.push({level:'ok',text:'Clicks subieron '+clickDelta.toFixed(0)+'% en la segunda mitad. Tendencia positiva.'});
+  }
+  const expCtr=getExpectedCtr(avgPos);
+  if(avgCtr<expCtr*0.5)actions.push({level:'urgent',text:'CTR muy bajo: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'% esperado para pos '+avgPos.toFixed(1)+'. Reescribir title tag y meta description con gancho emocional/especifico.'});
+  else if(avgCtr<expCtr*0.75)actions.push({level:'warn',text:'CTR bajo: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'% esperado. Oportunidad en title/meta.'});
+  else actions.push({level:'ok',text:'CTR saludable: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'% esperado.'});
+  if(avgPos<=3)actions.push({level:'info',text:'Top 3: Proteger. Mantener contenido fresco, no hacer cambios grandes, monitorear competidores.'});
+  else if(avgPos<=7)actions.push({level:'info',text:'Pos '+avgPos.toFixed(1)+': A un empujon del top 3. Agregar 3-5 internal links desde paginas fuertes, expandir contenido, agregar FAQ schema.'});
+  else if(avgPos<=15)actions.push({level:'warn',text:'Pos '+avgPos.toFixed(1)+': Expandir contenido (+500 palabras), mejorar H2s, agregar media, reforzar internal links.'});
+  else actions.push({level:'urgent',text:'Pos '+avgPos.toFixed(1)+': Pagina 2+. Reescritura completa o nuevo articulo con mejor search intent.'});
+  if(topQueries&&topQueries.length>0){
+    const topQClicks=topQueries[0].clicks;
+    if(totalClicks>0&&topQClicks/totalClicks>0.6)actions.push({level:'warn',text:'Trafico concentrado: "'+topQueries[0].keys[0]+'" = '+(topQClicks/totalClicks*100).toFixed(0)+'% de clicks. Diversificar con variantes long-tail.'});
+  }
+  if(totalImpr>1000&&totalClicks<10)actions.push({level:'urgent',text:'Alta visibilidad ('+fmt(totalImpr)+' impr) pero casi 0 clicks ('+totalClicks+'). Title/meta no conecta con search intent.'});
+  return actions;
+}
+
+function DetailChart({daily}){
+  const canvasRef=useRef(null);const chartRef=useRef(null);
+  useEffect(()=>{
+    if(!daily||!canvasRef.current)return;
+    if(chartRef.current)chartRef.current.destroy();
+    const ctx=canvasRef.current.getContext('2d');
+    chartRef.current=new Chart(ctx,{type:'line',data:{
+      labels:daily.map(d=>d.date.slice(5)),
+      datasets:[
+        {label:'Clicks',data:daily.map(d=>d.clicks),borderColor:'#2D5A27',backgroundColor:'rgba(45,90,39,0.08)',fill:true,tension:0.3,borderWidth:1.5,pointRadius:1,pointHitRadius:10,yAxisID:'y'},
+        {label:'Posicion',data:daily.map(d=>d.position),borderColor:'#D85A30',backgroundColor:'transparent',fill:false,tension:0.3,borderWidth:1.5,pointRadius:1,pointHitRadius:10,borderDash:[4,3],yAxisID:'y1'}
+      ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,font:{size:11,family:'DM Sans'},padding:8}},tooltip:{backgroundColor:'#1A1A18',titleFont:{size:11,family:'DM Sans'},bodyFont:{size:11,family:'DM Sans'},padding:8,cornerRadius:8,callbacks:{label:function(c){if(c.datasetIndex===1)return'Pos: '+c.parsed.y.toFixed(1);return c.dataset.label+': '+c.parsed.y}}}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:10,family:'DM Sans'},color:'#9C9A92',maxTicksLimit:7}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10,family:'DM Sans'},color:'#2D5A27'},title:{display:true,text:'Clicks',font:{size:10,family:'DM Sans'},color:'#2D5A27'}},y1:{position:'right',reverse:true,grid:{display:false},ticks:{font:{size:10,family:'DM Sans'},color:'#D85A30'},title:{display:true,text:'Posicion',font:{size:10,family:'DM Sans'},color:'#D85A30'}}}}});
+    return()=>{if(chartRef.current)chartRef.current.destroy()};
+  },[daily]);
+  return <div className="chart-wrap"><canvas ref={canvasRef}/></div>;
+}
 
 function TrendChart({dailyData}){
   const canvasRef=useRef(null);const chartRef=useRef(null);
@@ -114,6 +183,79 @@ function TrendChart({dailyData}){
     return()=>{if(chartRef.current)chartRef.current.destroy()};
   },[dailyData]);
   return <div className="chart-wrap"><canvas ref={canvasRef}/></div>;
+}
+
+function PageDetailDrawer({item,onClose,gscFn,period}){
+  const[loading,setLoading]=useState(true);const[daily,setDaily]=useState(null);const[topQueries,setTopQueries]=useState(null);const[diag,setDiag]=useState([]);
+  const page=item.page||null;const query=item.query||item.keys?.[0]||null;
+  useEffect(()=>{
+    if(!gscFn)return;
+    (async()=>{
+      setLoading(true);
+      const sd=daysAgo(period),ed=daysAgo(1);
+      try{
+        const filters=[];
+        if(page)filters.push({dimension:'page',operator:'equals',expression:page});
+        else if(query)filters.push({dimension:'query',operator:'equals',expression:query});
+        const body={startDate:sd,endDate:ed,dimensions:['date'],type:'web'};
+        if(filters.length>0)body.dimensionFilterGroups=[{filters}];
+        const resp=await gscFn(body);
+        const d=(resp.rows||[]).map(r=>({date:r.keys[0],clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}));
+        setDaily(d);
+        let tq=null;
+        if(page){
+          const qResp=await gscFn({startDate:sd,endDate:ed,dimensions:['query'],type:'web',dimensionFilterGroups:[{filters:[{dimension:'page',operator:'equals',expression:page}]}],rowLimit:10});
+          tq=qResp.rows||[];setTopQueries(tq);
+        }
+        const totalClicks=d.reduce((s,r)=>s+r.clicks,0);
+        const totalImpr=d.reduce((s,r)=>s+r.impressions,0);
+        const avgPos=d.length>0?d.reduce((s,r)=>s+r.position,0)/d.length:item.position||0;
+        const avgCtr=totalImpr>0?totalClicks/totalImpr:0;
+        setDiag(diagnose(d,tq,avgPos,avgCtr,totalClicks,totalImpr));
+      }catch(e){console.error(e);setDiag([{level:'urgent',text:'Error: '+e.message}])}
+      setLoading(false);
+    })();
+  },[page,query,gscFn,period]);
+  const title=query||shortPath(page||'');
+  const totalClicks=daily?daily.reduce((s,r)=>s+r.clicks,0):item.clicks||0;
+  const totalImpr=daily?daily.reduce((s,r)=>s+r.impressions,0):item.impressions||0;
+  const avgPos=daily&&daily.length>0?daily.reduce((s,r)=>s+r.position,0)/daily.length:item.position||0;
+  const avgCtr=totalImpr>0?(totalClicks/totalImpr*100):0;
+  return ReactDOM.createPortal(
+    <div className="drawer-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="drawer">
+        <div className="drawer-handle" onClick={onClose}><span/></div>
+        <div className="drawer-header">
+          <h2>{title}</h2>
+          {page&&<div className="drawer-url">{shortPath(page)}</div>}
+        </div>
+        <div className="drawer-body">
+          {loading?<div className="loading"><div className="spinner"/>Cargando detalle...</div>:<>
+          <div className="drawer-stats">
+            <div className="stat"><div className="stat-label">Clicks</div><div className="stat-val">{fmt(totalClicks)}</div></div>
+            <div className="stat"><div className="stat-label">Impresiones</div><div className="stat-val">{fmt(totalImpr)}</div></div>
+            <div className="stat"><div className="stat-label">CTR</div><div className="stat-val">{avgCtr.toFixed(1)}%</div></div>
+            <div className="stat"><div className="stat-label">Pos. prom.</div><div className="stat-val">{avgPos.toFixed(1)}</div></div>
+          </div>
+          {daily&&daily.length>0&&<DetailChart daily={daily}/>}
+          <div className="diag-section">
+            <div className="diag-title">Diagnostico y acciones</div>
+            {diag.map((a,i)=><div className="diag-item" key={i}><span className={'diag-label '+(a.level==='urgent'?'diag-urgent':a.level==='warn'?'diag-warn':a.level==='ok'?'diag-ok':'diag-info')}>{a.level==='urgent'?'URGENTE':a.level==='warn'?'ATENCION':a.level==='ok'?'BIEN':'INFO'}</span>{a.text}</div>)}
+          </div>
+          {topQueries&&topQueries.length>0&&<div className="diag-section">
+            <div className="diag-title">Top queries de esta pagina</div>
+            <div className="top-queries-list">
+              {topQueries.map((q,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{q.keys[0]}</div><div className="row-meta">{fmt(q.clicks)} clicks / {fmt(q.impressions)} impr / pos {q.position.toFixed(1)}</div></div><span className={`score ${q.position<=3?'s-hi':q.position<=10?'s-md':'s-lo'}`}>P{Math.round(q.position)}</span></div>)}
+            </div>
+          </div>}
+          <div style={{marginTop:16,display:'flex',gap:8}}>
+            <button className="btn-primary" style={{fontSize:12,padding:'9px 18px'}} onClick={()=>window.open('https://claude.ai/new?q='+encodeURIComponent('Analisis SEO para '+(page||'paislector.com')+'. Query: "'+(query||title)+'". Pos: '+avgPos.toFixed(1)+'. CTR: '+avgCtr.toFixed(1)+'%. Impr: '+totalImpr+'. Diagnostico: '+diag.map(a=>a.text).join(' | ')+'. Dame plan de accion: title, meta, contenido, internal links.'),'_blank')}>Abrir brief en Claude</button>
+            <button className="btn-secondary" onClick={onClose}>Cerrar</button>
+          </div>
+          </>}
+        </div>
+      </div>
+    </div>,document.body);
 }
 
 function ConfigScreen({onSave}){
@@ -146,6 +288,7 @@ function App(){
   const[config,setConfig]=useState(getConfig);const[token,setToken]=useState(getToken);
   const[period,setPeriod]=useState(28);const[loading,setLoading]=useState(false);
   const[error,setError]=useState(null);const[ga4Warn,setGa4Warn]=useState(null);const[data,setData]=useState(null);
+  const[detailItem,setDetailItem]=useState(null);
 
   function startAuth(){if(!config?.cid)return;window.location.href='https://accounts.google.com/o/oauth2/v2/auth?client_id='+encodeURIComponent(config.cid)+'&redirect_uri='+encodeURIComponent(REDIRECT_URI)+'&response_type=token&scope='+encodeURIComponent(SCOPES)+'&include_granted_scopes=true&prompt=consent'}
   useEffect(()=>{const h=window.location.hash;if(h.includes('access_token')){const p=new URLSearchParams(h.slice(1));const t={tk:p.get('access_token'),exp:Date.now()+parseInt(p.get('expires_in'))*1000};localStorage.setItem('sp2_token',JSON.stringify(t));setToken(t);window.history.replaceState(null,'',window.location.pathname)}},[]);
@@ -157,96 +300,33 @@ function App(){
     if(!token||!config)return;setLoading(true);setError(null);setGa4Warn(null);
     try{
       const sd=daysAgo(period),ed=daysAgo(1),psd=daysAgo(period*2),ped=daysAgo(period+1);
-      // TOTALS
       const fetchTotals=async(s,e)=>{const types=['web','image','video','discover'];const res=await Promise.all(types.map(t=>gsc({startDate:s,endDate:e,type:t}).catch(()=>({rows:[]}))));let cl=0,im=0,wc=0,wp=0;res.forEach((r,i)=>{if(r.rows)r.rows.forEach(row=>{cl+=row.clicks||0;im+=row.impressions||0});if(i===0&&r.rows&&r.rows[0]){wc=r.rows[0].ctr||0;wp=r.rows[0].position||0}});return{clicks:cl,impressions:im,ctr:wc,pos:wp}};
       const[cur,prev]=await Promise.all([fetchTotals(sd,ed),fetchTotals(psd,ped)]);
-      // DAILY TREND (GSC by date)
       const dailyGsc=await gsc({startDate:sd,endDate:ed,dimensions:['date'],type:'web'});
       const dailyMap={};(dailyGsc.rows||[]).forEach(r=>{dailyMap[r.keys[0]]={clicks:r.clicks,impressions:r.impressions}});
-      // COUNTRIES
       const countriesResp=await gsc({startDate:sd,endDate:ed,dimensions:['country'],type:'web',rowLimit:10});
       const countries=(countriesResp.rows||[]).map(r=>({code:r.keys[0],clicks:r.clicks,impressions:r.impressions}));
-      // ALL QUERIES (flat, for KW Analyzer + clusters + quick wins)
       const allQ=await gsc({startDate:sd,endDate:ed,dimensions:['query'],type:'web',rowLimit:5000});
       const prevAllQ=await gsc({startDate:psd,endDate:ped,dimensions:['query'],type:'web',rowLimit:5000});
       const rows=allQ.rows||[];const prevMap={};(prevAllQ.rows||[]).forEach(r=>{prevMap[r.keys[0]]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});
-
-      // ========== v2.4: QUERY+PAGE for escribir/optimizar routing ==========
       const queryPageResp=await gsc({startDate:sd,endDate:ed,dimensions:['query','page'],type:'web',rowLimit:5000});
       const queryPageRows=queryPageResp.rows||[];
-      // Build map: query -> best ranking page (highest clicks)
       const queryToPage={};
-      queryPageRows.forEach(r=>{
-        const q=r.keys[0],pg=r.keys[1];
-        if(!queryToPage[q]||r.clicks>queryToPage[q].clicks){
-          queryToPage[q]={page:pg,clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr};
-        }
-      });
-
-      // ALL PAGES
+      queryPageRows.forEach(r=>{const q=r.keys[0],pg=r.keys[1];if(!queryToPage[q]||r.clicks>queryToPage[q].clicks){queryToPage[q]={page:pg,clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}}});
       const allP=await gsc({startDate:sd,endDate:ed,dimensions:['page'],type:'web',rowLimit:5000});
       const prevAllP=await gsc({startDate:psd,endDate:ped,dimensions:['page'],type:'web',rowLimit:5000});
       const pages=allP.rows||[];const prevPageMap={};(prevAllP.rows||[]).forEach(r=>{prevPageMap[r.keys[0]]={clicks:r.clicks,position:r.position}});
-
-      // ========== ESCRIBIR vs OPTIMIZAR with page awareness ==========
       const candidates=rows.filter(r=>r.impressions>300&&r.position>7);
-      const escribir=[];    // true gaps: no page ranks for this query
-      const hasPageOpt=[];  // has page already: route to optimizar
-
-      candidates.forEach(r=>{
-        const q=r.keys[0];
-        const pageInfo=queryToPage[q];
-        if(pageInfo){
-          // This query already has a ranking page — optimize it
-          hasPageOpt.push({
-            query:q,
-            page:pageInfo.page,
-            impressions:r.impressions,
-            position:r.position,
-            clicks:r.clicks,
-            ctr:r.ctr,
-            action:suggestAction(r.position),
-            type:'HAS_PAGE'
-          });
-        }else{
-          // No page found (shouldn't normally happen since GSC returns page data,
-          // but handles edge cases). Treat as write opportunity.
-          const score=Math.round(r.impressions*(1/r.position)*10);
-          escribir.push({...r,score});
-        }
-      });
-
-      // For escribir, also check: even if queryToPage has a match,
-      // if the page is clearly generic (homepage), treat as escribir.
-      // Re-check hasPageOpt: if the ranking page is just "/" or the homepage,
-      // move back to escribir (homepage ranking = no dedicated article).
-      const siteHost=config.site.replace('sc-domain:','').replace(/https?:\/\//,'');
-      const finalEscribir=[...escribir];
-      const finalHasPage=[];
-      hasPageOpt.forEach(item=>{
-        const path=shortPath(item.page);
-        if(path==='/'||path===''||path==='/index.html'){
-          // Homepage ranking — not a dedicated article
-          const score=Math.round(item.impressions*(1/item.position)*10);
-          finalEscribir.push({keys:[item.query],impressions:item.impressions,position:item.position,clicks:item.clicks,ctr:item.ctr,score});
-        }else{
-          finalHasPage.push(item);
-        }
-      });
-
-      finalEscribir.sort((a,b)=>(b.score||0)-(a.score||0));
-      finalHasPage.sort((a,b)=>b.impressions-a.impressions);
-
-      // CTR-based optimizar (existing logic)
+      const escribir=[];const hasPageOpt=[];
+      candidates.forEach(r=>{const q=r.keys[0];const pageInfo=queryToPage[q];if(pageInfo){hasPageOpt.push({query:q,page:pageInfo.page,impressions:r.impressions,position:r.position,clicks:r.clicks,ctr:r.ctr,action:suggestAction(r.position),type:'HAS_PAGE'})}else{escribir.push({...r,score:Math.round(r.impressions*(1/r.position)*10)})}});
+      const finalEscribir=[...escribir];const finalHasPage=[];
+      hasPageOpt.forEach(item=>{const path=shortPath(item.page);if(path==='/'||path===''||path==='/index.html'){finalEscribir.push({keys:[item.query],impressions:item.impressions,position:item.position,clicks:item.clicks,ctr:item.ctr,score:Math.round(item.impressions*(1/item.position)*10)})}else{finalHasPage.push(item)}});
+      finalEscribir.sort((a,b)=>(b.score||0)-(a.score||0));finalHasPage.sort((a,b)=>b.impressions-a.impressions);
       const optimizar=[];rows.forEach(r=>{const exp=getExpectedCtr(r.position);if(r.impressions>200&&r.ctr<exp*0.6){const pageInfo=queryToPage[r.keys[0]];optimizar.push({...r,type:'CTR',expected:(exp*100).toFixed(1),page:pageInfo?pageInfo.page:null})}});
-
-      // Dropping pages
       const dropping=[];pages.forEach(r=>{const p=prevPageMap[r.keys[0]];if(p&&r.position-p.position>2&&r.clicks>20)dropping.push({page:r.keys[0],curPos:r.position,prevPos:p.position,clicks:r.clicks,lostClicks:p.clicks-r.clicks})});dropping.sort((a,b)=>b.lostClicks-a.lostClicks);
-
       const quickWins=rows.filter(r=>r.position>=2&&r.position<=20&&r.impressions>50).sort((a,b)=>b.impressions-a.impressions).slice(0,15).map(r=>{let a='protect';if(r.position>10)a='create';else if(r.position>3)a='push';const pageInfo=queryToPage[r.keys[0]];return{...r,action:a,page:pageInfo?pageInfo.page:null}});
       const clusters={};rows.forEach(r=>{const w=r.keys[0].split(' ');let s=w.slice(0,2).join(' ');if(w.length===1)s=w[0];if(!clusters[s])clusters[s]={queries:[],clicks:0,impressions:0};clusters[s].queries.push(r);clusters[s].clicks+=r.clicks;clusters[s].impressions+=r.impressions});
       const clusterArr=Object.entries(clusters).filter(([,v])=>v.queries.length>=3).map(([n,v])=>({name:n,count:v.queries.length,clicks:v.clicks,impressions:v.impressions})).sort((a,b)=>b.clicks-a.clicks).slice(0,8);
-      // GA4
       let ga4Data=null,ga4Pages=null,dailySessions=null;
       if(config.ga4){try{
         const[pgResp,dailyResp]=await Promise.all([
@@ -256,11 +336,8 @@ function App(){
         if(pgResp?.rows){ga4Data=pgResp.rows.map(r=>({page:r.dimensionValues[0].value,sessions:parseInt(r.metricValues[0].value),users:parseInt(r.metricValues[1].value),engRate:(parseFloat(r.metricValues[2].value)*100).toFixed(1)}));ga4Pages=ga4Data}
         if(dailyResp?.rows){const sm={};dailyResp.rows.forEach(r=>{const d=r.dimensionValues[0].value;const dt=d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8);sm[dt]=parseInt(r.metricValues[0].value)});dailySessions=sm}
       }catch(e){console.warn('GA4:',e.message)}}
-      // MERGE DAILY
       const dailyData=Object.keys(dailyMap).sort().map(date=>({date,clicks:dailyMap[date].clicks,sessions:dailySessions?dailySessions[date]||0:0}));
-      // CONTENT VS TRAFFIC
       let contentVsTraffic=[];if(ga4Data){const gm={};ga4Data.forEach(g=>{gm[g.page]=g});pages.slice(0,30).forEach(r=>{const path=r.keys[0].replace(/https?:\/\/[^/]+/,'');const ga=gm[path];if(ga&&r.clicks>10){const ratio=ga.sessions/Math.max(r.clicks,1);contentVsTraffic.push({page:path,gscClicks:r.clicks,gaSessions:ga.sessions,ratio,engRate:ga.engRate})}});contentVsTraffic.sort((a,b)=>b.ratio-a.ratio);contentVsTraffic=contentVsTraffic.slice(0,10)}
-
       setData({summary:{clicks:cur.clicks,impressions:cur.impressions,ctr:cur.ctr*100,pos:cur.pos,clicksChg:pct(cur.clicks,prev.clicks),imprChg:pct(cur.impressions,prev.impressions)},escribir:finalEscribir.slice(0,8),hasPageOpt:finalHasPage.slice(0,8),optimizar:optimizar.sort((a,b)=>b.impressions-a.impressions).slice(0,8),dropping:dropping.slice(0,5),quickWins,clusterArr,contentVsTraffic,ga4Pages,countries,dailyData,allRows:rows});
     }catch(err){console.error(err);setError(err.message);if(err.message.includes('401')){localStorage.removeItem('sp2_token');setToken(null)}}
     setLoading(false);
@@ -271,6 +348,7 @@ function App(){
   if(!token)return(<div className="app"><header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot"/></div></header><div className="auth-screen"><h2>Conecta tu cuenta</h2><p>Acceso de lectura a Search Console y Analytics.</p><button className="auth-btn" onClick={startAuth}>Conectar con Google</button><button className="btn-secondary" onClick={()=>{localStorage.removeItem('sp2_config');setConfig(null)}}>Cambiar config</button></div></div>);
 
   const d=data;const maxCountryClicks=d&&d.countries&&d.countries[0]?d.countries[0].clicks:1;
+  function openDetail(item){setDetailItem(item)}
   return(<div className="app">
     <header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot on"/></div></header>
     <div className="controls">{[7,14,28,90].map(n=><button key={n} className={`per-btn ${period===n?'active':''}`} onClick={()=>setPeriod(n)}>{n}d</button>)}<button className="ref-btn" onClick={loadData} disabled={loading}>{loading?'...':'Actualizar'}</button></div>
@@ -283,52 +361,40 @@ function App(){
       <div className="stat"><div className="stat-label">CTR prom.</div><div className="stat-val">{d.summary.ctr.toFixed(1)}%</div></div>
       <div className="stat"><div className="stat-label">Pos. prom.</div><div className="stat-val">{d.summary.pos.toFixed(1)}</div></div>
     </div>
-
-    {/* TREND CHART */}
     {d.dailyData&&d.dailyData.length>0&&<div className="panel"><div className="panel-head"><h3>Tendencia</h3><span className="pill pill-green">Clicks + Sessions</span></div><div className="panel-body"><TrendChart dailyData={d.dailyData}/></div></div>}
-
-    {/* COUNTRIES + GA4 TOP PAGES */}
     <div className="two-col">
       {d.countries&&d.countries.length>0&&<div className="panel"><div className="panel-head"><h3>Top paises</h3><span className="pill pill-blue">GSC</span></div><div className="panel-body">
         {d.countries.map((c,i)=><div className="country-bar" key={i}><span className="country-name">{COUNTRY_NAMES[c.code]||c.code}</span><div className="country-track"><div className="country-fill" style={{width:Math.round(c.clicks/maxCountryClicks*100)+'%'}}/></div><span className="country-val">{fmt(c.clicks)}</span></div>)}
       </div></div>}
       {d.ga4Pages&&d.ga4Pages.length>0&&<div className="panel"><div className="panel-head"><h3>Top pages</h3><span className="pill pill-blue">GA4</span></div><div className="panel-body">
-        {d.ga4Pages.slice(0,10).map((p,i)=><div className="row" key={i} style={{padding:'5px 0'}}><div className="row-left"><div className="row-kw">{p.page}</div><div className="row-meta">{fmt(p.sessions)} sess / {fmt(p.users)} users / {p.engRate}% eng</div></div></div>)}
+        {d.ga4Pages.slice(0,10).map((p,i)=><div className="row" key={i} style={{padding:'5px 0'}} onClick={()=>openDetail({page:'https://paislector.com'+p.page,query:null,position:0,clicks:0,impressions:0})}><div className="row-left"><div className="row-kw">{p.page}</div><div className="row-meta">{fmt(p.sessions)} sess / {fmt(p.users)} users / {p.engRate}% eng</div></div></div>)}
       </div></div>}
     </div>
-
     <KwAnalyzer gscRows={d.allRows}/>
-
-    {/* ====== ESCRIBIR NEXT (true gaps only) ====== */}
     <div className="panel"><div className="panel-head"><h3>Escribir next</h3><span className="pill pill-green">{d.escribir.length} oportunidades</span></div><div className="panel-body">
       {d.escribir.length===0&&<div style={{fontSize:12,color:'var(--hint)',padding:'8px 0'}}>No hay queries sin pagina dedicada que cumplan el umbral.</div>}
-      {d.escribir.map((r,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / score {r.score}</div></div><span className={`score ${r.score>80?'s-hi':r.score>50?'s-md':'s-lo'}`}>{r.score}</span><button className="row-btn" onClick={()=>window.open('https://claude.ai/new?q='+encodeURIComponent('Content brief para "'+r.keys[0]+'" para paislector.com'),'_blank')}>Brief</button></div>)}
-      <div className="explain">Keywords con +300 impr y pos &gt;7 que NO tienen pagina dedicada en GSC. Verdaderas oportunidades de contenido nuevo.</div></div></div>
-
-    {/* ====== OPTIMIZAR AHORA (CTR + dropping + hasPage rerouted) ====== */}
+      {d.escribir.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({query:r.keys[0],page:null,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / score {r.score}</div></div><span className={`score ${r.score>80?'s-hi':r.score>50?'s-md':'s-lo'}`}>{r.score}</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Content brief para "'+r.keys[0]+'" para paislector.com'),'_blank')}}>Brief</button></div>)}
+      <div className="explain">Click en fila para ver tendencia y diagnostico.</div></div></div>
     <div className="panel"><div className="panel-head"><h3>Optimizar ahora</h3><span className="pill pill-coral">{d.optimizar.length+d.dropping.length+d.hasPageOpt.length} acciones</span></div><div className="panel-body">
-      {/* Rerouted from escribir: queries that already have a page */}
       {d.hasPageOpt.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--blue)',marginBottom:6,marginTop:2}}>Ya tienen pagina ({d.hasPageOpt.length})</div>
-      {d.hasPageOpt.map((r,i)=><div className="row" key={'hp'+i}><div className="row-left"><div className="row-kw">{r.query}</div><div className="row-meta"><span className="url-tag">{shortPath(r.page)}</span> pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr / {r.action}</div></div><span className="score s-md">OPT</span><button className="row-btn" onClick={()=>window.open('https://claude.ai/new?q='+encodeURIComponent('Optimiza la pagina '+r.page+' para la keyword "'+r.query+'" en paislector.com. Posicion actual: '+r.position.toFixed(1)+'. Accion sugerida: '+r.action),'_blank')}>Brief</button></div>)}</>}
-      {/* CTR underperformers */}
+      {d.hasPageOpt.map((r,i)=><div className="row" key={'hp'+i} onClick={()=>openDetail(r)}><div className="row-left"><div className="row-kw">{r.query}</div><div className="row-meta"><span className="url-tag">{shortPath(r.page)}</span> pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr / {r.action}</div></div><span className="score s-md">OPT</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Optimiza '+r.page+' para "'+r.query+'". Pos: '+r.position.toFixed(1)+'. Accion: '+r.action),'_blank')}}>Brief</button></div>)}</>}
       {d.optimizar.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6,marginTop:d.hasPageOpt.length>0?10:2}}>CTR bajo ({d.optimizar.length})</div>
-      {d.optimizar.map((r,i)=><div className="row" key={'o'+i}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / CTR {(r.ctr*100).toFixed(1)}% vs esperado {r.expected}% / pos {r.position.toFixed(1)}</div></div><span className="score s-lo">CTR</span></div>)}</>}
-      {/* Dropping pages */}
+      {d.optimizar.map((r,i)=><div className="row" key={'o'+i} onClick={()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / CTR {(r.ctr*100).toFixed(1)}% vs esperado {r.expected}% / pos {r.position.toFixed(1)}</div></div><span className="score s-lo">CTR</span></div>)}</>}
       {d.dropping.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6,marginTop:10}}>Cayendo ({d.dropping.length})</div>
-      {d.dropping.map((r,i)=><div className="row" key={'d'+i}><div className="row-left"><div className="row-kw">{shortPath(r.page)}</div><div className="row-meta">pos {r.prevPos.toFixed(1)} &rarr; {r.curPos.toFixed(1)} / -{Math.max(0,r.lostClicks)} clicks</div></div><span className="score s-lo">DROP</span></div>)}</>}
-      <div className="explain">Ya tienen pagina = keywords del panel escribir que ya rankean con URL. CTR bajo = bajo para su posicion. Cayendo = paginas perdiendo posicion.</div></div></div>
-
+      {d.dropping.map((r,i)=><div className="row" key={'d'+i} onClick={()=>openDetail({query:null,page:r.page,position:r.curPos,clicks:r.clicks,impressions:0})}><div className="row-left"><div className="row-kw">{shortPath(r.page)}</div><div className="row-meta">pos {r.prevPos.toFixed(1)} &rarr; {r.curPos.toFixed(1)} / -{Math.max(0,r.lostClicks)} clicks</div></div><span className="score s-lo">DROP</span></div>)}</>}
+      <div className="explain">Click en fila para ver grafico diario y diagnostico.</div></div></div>
     <div className="panel"><div className="panel-head"><h3>Quick wins</h3><span className="pill pill-amber">{d.quickWins.length} keywords</span></div><div className="panel-body">
-      {d.quickWins.map((r,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / CTR {(r.ctr*100).toFixed(1)}%</div></div><span className={`score ${r.action==='protect'?'s-hi':r.action==='push'?'s-md':'s-lo'}`}>{r.action==='protect'?'TOP3':r.action==='push'?'PUSH':'NEW'}</span></div>)}
+      {d.quickWins.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / CTR {(r.ctr*100).toFixed(1)}%</div></div><span className={`score ${r.action==='protect'?'s-hi':r.action==='push'?'s-md':'s-lo'}`}>{r.action==='protect'?'TOP3':r.action==='push'?'PUSH':'NEW'}</span></div>)}
       <div className="explain">TOP3: proteger. PUSH: internal links. NEW: articulo nuevo.</div></div></div>
     <div className="panel"><div className="panel-head"><h3>Cluster map</h3><span className="pill pill-purple">{d.clusterArr.length} clusters</span></div><div className="panel-body">
-      {d.clusterArr.map((c,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{c.name}</div><div className="row-meta">{c.count} queries / {fmt(c.clicks)} clicks / {fmt(c.impressions)} impr</div></div><span className={`score ${c.count>5?'s-hi':c.count>3?'s-md':'s-lo'}`}>{c.count}q</span></div>)}
+      {d.clusterArr.map((c,i)=><div className="row" key={i} style={{cursor:'default'}}><div className="row-left"><div className="row-kw">{c.name}</div><div className="row-meta">{c.count} queries / {fmt(c.clicks)} clicks / {fmt(c.impressions)} impr</div></div><span className={`score ${c.count>5?'s-hi':c.count>3?'s-md':'s-lo'}`}>{c.count}q</span></div>)}
       <div className="explain">Queries por tema. Mas queries = mas oportunidad de hub.</div></div></div>
     {d.contentVsTraffic&&d.contentVsTraffic.length>0&&<div className="panel"><div className="panel-head"><h3>Contenido vs trafico</h3><span className="pill pill-blue">GSC + GA4</span></div><div className="panel-body">
-      {d.contentVsTraffic.map((r,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{r.page.length>45?r.page.slice(0,45)+'...':r.page}</div><div className="row-meta">GSC: {fmt(r.gscClicks)} / GA4: {fmt(r.gaSessions)} / ratio {r.ratio.toFixed(1)}x{r.ratio>1.5?' — social fuerte':''}</div></div></div>)}
+      {d.contentVsTraffic.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({page:'https://paislector.com'+r.page,query:null,position:0,clicks:r.gscClicks,impressions:0})}><div className="row-left"><div className="row-kw">{r.page.length>45?r.page.slice(0,45)+'...':r.page}</div><div className="row-meta">GSC: {fmt(r.gscClicks)} / GA4: {fmt(r.gaSessions)} / ratio {r.ratio.toFixed(1)}x{r.ratio>1.5?' \u2014 social fuerte':''}</div></div></div>)}
       <div className="explain">Ratio +1.5 = trafico no-SEO. ~1 = depende de Google.</div></div></div>}
     </>:null}
     <div className="footer">SEO Pulse {VERSION} / $0<br/><button className="btn-secondary" style={{marginTop:6}} onClick={()=>{localStorage.clear();setConfig(null);setToken(null);setData(null);setGa4Warn(null)}}>Resetear todo</button></div>
+    {detailItem&&<PageDetailDrawer item={detailItem} onClose={()=>setDetailItem(null)} gscFn={gsc} period={period}/>}
   </div>);
 }
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
