@@ -154,6 +154,30 @@ header h1 em{color:var(--green);font-style:normal}
 .utm-row-metrics{min-width:60px}
 .utm-metric-val{font-size:16px}
 }
+/* TAB NAVIGATION v2.8 */
+.tab-nav{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:0}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-item{padding:10px 16px;font-size:13px;font-family:var(--sans);color:var(--muted);background:transparent;border:none;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:color 0.15s,border-color 0.15s;position:relative}
+.tab-item:hover{color:var(--text)}
+.tab-item.active{color:var(--text);font-weight:500;border-bottom-color:var(--green)}
+.tab-badge{display:inline-block;margin-left:6px;padding:1px 6px;background:var(--coral);color:white;font-size:9px;border-radius:8px;font-weight:500;vertical-align:middle}
+.tab-content{padding-bottom:20px}
+/* Period selector (global header row) */
+.period-row{display:flex;gap:6px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.period-label{font-size:10px;color:var(--hint);text-transform:uppercase;letter-spacing:0.05em;margin-right:4px}
+/* Mobile bottom tab bar (< 480px) */
+.mobile-tab-bar{display:none}
+@media(max-width:480px){
+  .tab-nav{display:none}
+  .mobile-tab-bar{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:0.5px solid var(--border);padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px));justify-content:space-around;z-index:50;box-shadow:0 -2px 8px rgba(0,0,0,0.04)}
+  .mobile-tab-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 8px;cursor:pointer;border:none;background:transparent;flex:1;min-width:0}
+  .mobile-tab-icon{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:2;transition:stroke 0.15s}
+  .mobile-tab-label{font-size:9px;color:var(--muted);transition:color 0.15s;white-space:nowrap}
+  .mobile-tab-item.active .mobile-tab-icon{stroke:var(--green)}
+  .mobile-tab-item.active .mobile-tab-label{color:var(--green);font-weight:500}
+  .app{padding-bottom:80px}
+}
+.lazy-placeholder{padding:40px 20px;text-align:center;color:var(--hint);font-size:12px}
 </style>
 </head>
 <body>
@@ -164,7 +188,7 @@ header h1 em{color:var(--green);font-style:normal}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v2.7';
+const VERSION='v2.8';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SUGGEST_API=REDIRECT_URI+'/api/suggest';
 const SCOPES='https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly https://www.googleapis.com/auth/adsense.readonly';
@@ -939,9 +963,53 @@ function OutboundClicks({ga4Fetch,period}){
   </div></div>);
 }
 
+// ====== TAB NAV ======
+const TABS=[
+  {id:'overview',label:'Overview',icon:'M3 12l2-2 7-7 7 7 2 2M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3'},
+  {id:'content',label:'Content',icon:'M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z'},
+  {id:'tracking',label:'Tracking',icon:'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'},
+  {id:'revenue',label:'Revenue',icon:'M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6'},
+  {id:'config',label:'Config',icon:'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM12 15a3 3 0 100-6 3 3 0 000 6z'}
+];
+
+function TabNav({activeTab,onTabChange,badges}){
+  return(<>
+    <nav className="tab-nav" role="tablist">
+      {TABS.map(t=><button key={t.id} role="tab" aria-selected={activeTab===t.id} className={"tab-item "+(activeTab===t.id?'active':'')} onClick={()=>onTabChange(t.id)}>
+        {t.label}{badges&&badges[t.id]>0&&<span className="tab-badge">{badges[t.id]}</span>}
+      </button>)}
+    </nav>
+    <nav className="mobile-tab-bar" role="tablist">
+      {TABS.map(t=><button key={t.id} role="tab" aria-selected={activeTab===t.id} aria-label={t.label} className={"mobile-tab-item "+(activeTab===t.id?'active':'')} onClick={()=>onTabChange(t.id)}>
+        <svg className="mobile-tab-icon" viewBox="0 0 24 24"><path d={t.icon}/></svg>
+        <span className="mobile-tab-label">{t.label}</span>
+      </button>)}
+    </nav>
+  </>);
+}
+
+// Util: lee/guarda tab y periodos por tab desde URL hash + localStorage
+function getInitialTab(){
+  const h=window.location.hash.replace('#','');
+  if(TABS.find(t=>t.id===h))return h;
+  try{const s=localStorage.getItem('sp2_active_tab');if(s&&TABS.find(t=>t.id===s))return s}catch{}
+  return'overview';
+}
+function getTabPeriods(){
+  try{const s=JSON.parse(localStorage.getItem('sp2_tab_periods')||'null');if(s&&typeof s==='object')return{overview:s.overview||28,content:s.content||28,tracking:s.tracking||28,revenue:s.revenue||28,config:28}}catch{}
+  return{overview:28,content:28,tracking:28,revenue:28,config:28};
+}
+function saveTabPeriods(obj){try{localStorage.setItem('sp2_tab_periods',JSON.stringify(obj))}catch{}}
+
 function App(){
   const[config,setConfig]=useState(getConfig);const[token,setToken]=useState(getToken);
-  const[period,setPeriod]=useState(28);const[loading,setLoading]=useState(false);
+  // Tab state (v2.8)
+  const[activeTab,setActiveTab]=useState(getInitialTab);
+  const[tabPeriods,setTabPeriods]=useState(getTabPeriods);
+  const period=tabPeriods[activeTab]||28;
+  const setPeriod=(n)=>{const next={...tabPeriods,[activeTab]:n};setTabPeriods(next);saveTabPeriods(next)};
+  const changeTab=(id)=>{setActiveTab(id);try{localStorage.setItem('sp2_active_tab',id)}catch{}try{window.history.replaceState(null,'','#'+id)}catch{};window.scrollTo({top:0,behavior:'smooth'})};
+  const[loading,setLoading]=useState(false);
   const[error,setError]=useState(null);const[ga4Warn,setGa4Warn]=useState(null);const[data,setData]=useState(null);
   const[detailItem,setDetailItem]=useState(null);const[adsenseWarn,setAdsenseWarn]=useState(null);
   // UTM module state
@@ -1104,70 +1172,131 @@ function App(){
 
   const d=data;const maxCC=d&&d.countries&&d.countries[0]?d.countries[0].clicks:1;
   function openDetail(item){setDetailItem(item)}
+
+  // Compute tab badges (counts of actionable items)
+  const tabBadges={
+    content:d?(d.escribir.length+d.hasPageOpt.length+d.optimizar.length+d.dropping.length):0,
+    tracking:utms.filter(u=>!u.archived).length
+  };
+
+  const PeriodControls=()=>(
+    <div className="controls">
+      <span className="period-label">Periodo:</span>
+      {[7,14,28,90].map(n=><button key={n} className={`per-btn ${period===n?'active':''}`} onClick={()=>setPeriod(n)}>{n}d</button>)}
+      <button className="ref-btn" onClick={loadData} disabled={loading}>{loading?'...':'Actualizar'}</button>
+    </div>
+  );
+
   return(<div className="app">
     <header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot on"/></div></header>
-    <div className="controls">{[7,14,28,90].map(n=><button key={n} className={`per-btn ${period===n?'active':''}`} onClick={()=>setPeriod(n)}>{n}d</button>)}<button className="ref-btn" onClick={loadData} disabled={loading}>{loading?'...':'Actualizar'}</button></div>
+
+    <TabNav activeTab={activeTab} onTabChange={changeTab} badges={tabBadges}/>
+
     {error&&<div className="error-msg">{error}</div>}
-    {ga4Warn&&<div className="warn-msg">{ga4Warn}</div>}
-    {adsenseWarn&&<div className="warn-msg">{adsenseWarn}</div>}
-    {loading&&!d?<div className="loading"><div className="spinner"/>Cargando...</div>:d?<>
-    <div className="stats">
-      <div className="stat"><div className="stat-label">Clicks</div><div className="stat-val">{fmt(d.summary.clicks)}</div>{d.summary.clicksChg&&<div className={`stat-chg ${d.summary.clicksChg>0?'up':'down'}`}>{d.summary.clicksChg>0?'+':''}{d.summary.clicksChg}%</div>}</div>
-      <div className="stat"><div className="stat-label">Impresiones</div><div className="stat-val">{fmt(d.summary.impressions)}</div>{d.summary.imprChg&&<div className={`stat-chg ${d.summary.imprChg>0?'up':'down'}`}>{d.summary.imprChg>0?'+':''}{d.summary.imprChg}%</div>}</div>
-      <div className="stat"><div className="stat-label">CTR prom.</div><div className="stat-val">{d.summary.ctr.toFixed(1)}%</div></div>
-      <div className="stat"><div className="stat-label">Pos. prom.</div><div className="stat-val">{d.summary.pos.toFixed(1)}</div></div>
+    {ga4Warn&&activeTab!=='config'&&<div className="warn-msg">{ga4Warn}</div>}
+    {adsenseWarn&&activeTab==='revenue'&&<div className="warn-msg">{adsenseWarn}</div>}
+
+    <div className="tab-content">
+
+    {/* ========== OVERVIEW TAB ========== */}
+    {activeTab==='overview'&&<>
+      <PeriodControls/>
+      {loading&&!d?<div className="loading"><div className="spinner"/>Cargando...</div>:d?<>
+        <div className="stats">
+          <div className="stat"><div className="stat-label">Clicks</div><div className="stat-val">{fmt(d.summary.clicks)}</div>{d.summary.clicksChg&&<div className={`stat-chg ${d.summary.clicksChg>0?'up':'down'}`}>{d.summary.clicksChg>0?'+':''}{d.summary.clicksChg}%</div>}</div>
+          <div className="stat"><div className="stat-label">Impresiones</div><div className="stat-val">{fmt(d.summary.impressions)}</div>{d.summary.imprChg&&<div className={`stat-chg ${d.summary.imprChg>0?'up':'down'}`}>{d.summary.imprChg>0?'+':''}{d.summary.imprChg}%</div>}</div>
+          <div className="stat"><div className="stat-label">CTR prom.</div><div className="stat-val">{d.summary.ctr.toFixed(1)}%</div></div>
+          <div className="stat"><div className="stat-label">Pos. prom.</div><div className="stat-val">{d.summary.pos.toFixed(1)}</div></div>
+        </div>
+        {d.dailyData&&d.dailyData.length>0&&<div className="panel"><div className="panel-head"><h3>Tendencia</h3><span className="pill pill-green">Clicks + Sessions</span></div><div className="panel-body"><TrendChart dailyData={d.dailyData}/></div></div>}
+        <div className="two-col">
+          {d.countries&&d.countries.length>0&&<div className="panel"><div className="panel-head"><h3>Top paises</h3><span className="pill pill-blue">GSC</span></div><div className="panel-body">
+            {d.countries.map((c,i)=><div className="country-bar" key={i}><span className="country-name">{COUNTRY_NAMES[c.code]||c.code}</span><div className="country-track"><div className="country-fill" style={{width:Math.round(c.clicks/maxCC*100)+'%'}}/></div><span className="country-val">{fmt(c.clicks)}</span></div>)}</div></div>}
+          {d.ga4Pages&&d.ga4Pages.length>0&&<div className="panel"><div className="panel-head"><h3>Top pages</h3><span className="pill pill-blue">GA4</span></div><div className="panel-body">
+            {d.ga4Pages.slice(0,10).map((p,i)=><div className="row" key={i} style={{padding:'5px 0'}} onClick={()=>openDetail({page:'https://paislector.com'+p.page,query:null,position:0,clicks:0,impressions:0})}><div className="row-left"><div className="row-kw">{p.page}</div><div className="row-meta">{fmt(p.sessions)} sess / {fmt(p.users)} users / {p.engRate}% eng</div></div></div>)}</div></div>}
+        </div>
+        <div className="panel"><div className="panel-head"><h3>Cluster map</h3><span className="pill pill-purple">{d.clusterArr.length} clusters</span></div><div className="panel-body">
+          {d.clusterArr.map((c,i)=><div className="row" key={i} style={{cursor:'default'}}><div className="row-left"><div className="row-kw">{c.name}</div><div className="row-meta">{c.count} queries / {fmt(c.clicks)} clicks / {fmt(c.impressions)} impr</div></div><span className={`score ${c.count>5?'s-hi':c.count>3?'s-md':'s-lo'}`}>{c.count}q</span></div>)}
+          <div className="explain">Queries por tema. Mas queries = mas oportunidad de hub.</div></div></div>
+      </>:null}
+    </>}
+
+    {/* ========== CONTENT TAB ========== */}
+    {activeTab==='content'&&<>
+      <PeriodControls/>
+      {loading&&!d?<div className="loading"><div className="spinner"/>Cargando...</div>:d?<>
+        <div className="panel"><div className="panel-head"><h3>Escribir next</h3><span className="pill pill-green">{d.escribir.length} oportunidades</span></div><div className="panel-body">
+          {d.escribir.length===0&&<div style={{fontSize:12,color:'var(--hint)',padding:'8px 0'}}>No hay queries sin pagina dedicada que cumplan el umbral.</div>}
+          {d.escribir.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({query:r.keys[0],page:null,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / score {r.score}</div></div><span className={`score ${r.score>80?'s-hi':r.score>50?'s-md':'s-lo'}`}>{r.score}</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Content brief para "'+r.keys[0]+'" para paislector.com'),'_blank')}}>Brief</button></div>)}
+          <div className="explain">Click en fila para ver tendencia y diagnostico.</div></div></div>
+        <div className="panel"><div className="panel-head"><h3>Optimizar ahora</h3><span className="pill pill-coral">{d.optimizar.length+d.dropping.length+d.hasPageOpt.length} acciones</span></div><div className="panel-body">
+          {d.hasPageOpt.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--blue)',marginBottom:6,marginTop:2}}>Ya tienen pagina ({d.hasPageOpt.length})</div>
+          {d.hasPageOpt.map((r,i)=><div className="row" key={'hp'+i} onClick={()=>openDetail(r)}><div className="row-left"><div className="row-kw">{r.query}</div><div className="row-meta"><span className="url-tag">{shortPath(r.page)}</span> pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr / {r.action}</div></div><span className="score s-md">OPT</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Optimiza '+r.page+' para "'+r.query+'". Pos: '+r.position.toFixed(1)+'. Accion: '+r.action),'_blank')}}>Brief</button></div>)}</>}
+          {d.optimizar.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6,marginTop:d.hasPageOpt.length>0?10:2}}>CTR bajo ({d.optimizar.length})</div>
+          {d.optimizar.map((r,i)=><div className="row" key={'o'+i} onClick={()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / CTR {(r.ctr*100).toFixed(1)}% vs esperado {r.expected}% / pos {r.position.toFixed(1)}</div></div><span className="score s-lo">CTR</span></div>)}</>}
+          {d.dropping.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6,marginTop:10}}>Cayendo ({d.dropping.length})</div>
+          {d.dropping.map((r,i)=><div className="row" key={'d'+i} onClick={()=>openDetail({query:null,page:r.page,position:r.curPos,clicks:r.clicks,impressions:0})}><div className="row-left"><div className="row-kw">{shortPath(r.page)}</div><div className="row-meta">pos {r.prevPos.toFixed(1)} &rarr; {r.curPos.toFixed(1)} / -{Math.max(0,r.lostClicks)} clicks</div></div><span className="score s-lo">DROP</span></div>)}</>}
+          <div className="explain">Click en fila para diagnostico detallado.</div></div></div>
+        <div className="panel"><div className="panel-head"><h3>Quick wins</h3><span className="pill pill-amber">{d.quickWins.length} keywords</span></div><div className="panel-body">
+          {d.quickWins.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / CTR {(r.ctr*100).toFixed(1)}%</div></div><span className={`score ${r.action==='protect'?'s-hi':r.action==='push'?'s-md':'s-lo'}`}>{r.action==='protect'?'TOP3':r.action==='push'?'PUSH':'NEW'}</span></div>)}
+          <div className="explain">TOP3: proteger. PUSH: internal links. NEW: articulo nuevo.</div></div></div>
+        {d.contentVsTraffic&&d.contentVsTraffic.length>0&&<div className="panel"><div className="panel-head"><h3>Contenido vs trafico</h3><span className="pill pill-blue">GSC + GA4</span></div><div className="panel-body">
+          {d.contentVsTraffic.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({page:'https://paislector.com'+r.page,query:null,position:0,clicks:r.gscClicks,impressions:0})}><div className="row-left"><div className="row-kw">{r.page.length>45?r.page.slice(0,45)+'...':r.page}</div><div className="row-meta">GSC: {fmt(r.gscClicks)} / GA4: {fmt(r.gaSessions)} / ratio {r.ratio.toFixed(1)}x{r.ratio>1.5?' \u2014 social fuerte':''}</div></div></div>)}
+          <div className="explain">Ratio +1.5 = trafico no-SEO. ~1 = depende de Google.</div></div></div>}
+        <Discovery gscRows={d.allRows} onOpenDetail={openDetail}/>
+        <KwAnalyzer gscRows={d.allRows}/>
+      </>:null}
+    </>}
+
+    {/* ========== TRACKING TAB ========== */}
+    {activeTab==='tracking'&&<>
+      <PeriodControls/>
+      <UtmBuilder onCreated={createUtm} existingUtms={utms}/>
+      <UtmDashboard utms={utms} metricsMap={utmMetrics} onOpenDetail={setUtmDetail} onRefresh={()=>fetchUtmMetrics()} loading={utmLoading}/>
+      <OutboundClicks ga4Fetch={ga4Fetch} period={period}/>
+    </>}
+
+    {/* ========== REVENUE TAB ========== */}
+    {activeTab==='revenue'&&<>
+      <PeriodControls/>
+      {loading&&!d?<div className="loading"><div className="spinner"/>Cargando...</div>:d?<>
+        {d.adsense?<div className="panel"><div className="panel-head"><h3>Revenue</h3><span className="pill pill-amber">AdSense</span></div><div className="panel-body">
+          <div className="rev-total"><span className="rev-amount">{fmtMoney(d.adsense.totalEarnings)}</span><span className="rev-sub">{period}d / {d.adsense.pages.length} paginas con revenue</span></div>
+          {d.adsense.pages.slice(0,10).map((p,i)=>{const maxE=d.adsense.pages[0]?.earnings||1;return<div className="rev-bar" key={i} style={{cursor:'pointer'}} onClick={()=>openDetail({page:p.page,query:null,position:0,clicks:p.clicks,impressions:p.impressions})}><span className="rev-page">{shortPath(p.page)}</span><div className="rev-bar-track"><div className="rev-bar-fill" style={{width:Math.round(p.earnings/maxE*100)+'%'}}/></div><span className="rev-val">{fmtMoney(p.earnings)}</span></div>})}
+          {d.adsense.pages.length>0&&<div style={{marginTop:8,display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}}>
+            {d.adsense.pages.slice(0,6).map((p,i)=><div key={i} style={{fontSize:10,color:'var(--hint)'}}><span style={{fontWeight:500,color:'var(--text)'}}>{shortPath(p.page).slice(0,30)}</span><br/>{fmt(p.pageViews)} views / RPM {fmtMoney(p.rpm)} / {p.clicks} clicks</div>)}
+          </div>}
+          <div className="explain">Revenue estimado por pagina. RPM = revenue por 1K page views. Click en fila para detalle.</div>
+        </div></div>:<div className="lazy-placeholder">Sin data de AdSense para este periodo. Verifica que tu cuenta de AdSense este conectada al mismo OAuth.</div>}
+      </>:null}
+    </>}
+
+    {/* ========== CONFIG TAB ========== */}
+    {activeTab==='config'&&<>
+      <div className="panel"><div className="panel-head"><h3>Configuracion</h3><span className="pill pill-blue">Setup</span></div><div className="panel-body">
+        <div style={{fontSize:12,color:'var(--muted)',lineHeight:1.7,marginBottom:14}}>
+          <div style={{marginBottom:8}}><strong style={{color:'var(--text)'}}>Version:</strong> {VERSION}</div>
+          <div style={{marginBottom:8}}><strong style={{color:'var(--text)'}}>Site GSC:</strong> {config?.site||'-'}</div>
+          <div style={{marginBottom:8}}><strong style={{color:'var(--text)'}}>GA4 Property:</strong> {config?.ga4||'-'}</div>
+          <div style={{marginBottom:8}}><strong style={{color:'var(--text)'}}>UTMs guardadas:</strong> {utms.length} ({utms.filter(u=>!u.archived).length} activas)</div>
+          <div style={{marginBottom:8}}><strong style={{color:'var(--text)'}}>Token OAuth:</strong> {token?'valido hasta '+new Date(token.exp).toLocaleTimeString():'expirado'}</div>
+        </div>
+        <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+          <button className="btn-secondary" onClick={()=>{localStorage.removeItem('sp2_token');setToken(null)}}>Reconectar Google</button>
+          <button className="btn-secondary" onClick={()=>{localStorage.removeItem('sp2_config');localStorage.removeItem('sp2_token');setConfig(null);setToken(null)}}>Cambiar config</button>
+          <button className="btn-secondary" style={{color:'var(--coral)'}} onClick={()=>{if(confirm('Seguro? Borrara TODO: config, UTMs, cache. No hay vuelta atras.')){localStorage.clear();setConfig(null);setToken(null);setData(null);setUtms([]);setUtmMetrics({});setGa4Warn(null);setAdsenseWarn(null)}}}>Resetear todo</button>
+        </div>
+      </div></div>
+      <div className="panel"><div className="panel-head"><h3>Info</h3><span className="pill pill-green">SEO Pulse</span></div><div className="panel-body">
+        <div style={{fontSize:12,color:'var(--muted)',lineHeight:1.7}}>
+          <p>Dashboard SEO + tracking para Pais Lector. Conecta directo con Google Search Console, Analytics 4 y AdSense via OAuth. Sin backend, sin base de datos: todo corre en tu browser.</p>
+          <p style={{marginTop:10}}><strong style={{color:'var(--text)'}}>Costo total:</strong> $0/mes. Hosted en Vercel free tier.</p>
+        </div>
+      </div></div>
+    </>}
+
     </div>
-    {d.dailyData&&d.dailyData.length>0&&<div className="panel"><div className="panel-head"><h3>Tendencia</h3><span className="pill pill-green">Clicks + Sessions</span></div><div className="panel-body"><TrendChart dailyData={d.dailyData}/></div></div>}
 
-    {/* ====== REVENUE (AdSense) — v2.7 ====== */}
-    {d.adsense&&<div className="panel"><div className="panel-head"><h3>Revenue</h3><span className="pill pill-amber">AdSense</span></div><div className="panel-body">
-      <div className="rev-total"><span className="rev-amount">{fmtMoney(d.adsense.totalEarnings)}</span><span className="rev-sub">{period}d / {d.adsense.pages.length} paginas con revenue</span></div>
-      {d.adsense.pages.slice(0,10).map((p,i)=>{const maxE=d.adsense.pages[0]?.earnings||1;return<div className="rev-bar" key={i} style={{cursor:'pointer'}} onClick={()=>openDetail({page:p.page,query:null,position:0,clicks:p.clicks,impressions:p.impressions})}><span className="rev-page">{shortPath(p.page)}</span><div className="rev-bar-track"><div className="rev-bar-fill" style={{width:Math.round(p.earnings/maxE*100)+'%'}}/></div><span className="rev-val">{fmtMoney(p.earnings)}</span></div>})}
-      {d.adsense.pages.length>0&&<div style={{marginTop:8,display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}}>
-        {d.adsense.pages.slice(0,6).map((p,i)=><div key={i} style={{fontSize:10,color:'var(--hint)'}}><span style={{fontWeight:500,color:'var(--text)'}}>{shortPath(p.page).slice(0,30)}</span><br/>{fmt(p.pageViews)} views / RPM {fmtMoney(p.rpm)} / {p.clicks} clicks</div>)}
-      </div>}
-      <div className="explain">Revenue estimado por pagina. RPM = revenue por 1K page views. Click en fila para detalle.</div>
-    </div></div>}
-
-    <div className="two-col">
-      {d.countries&&d.countries.length>0&&<div className="panel"><div className="panel-head"><h3>Top paises</h3><span className="pill pill-blue">GSC</span></div><div className="panel-body">
-        {d.countries.map((c,i)=><div className="country-bar" key={i}><span className="country-name">{COUNTRY_NAMES[c.code]||c.code}</span><div className="country-track"><div className="country-fill" style={{width:Math.round(c.clicks/maxCC*100)+'%'}}/></div><span className="country-val">{fmt(c.clicks)}</span></div>)}</div></div>}
-      {d.ga4Pages&&d.ga4Pages.length>0&&<div className="panel"><div className="panel-head"><h3>Top pages</h3><span className="pill pill-blue">GA4</span></div><div className="panel-body">
-        {d.ga4Pages.slice(0,10).map((p,i)=><div className="row" key={i} style={{padding:'5px 0'}} onClick={()=>openDetail({page:'https://paislector.com'+p.page,query:null,position:0,clicks:0,impressions:0})}><div className="row-left"><div className="row-kw">{p.page}</div><div className="row-meta">{fmt(p.sessions)} sess / {fmt(p.users)} users / {p.engRate}% eng</div></div></div>)}</div></div>}
-    </div>
-
-    {/* DISCOVERY — new in v2.6 */}
-    <Discovery gscRows={d.allRows} onOpenDetail={openDetail}/>
-
-    <KwAnalyzer gscRows={d.allRows}/>
-
-    <UtmBuilder onCreated={createUtm} existingUtms={utms}/>
-    <UtmDashboard utms={utms} metricsMap={utmMetrics} onOpenDetail={setUtmDetail} onRefresh={()=>fetchUtmMetrics()} loading={utmLoading}/>
-
-    <OutboundClicks ga4Fetch={ga4Fetch} period={period}/>
-    <div className="panel"><div className="panel-head"><h3>Escribir next</h3><span className="pill pill-green">{d.escribir.length} oportunidades</span></div><div className="panel-body">
-      {d.escribir.length===0&&<div style={{fontSize:12,color:'var(--hint)',padding:'8px 0'}}>No hay queries sin pagina dedicada que cumplan el umbral.</div>}
-      {d.escribir.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({query:r.keys[0],page:null,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / score {r.score}</div></div><span className={`score ${r.score>80?'s-hi':r.score>50?'s-md':'s-lo'}`}>{r.score}</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Content brief para "'+r.keys[0]+'" para paislector.com'),'_blank')}}>Brief</button></div>)}
-      <div className="explain">Click en fila para ver tendencia y diagnostico.</div></div></div>
-    <div className="panel"><div className="panel-head"><h3>Optimizar ahora</h3><span className="pill pill-coral">{d.optimizar.length+d.dropping.length+d.hasPageOpt.length} acciones</span></div><div className="panel-body">
-      {d.hasPageOpt.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--blue)',marginBottom:6,marginTop:2}}>Ya tienen pagina ({d.hasPageOpt.length})</div>
-      {d.hasPageOpt.map((r,i)=><div className="row" key={'hp'+i} onClick={()=>openDetail(r)}><div className="row-left"><div className="row-kw">{r.query}</div><div className="row-meta"><span className="url-tag">{shortPath(r.page)}</span> pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr / {r.action}</div></div><span className="score s-md">OPT</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Optimiza '+r.page+' para "'+r.query+'". Pos: '+r.position.toFixed(1)+'. Accion: '+r.action),'_blank')}}>Brief</button></div>)}</>}
-      {d.optimizar.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6,marginTop:d.hasPageOpt.length>0?10:2}}>CTR bajo ({d.optimizar.length})</div>
-      {d.optimizar.map((r,i)=><div className="row" key={'o'+i} onClick={()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / CTR {(r.ctr*100).toFixed(1)}% vs esperado {r.expected}% / pos {r.position.toFixed(1)}</div></div><span className="score s-lo">CTR</span></div>)}</>}
-      {d.dropping.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6,marginTop:10}}>Cayendo ({d.dropping.length})</div>
-      {d.dropping.map((r,i)=><div className="row" key={'d'+i} onClick={()=>openDetail({query:null,page:r.page,position:r.curPos,clicks:r.clicks,impressions:0})}><div className="row-left"><div className="row-kw">{shortPath(r.page)}</div><div className="row-meta">pos {r.prevPos.toFixed(1)} &rarr; {r.curPos.toFixed(1)} / -{Math.max(0,r.lostClicks)} clicks</div></div><span className="score s-lo">DROP</span></div>)}</>}
-      <div className="explain">Click en fila para diagnostico detallado.</div></div></div>
-    <div className="panel"><div className="panel-head"><h3>Quick wins</h3><span className="pill pill-amber">{d.quickWins.length} keywords</span></div><div className="panel-body">
-      {d.quickWins.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / CTR {(r.ctr*100).toFixed(1)}%</div></div><span className={`score ${r.action==='protect'?'s-hi':r.action==='push'?'s-md':'s-lo'}`}>{r.action==='protect'?'TOP3':r.action==='push'?'PUSH':'NEW'}</span></div>)}
-      <div className="explain">TOP3: proteger. PUSH: internal links. NEW: articulo nuevo.</div></div></div>
-    <div className="panel"><div className="panel-head"><h3>Cluster map</h3><span className="pill pill-purple">{d.clusterArr.length} clusters</span></div><div className="panel-body">
-      {d.clusterArr.map((c,i)=><div className="row" key={i} style={{cursor:'default'}}><div className="row-left"><div className="row-kw">{c.name}</div><div className="row-meta">{c.count} queries / {fmt(c.clicks)} clicks / {fmt(c.impressions)} impr</div></div><span className={`score ${c.count>5?'s-hi':c.count>3?'s-md':'s-lo'}`}>{c.count}q</span></div>)}
-      <div className="explain">Queries por tema. Mas queries = mas oportunidad de hub.</div></div></div>
-    {d.contentVsTraffic&&d.contentVsTraffic.length>0&&<div className="panel"><div className="panel-head"><h3>Contenido vs trafico</h3><span className="pill pill-blue">GSC + GA4</span></div><div className="panel-body">
-      {d.contentVsTraffic.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({page:'https://paislector.com'+r.page,query:null,position:0,clicks:r.gscClicks,impressions:0})}><div className="row-left"><div className="row-kw">{r.page.length>45?r.page.slice(0,45)+'...':r.page}</div><div className="row-meta">GSC: {fmt(r.gscClicks)} / GA4: {fmt(r.gaSessions)} / ratio {r.ratio.toFixed(1)}x{r.ratio>1.5?' \u2014 social fuerte':''}</div></div></div>)}
-      <div className="explain">Ratio +1.5 = trafico no-SEO. ~1 = depende de Google.</div></div></div>}
-    </>:null}
-    <div className="footer">SEO Pulse {VERSION} / $0<br/><button className="btn-secondary" style={{marginTop:6}} onClick={()=>{localStorage.clear();setConfig(null);setToken(null);setData(null);setGa4Warn(null);setAdsenseWarn(null)}}>Resetear todo</button></div>
     {detailItem&&<PageDetailDrawer item={detailItem} onClose={()=>setDetailItem(null)} gscFn={gsc} period={period}/>}
     {utmDetail&&<UtmDetailDrawer utm={utmDetail} onClose={()=>setUtmDetail(null)} ga4Fetch={ga4Fetch} period={period} onDelete={deleteUtm} onArchive={archiveUtm}/>}
   </div>);
