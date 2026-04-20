@@ -740,6 +740,205 @@ function UtmDetailDrawer({utm,onClose,ga4Fetch,period,onDelete,onArchive}){
     </div>,document.body);
 }
 
+// ====== OUTBOUND CLICKS ======
+// Mide clicks salientes desde tu site (GA4 Enhanced Measurement captura esto auto)
+function OutboundClicks({ga4Fetch,period}){
+  const[loading,setLoading]=useState(true);
+  const[domains,setDomains]=useState(null);
+  const[error,setError]=useState(null);
+  const[selectedDomain,setSelectedDomain]=useState(null);
+  const[domainDetail,setDomainDetail]=useState(null);
+  const[detailLoading,setDetailLoading]=useState(false);
+
+  const fetchDomains=useCallback(async()=>{
+    if(!ga4Fetch)return;
+    setLoading(true);setError(null);
+    const sd=daysAgo(period),ed=daysAgo(1);
+    try{
+      const resp=await ga4Fetch({
+        dateRanges:[{startDate:sd,endDate:ed}],
+        dimensions:[{name:'linkDomain'}],
+        metrics:[{name:'eventCount'}],
+        dimensionFilter:{filter:{fieldName:'eventName',stringFilter:{value:'click'}}},
+        orderBys:[{metric:{metricName:'eventCount'},desc:true}],
+        limit:50
+      });
+      if(resp&&resp.rows){
+        const rows=resp.rows.map(r=>({domain:r.dimensionValues[0].value||'(not set)',clicks:parseInt(r.metricValues[0].value)})).filter(r=>r.domain&&r.domain!=='(not set)');
+        setDomains(rows);
+      }else{setDomains([])}
+    }catch(e){setError(e.message);console.warn('Outbound error:',e.message)}
+    setLoading(false);
+  },[ga4Fetch,period]);
+
+  useEffect(()=>{fetchDomains()},[fetchDomains]);
+
+  const openDomainDetail=async(domain)=>{
+    setSelectedDomain(domain);setDetailLoading(true);setDomainDetail(null);
+    const sd=daysAgo(period),ed=daysAgo(1);
+    try{
+      const[pagesResp,urlsResp,dailyResp]=await Promise.all([
+        ga4Fetch({
+          dateRanges:[{startDate:sd,endDate:ed}],
+          dimensions:[{name:'pagePath'}],
+          metrics:[{name:'eventCount'}],
+          dimensionFilter:{andGroup:{expressions:[
+            {filter:{fieldName:'eventName',stringFilter:{value:'click'}}},
+            {filter:{fieldName:'linkDomain',stringFilter:{value:domain}}}
+          ]}},
+          orderBys:[{metric:{metricName:'eventCount'},desc:true}],
+          limit:10
+        }),
+        ga4Fetch({
+          dateRanges:[{startDate:sd,endDate:ed}],
+          dimensions:[{name:'linkUrl'}],
+          metrics:[{name:'eventCount'}],
+          dimensionFilter:{andGroup:{expressions:[
+            {filter:{fieldName:'eventName',stringFilter:{value:'click'}}},
+            {filter:{fieldName:'linkDomain',stringFilter:{value:domain}}}
+          ]}},
+          orderBys:[{metric:{metricName:'eventCount'},desc:true}],
+          limit:10
+        }),
+        ga4Fetch({
+          dateRanges:[{startDate:sd,endDate:ed}],
+          dimensions:[{name:'date'}],
+          metrics:[{name:'eventCount'}],
+          dimensionFilter:{andGroup:{expressions:[
+            {filter:{fieldName:'eventName',stringFilter:{value:'click'}}},
+            {filter:{fieldName:'linkDomain',stringFilter:{value:domain}}}
+          ]}},
+          orderBys:[{dimension:{dimensionName:'date'}}]
+        })
+      ]);
+      const detail={pages:[],urls:[],daily:[]};
+      if(pagesResp&&pagesResp.rows){detail.pages=pagesResp.rows.map(r=>({page:r.dimensionValues[0].value,clicks:parseInt(r.metricValues[0].value)}))}
+      if(urlsResp&&urlsResp.rows){detail.urls=urlsResp.rows.map(r=>({url:r.dimensionValues[0].value,clicks:parseInt(r.metricValues[0].value)}))}
+      if(dailyResp&&dailyResp.rows){detail.daily=dailyResp.rows.map(r=>{const d=r.dimensionValues[0].value;return{date:d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8),clicks:parseInt(r.metricValues[0].value)}})}
+      setDomainDetail(detail);
+    }catch(e){console.warn('Domain detail error:',e.message)}
+    setDetailLoading(false);
+  };
+
+  const closeDomainDetail=()=>{setSelectedDomain(null);setDomainDetail(null)};
+
+  // Iconos/colores por tipo de dominio conocido
+  const domainType=(d)=>{
+    if(/substack\.com/.test(d))return{label:'newsletter',color:'coral'};
+    if(/linkedin\.com/.test(d))return{label:'social',color:'blue'};
+    if(/twitter\.com|x\.com/.test(d))return{label:'social',color:'blue'};
+    if(/facebook\.com|instagram\.com|tiktok\.com/.test(d))return{label:'social',color:'purple'};
+    if(/amazon\.|mercadolibre\./.test(d))return{label:'afiliado',color:'amber'};
+    if(/youtube\.com|vimeo\.com/.test(d))return{label:'video',color:'red'};
+    if(/spotify\.com|apple\.com/.test(d))return{label:'media',color:'green'};
+    return{label:'externo',color:'blue'};
+  };
+
+  const totalClicks=domains?domains.reduce((s,d)=>s+d.clicks,0):0;
+  const maxClicks=domains&&domains[0]?domains[0].clicks:1;
+
+  return(<div className="panel"><div className="panel-head">
+    <h3>Clicks salientes</h3>
+    <span className="pill pill-amber">GA4 outbound</span>
+  </div><div className="panel-body">
+
+    {error&&<div className="utm-err">{error} — Verifica que Enhanced Measurement esté activo en GA4 (Admin - Data Streams - tu stream).</div>}
+
+    {loading?<div className="loading"><div className="spinner"/>Cargando clicks salientes...</div>:<>
+
+      {domains&&domains.length===0&&<div style={{fontSize:12,color:'var(--hint)',padding:'12px 0',textAlign:'center'}}>
+        Sin clicks salientes registrados en este período. GA4 necesita Enhanced Measurement activo (default) para capturar esto.
+      </div>}
+
+      {domains&&domains.length>0&&<>
+        <div style={{display:'flex',alignItems:'baseline',gap:8,marginBottom:10}}>
+          <span style={{fontFamily:'var(--serif)',fontSize:22,color:'var(--text)'}}>{fmt(totalClicks)}</span>
+          <span style={{fontSize:11,color:'var(--hint)'}}>clicks hacia {domains.length} dominios externos en {period}d</span>
+        </div>
+
+        {domains.map((d,i)=>{
+          const t=domainType(d.domain);
+          const pct=Math.round(d.clicks/maxClicks*100);
+          return(<div className="utm-row" key={i} onClick={()=>openDomainDetail(d.domain)}>
+            <div className="utm-row-main">
+              <div className="utm-row-campaign">{d.domain}</div>
+              <div className="utm-row-meta">
+                <span className={"pill pill-"+t.color} style={{fontSize:9,padding:'2px 7px'}}>{t.label}</span>
+                <div style={{flex:1,height:4,background:'var(--surface-alt)',borderRadius:2,overflow:'hidden',marginLeft:4}}>
+                  <div style={{height:'100%',width:pct+'%',background:'var(--amber)'}}/>
+                </div>
+              </div>
+            </div>
+            <div className="utm-row-metrics">
+              <div className="utm-metric-val">{fmt(d.clicks)}</div>
+              <div className="utm-metric-sub">clicks</div>
+            </div>
+          </div>);
+        })}
+
+        <div className="explain">GA4 Enhanced Measurement captura cada click hacia dominios externos automáticamente. Click en un dominio para ver desde qué páginas salen más clicks.</div>
+      </>}
+
+    </>}
+
+    {selectedDomain&&ReactDOM.createPortal(
+      <div className="drawer-overlay" onClick={e=>{if(e.target===e.currentTarget)closeDomainDetail()}}>
+        <div className="drawer">
+          <div className="drawer-handle" onClick={closeDomainDetail}><span/></div>
+          <div className="drawer-header">
+            <h2>{selectedDomain}</h2>
+            <div style={{fontSize:11,color:'var(--hint)',marginTop:4}}>Clicks salientes en últimos {period} días</div>
+          </div>
+          <div className="drawer-body">
+            {detailLoading?<div className="loading"><div className="spinner"/>Cargando detalle...</div>:domainDetail?<>
+
+              {domainDetail.daily&&domainDetail.daily.length>0&&<div style={{marginBottom:14}}>
+                <div className="diag-title">Clicks por día</div>
+                <UtmDetailChart daily={domainDetail.daily.map(d=>({date:d.date,sessions:d.clicks}))}/>
+              </div>}
+
+              {domainDetail.pages&&domainDetail.pages.length>0&&<div className="diag-section">
+                <div className="diag-title">Páginas de origen (top 10)</div>
+                <div style={{fontSize:11,color:'var(--hint)',marginBottom:8}}>Desde qué páginas de tu site salen más clicks hacia este dominio</div>
+                {domainDetail.pages.map((p,i)=>{
+                  const maxP=domainDetail.pages[0].clicks;
+                  return(<div key={i} style={{marginBottom:8}}>
+                    <div style={{display:'flex',justifyContent:'space-between',marginBottom:3,gap:8}}>
+                      <code style={{fontSize:11,color:'var(--text)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',flex:1,minWidth:0}}>{p.page}</code>
+                      <span style={{fontSize:11,fontWeight:500,flexShrink:0}}>{p.clicks}</span>
+                    </div>
+                    <div style={{height:4,background:'var(--surface-alt)',borderRadius:2,overflow:'hidden'}}>
+                      <div style={{height:'100%',width:(p.clicks/maxP*100)+'%',background:'var(--amber)'}}/>
+                    </div>
+                  </div>);
+                })}
+              </div>}
+
+              {domainDetail.urls&&domainDetail.urls.length>0&&<div className="diag-section">
+                <div className="diag-title">URLs específicas clickeadas (top 10)</div>
+                {domainDetail.urls.map((u,i)=><div key={i} className="diag-item" style={{padding:'6px 10px'}}>
+                  <div style={{display:'flex',justifyContent:'space-between',gap:8,alignItems:'center'}}>
+                    <code style={{fontSize:11,color:'var(--text)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',flex:1,minWidth:0}}>{u.url}</code>
+                    <span style={{fontSize:11,fontWeight:500,flexShrink:0}}>{u.clicks}</span>
+                  </div>
+                </div>)}
+              </div>}
+
+              <div className="utm-warn" style={{marginTop:14}}>
+                <strong>Importante:</strong> Esto mide <em>intención</em> (clicks salientes), no <em>conversión</em>. Para saber cuántos de estos clicks se convirtieron en suscripciones/ventas/etc., necesitas mirar las stats nativas del dominio destino (ej. Substack stats).
+              </div>
+
+              <div style={{marginTop:16,display:'flex',justifyContent:'flex-end'}}>
+                <button className="btn-secondary" onClick={closeDomainDetail}>Cerrar</button>
+              </div>
+            </>:<div style={{padding:20,textAlign:'center',color:'var(--hint)'}}>Sin datos para este dominio.</div>}
+          </div>
+        </div>
+      </div>,document.body)}
+
+  </div></div>);
+}
+
 function App(){
   const[config,setConfig]=useState(getConfig);const[token,setToken]=useState(getToken);
   const[period,setPeriod]=useState(28);const[loading,setLoading]=useState(false);
@@ -944,6 +1143,8 @@ function App(){
 
     <UtmBuilder onCreated={createUtm} existingUtms={utms}/>
     <UtmDashboard utms={utms} metricsMap={utmMetrics} onOpenDetail={setUtmDetail} onRefresh={()=>fetchUtmMetrics()} loading={utmLoading}/>
+
+    <OutboundClicks ga4Fetch={ga4Fetch} period={period}/>
     <div className="panel"><div className="panel-head"><h3>Escribir next</h3><span className="pill pill-green">{d.escribir.length} oportunidades</span></div><div className="panel-body">
       {d.escribir.length===0&&<div style={{fontSize:12,color:'var(--hint)',padding:'8px 0'}}>No hay queries sin pagina dedicada que cumplan el umbral.</div>}
       {d.escribir.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({query:r.keys[0],page:null,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / score {r.score}</div></div><span className={`score ${r.score>80?'s-hi':r.score>50?'s-md':'s-lo'}`}>{r.score}</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Content brief para "'+r.keys[0]+'" para paislector.com'),'_blank')}}>Brief</button></div>)}
