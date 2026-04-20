@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Pulse v2.7 — País Lector</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap');
+:root{--bg:#FAF8F3;--surface:#FFFFFF;--surface-alt:#F3F0E8;--text:#1A1A18;--muted:#6B6A65;--hint:#9C9A92;--green:#2D5A27;--green-light:#E8F0E6;--coral:#D85A30;--coral-light:#FAECE7;--blue:#185FA5;--blue-light:#E6F1FB;--amber:#BA7517;--amber-light:#FAEEDA;--purple:#534AB7;--purple-light:#EEEDFE;--red:#A32D2D;--red-light:#FCEBEB;--border:rgba(0,0,0,0.08);--radius:12px;--serif:'Instrument Serif',Georgia,serif;--sans:'DM Sans',-apple-system,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.app{max-width:720px;margin:0 auto;padding:20px 16px 40px}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 20px;border-bottom:1px solid var(--border);margin-bottom:20px}
+header h1{font-family:var(--serif);font-size:26px;font-weight:400;letter-spacing:-0.02em}
+header h1 em{color:var(--green);font-style:normal}
+.header-right{display:flex;align-items:center;gap:10px}
+.ver{font-size:10px;color:var(--hint)}.dot{width:8px;height:8px;border-radius:50%;background:var(--hint);transition:background 0.3s}.dot.on{background:var(--green)}
+.auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:55vh;text-align:center;gap:20px}
+.auth-screen h2{font-family:var(--serif);font-size:28px;font-weight:400}
+.auth-screen p{color:var(--muted);font-size:14px;max-width:380px;line-height:1.6}
+.auth-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:14px;font-weight:500;color:var(--text);cursor:pointer}
+.auth-btn:hover{border-color:var(--green)}
+.setup-note{background:var(--surface-alt);border-radius:var(--radius);padding:16px;text-align:left;max-width:440px;width:100%}
+.setup-note h3{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:10px}
+.setup-note ol{font-size:13px;color:var(--muted);line-height:1.8;padding-left:18px}
+.setup-note code{background:var(--bg);padding:2px 5px;border-radius:4px;font-size:12px}
+.config-form{display:flex;flex-direction:column;gap:10px;max-width:440px;width:100%}
+.config-form label{font-size:12px;font-weight:500;color:var(--muted)}
+.config-form input{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:var(--sans);background:var(--surface)}
+.config-form input:focus{outline:none;border-color:var(--green)}
+.config-row{display:flex;gap:10px}.config-row>div{flex:1;display:flex;flex-direction:column;gap:4px}
+.btn-primary{padding:11px 22px;border-radius:var(--radius);border:none;background:var(--green);color:white;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer}.btn-primary:hover{opacity:0.9}
+.btn-secondary{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:12px;color:var(--muted);cursor:pointer}
+.controls{display:flex;gap:6px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.per-btn{padding:5px 12px;border-radius:18px;border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:12px;color:var(--muted);cursor:pointer}
+.per-btn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.ref-btn{margin-left:auto;padding:5px 12px;border-radius:18px;border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:12px;color:var(--muted);cursor:pointer}
+.ref-btn:hover{border-color:var(--green);color:var(--green)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.stat{background:var(--surface-alt);border-radius:var(--radius);padding:12px 14px}
+.stat-label{font-size:11px;color:var(--hint);margin-bottom:2px}.stat-val{font-family:var(--serif);font-size:22px}.stat-chg{font-size:11px;margin-top:2px}
+.up{color:var(--green)}.down{color:var(--coral)}
+.panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:0.5px solid var(--border)}
+.panel-head h3{font-size:13px;font-weight:600}
+.pill{font-size:10px;padding:3px 9px;border-radius:14px;font-weight:500}
+.pill-green{background:var(--green-light);color:var(--green)}.pill-coral{background:var(--coral-light);color:var(--coral)}.pill-blue{background:var(--blue-light);color:var(--blue)}.pill-amber{background:var(--amber-light);color:var(--amber)}.pill-purple{background:var(--purple-light);color:var(--purple)}.pill-red{background:var(--red-light);color:var(--red)}
+.panel-body{padding:10px 14px}
+.row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background 0.15s}.row:last-child{border-bottom:none}.row:hover{background:var(--surface-alt)}
+.row-left{flex:1;min-width:0}.row-kw{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row-meta{font-size:10px;color:var(--hint);margin-top:1px;line-height:1.4}
+.row-btn{font-size:10px;padding:3px 8px;border-radius:6px;border:0.5px solid var(--border);background:transparent;cursor:pointer;white-space:nowrap;color:var(--muted)}.row-btn:hover{border-color:var(--green);color:var(--green)}
+.score{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:20px;border-radius:5px;font-size:10px;font-weight:600;padding:0 5px}
+.s-hi{background:var(--green-light);color:var(--green)}.s-md{background:var(--amber-light);color:var(--amber)}.s-lo{background:var(--coral-light);color:var(--coral)}.s-new{background:var(--purple-light);color:var(--purple)}
+.explain{font-size:11px;color:var(--hint);padding:6px 0 2px;line-height:1.5;border-top:0.5px solid var(--border);margin-top:6px}
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--hint);font-size:13px;gap:8px}
+.spinner{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin 0.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{padding:12px 14px;background:var(--coral-light);border-radius:var(--radius);color:var(--coral);font-size:12px;margin-bottom:12px}
+.warn-msg{padding:10px 14px;background:var(--amber-light);border-radius:var(--radius);color:var(--amber);font-size:11px;margin-bottom:12px}
+.footer{text-align:center;padding:20px 0;font-size:11px;color:var(--hint)}
+.kw-textarea{width:100%;min-height:80px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-size:12px;font-family:var(--sans);background:var(--surface);resize:vertical;line-height:1.6}.kw-textarea:focus{outline:none;border-color:var(--green)}
+.kw-actions{display:flex;gap:8px;margin-top:8px;align-items:center}.kw-count{font-size:11px;color:var(--hint);margin-left:auto}
+.chart-wrap{position:relative;height:200px;margin:8px 0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.country-bar{display:flex;align-items:center;gap:6px;padding:4px 0}
+.country-name{font-size:11px;min-width:30px;font-weight:500}
+.country-track{flex:1;height:8px;background:var(--surface-alt);border-radius:4px;overflow:hidden}
+.country-fill{height:100%;border-radius:4px;background:var(--green)}
+.country-val{font-size:10px;color:var(--hint);min-width:40px;text-align:right}
+.url-tag{font-size:9px;color:var(--blue);background:var(--blue-light);padding:1px 5px;border-radius:3px;display:inline-block;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+/* DRAWER */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:100;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s}
+.drawer{background:var(--bg);width:100%;max-width:720px;max-height:85vh;border-radius:16px 16px 0 0;overflow-y:auto;padding:0;animation:slideUp 0.25s ease-out}
+.drawer-handle{display:flex;justify-content:center;padding:10px 0 4px;cursor:pointer}.drawer-handle span{width:36px;height:4px;border-radius:2px;background:var(--border)}
+.drawer-header{padding:8px 18px 14px;border-bottom:1px solid var(--border)}
+.drawer-header h2{font-family:var(--serif);font-size:20px;font-weight:400;margin-bottom:2px}
+.drawer-header .drawer-url{font-size:11px;color:var(--blue);word-break:break-all}
+.drawer-body{padding:14px 18px 24px}
+.drawer-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.drawer-stats .stat{padding:10px 12px}.drawer-stats .stat-val{font-size:18px}
+.diag-section{margin-top:14px}
+.diag-title{font-size:12px;font-weight:600;margin-bottom:8px}
+.diag-item{padding:8px 12px;background:var(--surface);border-radius:8px;border:0.5px solid var(--border);margin-bottom:6px;font-size:12px;line-height:1.6}
+.diag-label{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;display:inline-block;margin-right:6px}
+.diag-urgent{background:var(--coral-light);color:var(--coral)}.diag-warn{background:var(--amber-light);color:var(--amber)}.diag-ok{background:var(--green-light);color:var(--green)}.diag-info{background:var(--blue-light);color:var(--blue)}
+.top-queries-list .row{cursor:default}.top-queries-list .row:hover{background:transparent}
+/* DISCOVERY */
+.disc-input-row{display:flex;gap:8px;align-items:center}.disc-input{flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:var(--sans);background:var(--surface)}.disc-input:focus{outline:none;border-color:var(--green)}
+.disc-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.disc-chip{font-size:11px;padding:4px 10px;border-radius:14px;border:0.5px solid var(--border);background:var(--surface-alt);cursor:pointer;color:var(--muted);transition:all 0.15s}.disc-chip:hover{border-color:var(--green);color:var(--green)}
+.disc-rank{font-size:9px;color:var(--hint);margin-left:2px}
+.disc-searching{font-size:11px;color:var(--hint);padding:8px 0;display:flex;align-items:center;gap:6px}
+/* REVENUE */
+.rev-total{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}.rev-amount{font-family:var(--serif);font-size:28px;color:var(--green)}.rev-sub{font-size:11px;color:var(--hint)}
+.rev-bar{display:flex;align-items:center;gap:6px;padding:4px 0}
+.rev-bar-track{flex:1;height:8px;background:var(--surface-alt);border-radius:4px;overflow:hidden}
+.rev-bar-fill{height:100%;border-radius:4px;background:var(--amber)}
+.rev-val{font-size:10px;color:var(--hint);min-width:50px;text-align:right;font-weight:500}
+.rev-page{font-size:11px;min-width:0;flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adsense-warn{padding:8px 12px;background:var(--amber-light);border-radius:8px;color:var(--amber);font-size:11px;margin-bottom:8px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@media(max-width:480px){.stats{grid-template-columns:repeat(2,1fr)}.stat-val{font-size:18px}header h1{font-size:20px}.two-col{grid-template-columns:1fr}.url-tag{max-width:120px}.drawer-stats{grid-template-columns:repeat(2,1fr)}}
+/* UTM MODULE STYLES */
+.utm-form-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:10px}
+.utm-grid-2{grid-template-columns:1fr 1fr}
+.utm-field{display:flex;flex-direction:column;gap:4px}
+.utm-field label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em}
+.utm-input{width:100%;padding:8px 11px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:var(--sans);background:var(--surface);color:var(--text)}
+.utm-input:focus{outline:none;border-color:var(--green)}
+.utm-select{padding:8px 11px;border-radius:8px;border:1px solid var(--border);font-size:12px;font-family:var(--sans);background:var(--surface);color:var(--text);cursor:pointer}
+.utm-hint{font-size:10px;color:var(--hint);margin-top:2px;line-height:1.4}
+.utm-advanced-toggle{font-size:11px;color:var(--blue);cursor:pointer;padding:6px 0;margin:2px 0;user-select:none}
+.utm-advanced-toggle:hover{color:var(--text)}
+.utm-preview{margin:12px 0 10px;padding:10px 12px;background:var(--surface-alt);border-radius:8px}
+.utm-preview-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.utm-preview-head>span{font-size:10px;color:var(--hint);text-transform:uppercase;letter-spacing:0.05em;font-weight:600}
+.utm-preview-url{display:block;font-family:'Courier New',monospace;font-size:11px;color:var(--text);word-break:break-all;line-height:1.5;padding:6px 0}
+.utm-copy-btn{font-size:10px;padding:3px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-family:var(--sans)}
+.utm-copy-btn:hover{border-color:var(--green);color:var(--green)}
+.utm-err{padding:8px 12px;background:var(--coral-light);border-radius:8px;color:var(--coral);font-size:11px;margin-bottom:8px;line-height:1.5}
+.utm-warn{padding:8px 12px;background:var(--amber-light);border-radius:8px;color:var(--amber);font-size:11px;margin:8px 0;line-height:1.5}
+.utm-actions{display:flex;gap:8px;margin-top:4px;align-items:center}
+.utm-totals{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.utm-total-card{background:var(--surface-alt);border-radius:8px;padding:9px 11px}
+.utm-total-label{font-size:10px;color:var(--hint);margin-bottom:2px;line-height:1.3}
+.utm-total-val{font-family:var(--serif);font-size:18px;color:var(--text)}
+.utm-filters{display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.utm-list{display:flex;flex-direction:column;gap:0}
+.utm-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background 0.15s}
+.utm-row:last-child{border-bottom:none}
+.utm-row:hover{background:var(--surface-alt)}
+.utm-row-main{flex:1;min-width:0}
+.utm-row-campaign{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.utm-row-meta{display:flex;align-items:center;gap:5px;font-size:10px;flex-wrap:wrap}
+.utm-badge-src{padding:1px 6px;background:var(--blue-light);color:var(--blue);border-radius:4px;font-weight:500}
+.utm-badge-med{padding:1px 6px;background:var(--purple-light);color:var(--purple);border-radius:4px;font-weight:500}
+.utm-row-time{color:var(--hint);margin-left:2px}
+.utm-row-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:4px}
+.utm-tag{font-size:9px;padding:1px 6px;background:var(--green-light);color:var(--green);border-radius:10px;font-weight:500}
+.utm-row-metrics{text-align:right;min-width:68px}
+.utm-metric-val{font-family:var(--serif);font-size:18px;color:var(--text);line-height:1}
+.utm-metric-sub{font-size:9px;color:var(--hint);margin-top:1px}
+.utm-metric-eng{font-size:10px;margin-top:2px;color:var(--muted)}
+.utm-metric-eng.up{color:var(--green)}
+.utm-metric-eng.down{color:var(--coral)}
+.utm-row-actions{display:flex;gap:4px}
+.utm-url-box{padding:10px 12px;background:var(--surface);border:0.5px solid var(--border);border-radius:8px;margin-bottom:10px}
+.utm-url-label{font-size:10px;color:var(--hint);text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin-bottom:4px}
+@media(max-width:480px){
+.utm-grid-2{grid-template-columns:1fr}
+.utm-totals{grid-template-columns:repeat(2,1fr)}
+.utm-total-val{font-size:16px}
+.utm-row-metrics{min-width:60px}
+.utm-metric-val{font-size:16px}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const {useState,useEffect,useCallback,useRef}=React;
+const VERSION='v2.7';
+const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
+const SUGGEST_API=REDIRECT_URI+'/api/suggest';
+const SCOPES='https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly https://www.googleapis.com/auth/adsense.readonly';
+const GSC_API='https://www.googleapis.com/webmasters/v3';
+const GA4_API='https://analyticsdata.googleapis.com/v1beta';
+const ADSENSE_API='https://adsense.googleapis.com/v2';
+const COUNTRY_NAMES={MEX:'Mexico',USA:'USA',ARG:'Argentina',COL:'Colombia',ESP:'Spain',PER:'Peru',CHL:'Chile',ECU:'Ecuador',VEN:'Venezuela',BOL:'Bolivia',GTM:'Guatemala',DOM:'Rep. Dom.',CRI:'Costa Rica',PAN:'Panama',URY:'Uruguay',PRY:'Paraguay',HND:'Honduras',SLV:'El Salvador',NIC:'Nicaragua',CUB:'Cuba',BRA:'Brasil',DEU:'Alemania',FRA:'Francia',GBR:'UK',ITA:'Italia',JPN:'Japon'};
+
+function fmt(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return Math.round(n).toLocaleString()}
+function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().split('T')[0]}
+function pct(c,p){if(!p)return null;return((c-p)/p*100).toFixed(1)}
+function getConfig(){try{return JSON.parse(localStorage.getItem('sp2_config')||'null')}catch{return null}}
+function getToken(){try{const t=JSON.parse(localStorage.getItem('sp2_token')||'null');if(t&&t.exp>Date.now())return t;return null}catch{return null}}
+function getSavedKws(){try{return JSON.parse(localStorage.getItem('sp2_extrakws')||'null')}catch{return null}}
+function shortPath(url){return url.replace(/https?:\/\/[^/]+/,'')}
+function fmtMoney(n){if(n>=1000)return'$'+(n/1000).toFixed(1)+'K';if(n>=1)return'$'+n.toFixed(2);if(n>=0.01)return'$'+n.toFixed(2);return'$'+n.toFixed(3)}
+function getAdsenseAccountId(){try{return localStorage.getItem('sp2_adsense_account')||null}catch{return null}}
+function setAdsenseAccountId(id){try{localStorage.setItem('sp2_adsense_account',id)}catch{}}
+const expectedCtr=[0,0.396,0.187,0.110,0.076,0.053,0.044,0.032,0.024,0.020,0.016,0.014,0.012,0.010,0.009,0.008,0.007,0.006,0.006,0.005,0.005];
+function getExpectedCtr(pos){const p=Math.round(Math.min(Math.max(pos,1),20));return expectedCtr[p]||0.005}
+function suggestAction(pos){if(pos<=3)return'Mejorar CTR (title/meta)';if(pos<=7)return'Push a top 3 (internal links + contenido)';if(pos<=15)return'Expandir contenido + links internos';return'Reescribir o nuevo articulo dedicado'}
+
+// ====== UTM UTILS ======
+function getUtms(){try{return JSON.parse(localStorage.getItem('sp2_utms')||'[]')}catch{return[]}}
+function saveUtms(arr){try{localStorage.setItem('sp2_utms',JSON.stringify(arr))}catch{}}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function slugify(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)}
+function buildUtmUrl(u){const p=new URLSearchParams();if(u.source)p.set('utm_source',slugify(u.source));if(u.medium)p.set('utm_medium',slugify(u.medium));if(u.campaign)p.set('utm_campaign',slugify(u.campaign));if(u.term)p.set('utm_term',slugify(u.term));if(u.content)p.set('utm_content',slugify(u.content));const sep=u.destination.includes('?')?'&':'?';return u.destination+sep+p.toString()}
+function validateUtm(u){const errs=[];if(!u.destination||!u.destination.startsWith('http'))errs.push('Destination URL debe empezar con http');if(!u.source)errs.push('Source es requerido');if(!u.medium)errs.push('Medium es requerido');if(!u.campaign)errs.push('Campaign es requerido');return errs}
+function findUtmDuplicate(list,u,excludeId){return list.find(x=>x.id!==excludeId&&x.destination===u.destination&&slugify(x.source)===slugify(u.source)&&slugify(x.medium)===slugify(u.medium)&&slugify(x.campaign)===slugify(u.campaign))}
+function formatRelTime(ts){const d=Date.now()-ts;const m=Math.floor(d/60000);if(m<1)return'ahora';if(m<60)return'hace '+m+'m';const h=Math.floor(m/60);if(h<24)return'hace '+h+'h';const da=Math.floor(h/24);if(da<30)return'hace '+da+'d';const mo=Math.floor(da/30);return'hace '+mo+'mo'}
+function uniqValues(list,field){return Array.from(new Set(list.map(x=>x[field]).filter(Boolean))).slice(0,6)}
+function genQrUrl(text,size){size=size||120;return'https://api.qrserver.com/v1/create-qr-code/?size='+size+'x'+size+'&data='+encodeURIComponent(text)+'&margin=0'}
+
+function diagnose(daily,topQueries,avgPos,avgCtr,totalClicks,totalImpr){
+  const actions=[];
+  if(daily&&daily.length>=6){
+    const mid=Math.floor(daily.length/2);
+    const h1Clicks=daily.slice(0,mid).reduce((s,d)=>s+d.clicks,0);
+    const h2Clicks=daily.slice(mid).reduce((s,d)=>s+d.clicks,0);
+    const h1Pos=daily.slice(0,mid).reduce((s,d)=>s+d.position,0)/mid;
+    const h2Pos=daily.slice(mid).reduce((s,d)=>s+d.position,0)/(daily.length-mid);
+    const clickDelta=h1Clicks>0?((h2Clicks-h1Clicks)/h1Clicks*100):0;
+    const posDelta=h2Pos-h1Pos;
+    if(posDelta>1.5)actions.push({level:'urgent',text:'Posicion cayendo: '+h1Pos.toFixed(1)+' \u2192 '+h2Pos.toFixed(1)+'. Revisar competidores, backlinks, core updates.'});
+    else if(posDelta>0.5)actions.push({level:'warn',text:'Leve descenso ('+h1Pos.toFixed(1)+' \u2192 '+h2Pos.toFixed(1)+'). Reforzar con internal links.'});
+    else if(posDelta<-1)actions.push({level:'ok',text:'Posicion mejorando: '+h1Pos.toFixed(1)+' \u2192 '+h2Pos.toFixed(1)+'.'});
+    if(clickDelta<-25&&h1Clicks>10)actions.push({level:'urgent',text:'Clicks -'+Math.abs(clickDelta).toFixed(0)+'% segunda mitad del periodo.'});
+    else if(clickDelta>25&&h2Clicks>10)actions.push({level:'ok',text:'Clicks +'+clickDelta.toFixed(0)+'% segunda mitad.'});
+  }
+  const expCtr=getExpectedCtr(avgPos);
+  if(avgCtr<expCtr*0.5)actions.push({level:'urgent',text:'CTR muy bajo: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'% esperado. Reescribir title/meta.'});
+  else if(avgCtr<expCtr*0.75)actions.push({level:'warn',text:'CTR bajo: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'%. Oportunidad en title/meta.'});
+  else actions.push({level:'ok',text:'CTR saludable: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'%.'});
+  if(avgPos<=3)actions.push({level:'info',text:'Top 3: Proteger. Mantener fresco, no cambios grandes.'});
+  else if(avgPos<=7)actions.push({level:'info',text:'Pos '+avgPos.toFixed(1)+': Push a top 3 con 3-5 internal links + FAQ schema.'});
+  else if(avgPos<=15)actions.push({level:'warn',text:'Pos '+avgPos.toFixed(1)+': Expandir contenido +500 palabras, H2s, media, internal links.'});
+  else actions.push({level:'urgent',text:'Pos '+avgPos.toFixed(1)+': Reescritura o nuevo articulo dedicado.'});
+  if(topQueries&&topQueries.length>0&&totalClicks>0&&topQueries[0].clicks/totalClicks>0.6)actions.push({level:'warn',text:'Trafico concentrado en "'+topQueries[0].keys[0]+'" ('+((topQueries[0].clicks/totalClicks)*100).toFixed(0)+'%). Diversificar long-tail.'});
+  if(totalImpr>1000&&totalClicks<10)actions.push({level:'urgent',text:fmt(totalImpr)+' impr pero '+totalClicks+' clicks. Title/meta no conecta.'});
+  return actions;
+}
+
+function DetailChart({daily}){
+  const canvasRef=useRef(null);const chartRef=useRef(null);
+  useEffect(()=>{
+    if(!daily||!canvasRef.current)return;
+    if(chartRef.current)chartRef.current.destroy();
+    const ctx=canvasRef.current.getContext('2d');
+    chartRef.current=new Chart(ctx,{type:'line',data:{
+      labels:daily.map(d=>d.date.slice(5)),
+      datasets:[
+        {label:'Clicks',data:daily.map(d=>d.clicks),borderColor:'#2D5A27',backgroundColor:'rgba(45,90,39,0.08)',fill:true,tension:0.3,borderWidth:1.5,pointRadius:1,pointHitRadius:10,yAxisID:'y'},
+        {label:'Posicion',data:daily.map(d=>d.position),borderColor:'#D85A30',backgroundColor:'transparent',fill:false,tension:0.3,borderWidth:1.5,pointRadius:1,pointHitRadius:10,borderDash:[4,3],yAxisID:'y1'}
+      ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,font:{size:11,family:'DM Sans'},padding:8}},tooltip:{backgroundColor:'#1A1A18',titleFont:{size:11,family:'DM Sans'},bodyFont:{size:11,family:'DM Sans'},padding:8,cornerRadius:8,callbacks:{label:function(c){if(c.datasetIndex===1)return'Pos: '+c.parsed.y.toFixed(1);return c.dataset.label+': '+c.parsed.y}}}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:10,family:'DM Sans'},color:'#9C9A92',maxTicksLimit:7}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10,family:'DM Sans'},color:'#2D5A27'},title:{display:true,text:'Clicks',font:{size:10,family:'DM Sans'},color:'#2D5A27'}},y1:{position:'right',reverse:true,grid:{display:false},ticks:{font:{size:10,family:'DM Sans'},color:'#D85A30'},title:{display:true,text:'Posicion',font:{size:10,family:'DM Sans'},color:'#D85A30'}}}}});
+    return()=>{if(chartRef.current)chartRef.current.destroy()};
+  },[daily]);
+  return <div className="chart-wrap"><canvas ref={canvasRef}/></div>;
+}
+
+function TrendChart({dailyData}){
+  const canvasRef=useRef(null);const chartRef=useRef(null);
+  useEffect(()=>{
+    if(!dailyData||!canvasRef.current)return;
+    if(chartRef.current)chartRef.current.destroy();
+    const ctx=canvasRef.current.getContext('2d');
+    chartRef.current=new Chart(ctx,{type:'line',data:{
+      labels:dailyData.map(d=>d.date.slice(5)),
+      datasets:[
+        {label:'Clicks',data:dailyData.map(d=>d.clicks),borderColor:'#2D5A27',backgroundColor:'rgba(45,90,39,0.08)',fill:true,tension:0.3,borderWidth:1.5,pointRadius:0,pointHitRadius:10},
+        {label:'Sessions',data:dailyData.map(d=>d.sessions||0),borderColor:'#185FA5',backgroundColor:'rgba(24,95,165,0.06)',fill:true,tension:0.3,borderWidth:1.5,pointRadius:0,pointHitRadius:10}
+      ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,font:{size:11,family:'DM Sans'},padding:8}},tooltip:{backgroundColor:'#1A1A18',titleFont:{size:11,family:'DM Sans'},bodyFont:{size:11,family:'DM Sans'},padding:8,cornerRadius:8}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:10,family:'DM Sans'},color:'#9C9A92',maxTicksLimit:7}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10,family:'DM Sans'},color:'#9C9A92'}}}}});
+    return()=>{if(chartRef.current)chartRef.current.destroy()};
+  },[dailyData]);
+  return <div className="chart-wrap"><canvas ref={canvasRef}/></div>;
+}
+
+function PageDetailDrawer({item,onClose,gscFn,period}){
+  const[loading,setLoading]=useState(true);const[daily,setDaily]=useState(null);const[topQueries,setTopQueries]=useState(null);const[diag,setDiag]=useState([]);
+  const page=item.page||null;const query=item.query||item.keys?.[0]||null;
+  useEffect(()=>{
+    if(!gscFn)return;
+    (async()=>{
+      setLoading(true);const sd=daysAgo(period),ed=daysAgo(1);
+      try{
+        const filters=[];
+        if(page)filters.push({dimension:'page',operator:'equals',expression:page});
+        else if(query)filters.push({dimension:'query',operator:'equals',expression:query});
+        const body={startDate:sd,endDate:ed,dimensions:['date'],type:'web'};
+        if(filters.length>0)body.dimensionFilterGroups=[{filters}];
+        const resp=await gscFn(body);
+        const d=(resp.rows||[]).map(r=>({date:r.keys[0],clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}));
+        setDaily(d);
+        let tq=null;
+        if(page){const qResp=await gscFn({startDate:sd,endDate:ed,dimensions:['query'],type:'web',dimensionFilterGroups:[{filters:[{dimension:'page',operator:'equals',expression:page}]}],rowLimit:10});tq=qResp.rows||[];setTopQueries(tq)}
+        const totalClicks=d.reduce((s,r)=>s+r.clicks,0);const totalImpr=d.reduce((s,r)=>s+r.impressions,0);
+        const avgPos=d.length>0?d.reduce((s,r)=>s+r.position,0)/d.length:item.position||0;
+        const avgCtr=totalImpr>0?totalClicks/totalImpr:0;
+        setDiag(diagnose(d,tq,avgPos,avgCtr,totalClicks,totalImpr));
+      }catch(e){setDiag([{level:'urgent',text:'Error: '+e.message}])}
+      setLoading(false);
+    })();
+  },[page,query,gscFn,period]);
+  const title=query||shortPath(page||'');
+  const totalClicks=daily?daily.reduce((s,r)=>s+r.clicks,0):item.clicks||0;
+  const totalImpr=daily?daily.reduce((s,r)=>s+r.impressions,0):item.impressions||0;
+  const avgPos=daily&&daily.length>0?daily.reduce((s,r)=>s+r.position,0)/daily.length:item.position||0;
+  const avgCtr=totalImpr>0?(totalClicks/totalImpr*100):0;
+  return ReactDOM.createPortal(
+    <div className="drawer-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="drawer"><div className="drawer-handle" onClick={onClose}><span/></div>
+        <div className="drawer-header"><h2>{title}</h2>{page&&<div className="drawer-url">{shortPath(page)}</div>}</div>
+        <div className="drawer-body">
+          {loading?<div className="loading"><div className="spinner"/>Cargando detalle...</div>:<>
+          <div className="drawer-stats">
+            <div className="stat"><div className="stat-label">Clicks</div><div className="stat-val">{fmt(totalClicks)}</div></div>
+            <div className="stat"><div className="stat-label">Impresiones</div><div className="stat-val">{fmt(totalImpr)}</div></div>
+            <div className="stat"><div className="stat-label">CTR</div><div className="stat-val">{avgCtr.toFixed(1)}%</div></div>
+            <div className="stat"><div className="stat-label">Pos. prom.</div><div className="stat-val">{avgPos.toFixed(1)}</div></div>
+          </div>
+          {daily&&daily.length>0&&<DetailChart daily={daily}/>}
+          <div className="diag-section"><div className="diag-title">Diagnostico y acciones</div>
+            {diag.map((a,i)=><div className="diag-item" key={i}><span className={'diag-label '+(a.level==='urgent'?'diag-urgent':a.level==='warn'?'diag-warn':a.level==='ok'?'diag-ok':'diag-info')}>{a.level==='urgent'?'URGENTE':a.level==='warn'?'ATENCION':a.level==='ok'?'BIEN':'INFO'}</span>{a.text}</div>)}</div>
+          {topQueries&&topQueries.length>0&&<div className="diag-section"><div className="diag-title">Top queries de esta pagina</div><div className="top-queries-list">
+            {topQueries.map((q,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{q.keys[0]}</div><div className="row-meta">{fmt(q.clicks)} clicks / {fmt(q.impressions)} impr / pos {q.position.toFixed(1)}</div></div><span className={`score ${q.position<=3?'s-hi':q.position<=10?'s-md':'s-lo'}`}>P{Math.round(q.position)}</span></div>)}</div></div>}
+          <div style={{marginTop:16,display:'flex',gap:8}}>
+            <button className="btn-primary" style={{fontSize:12,padding:'9px 18px'}} onClick={()=>window.open('https://claude.ai/new?q='+encodeURIComponent('Analisis SEO para '+(page||'paislector.com')+'. Query: "'+(query||title)+'". Pos: '+avgPos.toFixed(1)+'. CTR: '+avgCtr.toFixed(1)+'%. Impr: '+totalImpr+'. Diagnostico: '+diag.map(a=>a.text).join(' | ')+'. Plan de accion: title, meta, contenido, internal links.'),'_blank')}>Brief en Claude</button>
+            <button className="btn-secondary" onClick={onClose}>Cerrar</button>
+          </div></>}
+        </div>
+      </div>
+    </div>,document.body);
+}
+
+// =========== DISCOVERY PANEL ===========
+function Discovery({gscRows,onOpenDetail}){
+  const[seed,setSeed]=useState('');const[searching,setSearching]=useState(false);const[results,setResults]=useState(null);const[expanded,setExpanded]=useState({});
+  const gscMap=useRef({});
+  useEffect(()=>{if(gscRows){const m={};gscRows.forEach(r=>{const k=r.keys[0].toLowerCase();m[k]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});gscMap.current=m}},[gscRows]);
+
+  async function fetchSuggestions(query){
+    try{const r=await fetch(SUGGEST_API+'?q='+encodeURIComponent(query)+'&lang=es');if(!r.ok)return[];const d=await r.json();return d.suggestions||[]}catch{return[]}}
+
+  async function runDiscovery(){
+    if(!seed.trim())return;setSearching(true);setResults(null);setExpanded({});
+    // Fetch suggestions for seed + seed + " " (a-z alphabet soup)
+    const queries=[seed.trim()];
+    const alpha='abcdefghijklmnopqrstuvwxyz'.split('');
+    // Add top 5 alphabet expansions for breadth
+    const alphaQueries=alpha.slice(0,10).map(l=>seed.trim()+' '+l);
+    queries.push(...alphaQueries);
+    const allSuggestions=new Set();
+    const batches=[];
+    // Fetch in parallel batches of 4
+    for(let i=0;i<queries.length;i+=4){batches.push(queries.slice(i,i+4))}
+    for(const batch of batches){
+      const batchResults=await Promise.all(batch.map(q=>fetchSuggestions(q)));
+      batchResults.forEach(suggestions=>suggestions.forEach(s=>allSuggestions.add(s.toLowerCase().trim())));
+    }
+    // Remove exact seed
+    allSuggestions.delete(seed.trim().toLowerCase());
+    // Cross-reference against GSC
+    const analyzed=Array.from(allSuggestions).map(kw=>{
+      const exact=gscMap.current[kw];
+      if(exact)return{kw,status:'ranking',clicks:exact.clicks,impressions:exact.impressions,position:exact.position,ctr:exact.ctr};
+      // Partial match
+      const partials=Object.keys(gscMap.current).filter(q=>q.includes(kw)||kw.includes(q));
+      if(partials.length>0){
+        const best=partials.reduce((a,b)=>gscMap.current[a].impressions>gscMap.current[b].impressions?a:b);
+        const d=gscMap.current[best];
+        return{kw,status:'partial',matchedQuery:best,clicks:d.clicks,impressions:d.impressions,position:d.position,ctr:d.ctr};
+      }
+      return{kw,status:'gap',clicks:0,impressions:0,position:0,ctr:0};
+    });
+    // Sort: gaps first, then partials, then ranking
+    analyzed.sort((a,b)=>{const order={gap:0,partial:1,ranking:2};return order[a.status]-order[b.status]||b.impressions-a.impressions});
+    setResults(analyzed);setSearching(false);
+  }
+
+  function handleExpand(kw){
+    if(expanded[kw])return;
+    setExpanded(prev=>({...prev,[kw]:'loading'}));
+    fetchSuggestions(kw).then(suggestions=>{
+      const sub=suggestions.filter(s=>s.toLowerCase()!==kw).map(s=>{
+        const k=s.toLowerCase().trim();const exact=gscMap.current[k];
+        if(exact)return{kw:k,status:'ranking',clicks:exact.clicks,impressions:exact.impressions,position:exact.position};
+        return{kw:k,status:'gap',clicks:0,impressions:0,position:0};
+      });
+      setExpanded(prev=>({...prev,[kw]:sub}));
+    });
+  }
+
+  const gaps=results?results.filter(r=>r.status==='gap'):[];
+  const partials=results?results.filter(r=>r.status==='partial'):[];
+  const ranking=results?results.filter(r=>r.status==='ranking'):[];
+
+  return(<div className="panel"><div className="panel-head"><h3>Discovery</h3><span className="pill pill-purple">Autocomplete + GSC</span></div><div className="panel-body">
+    <div className="disc-input-row">
+      <input className="disc-input" placeholder='Tema seed: "poemas de amor", "sylvia plath"...' value={seed} onChange={e=>setSeed(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')runDiscovery()}}/>
+      <button className="btn-primary" style={{padding:'9px 16px',fontSize:'12px',whiteSpace:'nowrap'}} onClick={runDiscovery} disabled={searching}>{searching?'...':'Descubrir'}</button>
+    </div>
+    <div className="disc-chips">
+      {['poemas de amor','pablo neruda','cuentos cortos','sylvia plath','sor juana','haiku','poesia','frases de libros'].map(s=><span key={s} className="disc-chip" onClick={()=>{setSeed(s);}}>{s}</span>)}
+    </div>
+    {searching&&<div className="disc-searching"><div className="spinner"/>Buscando en Google Autocomplete y cruzando con GSC...</div>}
+    {results&&results.length>0&&<>
+      <div style={{marginTop:12,display:'flex',gap:6}}>
+        <span className="score s-lo" style={{fontSize:11,height:22,minWidth:40}}>{gaps.length} gaps</span>
+        <span className="score s-md" style={{fontSize:11,height:22,minWidth:50}}>{partials.length} parcial</span>
+        <span className="score s-hi" style={{fontSize:11,height:22,minWidth:55}}>{ranking.length} ranking</span>
+        <span style={{fontSize:10,color:'var(--hint)',marginLeft:'auto'}}>{results.length} total</span>
+      </div>
+      {/* GAPS */}
+      {gaps.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6}}>No rankeas ({gaps.length})</div>
+        {gaps.map((r,i)=><div key={'dg'+i}><div className="row" onClick={()=>handleExpand(r.kw)}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">Sin datos en GSC — click para expandir</div></div><span className="score s-new">GAP</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Content brief para "'+r.kw+'" para paislector.com. Incluye: search intent, estructura H2, keywords secundarias, meta description sugerida.'),'_blank')}}>Brief</button></div>
+          {expanded[r.kw]==='loading'&&<div className="disc-searching" style={{paddingLeft:12}}><div className="spinner"/>Expandiendo...</div>}
+          {Array.isArray(expanded[r.kw])&&expanded[r.kw].length>0&&<div style={{paddingLeft:16,borderLeft:'2px solid var(--purple-light)',marginLeft:6,marginBottom:4}}>
+            {expanded[r.kw].map((sub,j)=><div className="row" key={'sub'+j} style={{padding:'4px 0'}}><div className="row-left"><div className="row-kw" style={{fontSize:11}}>{sub.kw}</div>{sub.status==='ranking'&&<div className="row-meta">pos {sub.position.toFixed(1)} / {fmt(sub.clicks)} clicks</div>}</div><span className={`score ${sub.status==='gap'?'s-new':sub.position<=10?'s-md':'s-lo'}`}>{sub.status==='gap'?'GAP':'P'+Math.round(sub.position)}</span></div>)}
+          </div>}
+        </div>)}
+      </div>}
+      {/* PARTIALS */}
+      {partials.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--amber)',marginBottom:6}}>Parcial ({partials.length})</div>
+        {partials.map((r,i)=><div className="row" key={'dp'+i} onClick={()=>onOpenDetail&&onOpenDetail({query:r.matchedQuery,page:null,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">~"{r.matchedQuery}" / pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr</div></div><span className="score s-md">~{r.position.toFixed(0)}</span></div>)}
+      </div>}
+      {/* RANKING */}
+      {ranking.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--green)',marginBottom:6}}>Ya rankeas ({ranking.length})</div>
+        {ranking.map((r,i)=><div className="row" key={'dr'+i} onClick={()=>onOpenDetail&&onOpenDetail({query:r.kw,page:null,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">pos {r.position.toFixed(1)} / {fmt(r.clicks)} clicks / {fmt(r.impressions)} impr</div></div><span className={`score ${r.position<=3?'s-hi':r.position<=10?'s-md':'s-lo'}`}>P{r.position.toFixed(0)}</span></div>)}
+      </div>}
+      <div className="explain">Datos de Google Autocomplete cruzados con tu GSC. GAP = Google sugiere pero no apareces. Parcial = match similar. Click en GAP para expandir sub-queries. Orden de sugerencias refleja popularidad relativa.</div>
+    </>}
+    {results&&results.length===0&&<div style={{fontSize:12,color:'var(--hint)',padding:'12px 0'}}>Sin sugerencias para "{seed}". Prueba otro seed.</div>}
+  </div></div>);
+}
+
+function ConfigScreen({onSave}){
+  const[cid,setCid]=useState('');const[site,setSite]=useState('sc-domain:paislector.com');const[ga4,setGa4]=useState('properties/405100005');
+  return(<div className="auth-screen"><h2>Configura SEO Pulse</h2><p>Conecta Google Cloud Console con GSC y GA4.</p>
+    <div className="setup-note"><h3>Setup</h3><ol><li><strong>console.cloud.google.com</strong></li><li>Habilita <strong>Search Console API</strong> y <strong>Google Analytics Data API</strong></li><li>OAuth 2.0 Client ID tipo Web</li><li>Redirect URI: <code>{REDIRECT_URI}</code></li></ol></div>
+    <div className="config-form"><div><label>OAuth Client ID</label><input placeholder="264065...googleusercontent.com" value={cid} onChange={e=>setCid(e.target.value)}/></div>
+    <div className="config-row"><div><label>Site URL (GSC)</label><input value={site} onChange={e=>setSite(e.target.value)}/></div><div><label>GA4 Property ID</label><input value={ga4} onChange={e=>setGa4(e.target.value)}/></div></div>
+    <button className="btn-primary" onClick={()=>{if(!cid)return alert('Client ID requerido');const c={cid,site,ga4};localStorage.setItem('sp2_config',JSON.stringify(c));onSave(c)}}>Guardar y conectar</button></div></div>);
+}
+
+function KwAnalyzer({gscRows}){
+  const[text,setText]=useState('');const[results,setResults]=useState(getSavedKws);const gscMap=useRef({});
+  useEffect(()=>{if(gscRows){const m={};gscRows.forEach(r=>{m[r.keys[0].toLowerCase()]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});gscMap.current=m;if(results)analyzeKws(results.map(r=>r.kw))}},[gscRows]);
+  function analyzeKws(kwList){const analyzed=kwList.map(kw=>{const k=kw.toLowerCase().trim();const exact=gscMap.current[k];if(exact)return{kw:k,status:'ranking',clicks:exact.clicks,impressions:exact.impressions,position:exact.position,ctr:exact.ctr};const partial=Object.keys(gscMap.current).filter(q=>q.includes(k)||k.includes(q));if(partial.length>0){const best=partial.reduce((a,b)=>gscMap.current[a].impressions>gscMap.current[b].impressions?a:b);const d=gscMap.current[best];return{kw:k,status:'partial',matchedQuery:best,clicks:d.clicks,impressions:d.impressions,position:d.position,ctr:d.ctr}}return{kw:k,status:'gap',clicks:0,impressions:0,position:0,ctr:0}});analyzed.sort((a,b)=>{const order={gap:0,partial:1,ranking:2};return order[a.status]-order[b.status]||b.impressions-a.impressions});setResults(analyzed);localStorage.setItem('sp2_extrakws',JSON.stringify(analyzed))}
+  function handleAnalyze(){const kws=text.split('\n').map(l=>l.replace(/["\t,;]/g,'').trim()).filter(l=>l.length>2);if(kws.length===0)return;analyzeKws(kws)}
+  const gaps=results?results.filter(r=>r.status==='gap'):[];const partials=results?results.filter(r=>r.status==='partial'):[];const ranking=results?results.filter(r=>r.status==='ranking'):[];
+  return(<div className="panel"><div className="panel-head"><h3>KW Analyzer</h3><span className="pill pill-red">Semrush / externo</span></div><div className="panel-body">
+    <textarea className="kw-textarea" placeholder="Pega keywords (una por linea)" value={text} onChange={e=>setText(e.target.value)}/>
+    <div className="kw-actions"><button className="btn-primary" style={{padding:'7px 16px',fontSize:'12px'}} onClick={handleAnalyze}>Analizar vs GSC</button>{results&&<button className="btn-secondary" onClick={()=>{setResults(null);setText('');localStorage.removeItem('sp2_extrakws')}}>Limpiar</button>}<span className="kw-count">{text.split('\n').filter(l=>l.trim().length>2).length} kws</span></div>
+    {results&&results.length>0&&<><div style={{marginTop:12,display:'flex',gap:6}}><span className="score s-lo" style={{fontSize:11,height:22,minWidth:40}}>{gaps.length} gaps</span><span className="score s-md" style={{fontSize:11,height:22,minWidth:50}}>{partials.length} parcial</span><span className="score s-hi" style={{fontSize:11,height:22,minWidth:55}}>{ranking.length} ranking</span></div>
+    {gaps.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6}}>No rankeas ({gaps.length})</div>{gaps.slice(0,10).map((r,i)=><div className="row" key={'g'+i}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">Sin datos en GSC</div></div><span className="score s-new">GAP</span><button className="row-btn" onClick={()=>window.open('https://claude.ai/new?q='+encodeURIComponent('Content brief para "'+r.kw+'" para paislector.com'),'_blank')}>Brief</button></div>)}</div>}
+    {partials.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--amber)',marginBottom:6}}>Parcial ({partials.length})</div>{partials.slice(0,10).map((r,i)=><div className="row" key={'p'+i}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">~"{r.matchedQuery}" / pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr</div></div><span className="score s-md">~{r.position.toFixed(0)}</span></div>)}</div>}
+    {ranking.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--green)',marginBottom:6}}>Ya rankeas ({ranking.length})</div>{ranking.slice(0,10).map((r,i)=><div className="row" key={'r'+i}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">pos {r.position.toFixed(1)} / {fmt(r.clicks)} clicks</div></div><span className={`score ${r.position<=3?'s-hi':r.position<=10?'s-md':'s-lo'}`}>P{r.position.toFixed(0)}</span></div>)}</div>}
+    <div className="explain">GAP = contenido nuevo. Parcial = similar. Ranking = compites.</div></>}
+  </div></div>);
+}
+
+// ====== UTM BUILDER ======
+function UtmBuilder({onCreated,existingUtms}){
+  const[dest,setDest]=useState('https://paislector.com/');
+  const[source,setSource]=useState('');const[medium,setMedium]=useState('');const[campaign,setCampaign]=useState('');
+  const[term,setTerm]=useState('');const[content,setContent]=useState('');const[tags,setTags]=useState('');const[notes,setNotes]=useState('');
+  const[showAdvanced,setShowAdvanced]=useState(false);const[copied,setCopied]=useState(false);
+  const[errors,setErrors]=useState([]);const[dupWarn,setDupWarn]=useState(null);
+
+  const prevSources=uniqValues(existingUtms||[],'source');
+  const prevMediums=uniqValues(existingUtms||[],'medium');
+  const prevCampaigns=uniqValues(existingUtms||[],'campaign');
+  const previewUrl=(source||medium||campaign)?buildUtmUrl({destination:dest,source,medium,campaign,term,content}):dest;
+
+  useEffect(()=>{
+    if(source&&medium&&campaign&&dest){
+      const dup=findUtmDuplicate(existingUtms||[],{destination:dest,source,medium,campaign});
+      setDupWarn(dup);
+    }else{setDupWarn(null)}
+  },[dest,source,medium,campaign,existingUtms]);
+
+  function handleSave(){
+    const u={destination:dest.trim(),source:source.trim(),medium:medium.trim(),campaign:campaign.trim(),term:term.trim(),content:content.trim()};
+    const errs=validateUtm(u);if(errs.length>0){setErrors(errs);return}
+    setErrors([]);
+    const full={id:uid(),...u,tags:tags.split(',').map(t=>t.trim()).filter(Boolean),notes:notes.trim(),full_url:buildUtmUrl(u),created_at:Date.now(),archived:false};
+    onCreated(full);
+    setSource('');setCampaign('');setTerm('');setContent('');setTags('');setNotes('');setDupWarn(null);
+  }
+
+  function handleCopy(){navigator.clipboard.writeText(previewUrl).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),1500)})}
+
+  return(<div className="panel"><div className="panel-head"><h3>UTM Builder</h3><span className="pill pill-blue">Link tracking</span></div><div className="panel-body">
+    <div className="utm-form-grid">
+      <div className="utm-field"><label>Destination URL <span style={{color:'var(--coral)'}}>*</span></label>
+        <input className="utm-input" value={dest} onChange={e=>setDest(e.target.value)} placeholder="https://paislector.com/..."/></div>
+    </div>
+    <div className="utm-form-grid utm-grid-2">
+      <div className="utm-field"><label>Source <span style={{color:'var(--coral)'}}>*</span></label>
+        <input className="utm-input" value={source} onChange={e=>setSource(e.target.value)} placeholder="newsletter, linkedin..."/>
+        {prevSources.length>0&&<div className="utm-hint">Usados: {prevSources.join(', ')}</div>}</div>
+      <div className="utm-field"><label>Medium <span style={{color:'var(--coral)'}}>*</span></label>
+        <input className="utm-input" value={medium} onChange={e=>setMedium(e.target.value)} placeholder="email, social, cpc..."/>
+        {prevMediums.length>0&&<div className="utm-hint">Usados: {prevMediums.join(', ')}</div>}</div>
+    </div>
+    <div className="utm-form-grid">
+      <div className="utm-field"><label>Campaign <span style={{color:'var(--coral)'}}>*</span></label>
+        <input className="utm-input" value={campaign} onChange={e=>setCampaign(e.target.value)} placeholder="sor-juana-lanzamiento"/>
+        {prevCampaigns.length>0&&<div className="utm-hint">Recientes: {prevCampaigns.join(', ')}</div>}</div>
+    </div>
+    <div className="utm-advanced-toggle" onClick={()=>setShowAdvanced(!showAdvanced)}>
+      {showAdvanced?'- Ocultar':'+ Mostrar'} opcionales (term, content, tags, notas)
+    </div>
+    {showAdvanced&&<>
+      <div className="utm-form-grid utm-grid-2">
+        <div className="utm-field"><label>Term</label><input className="utm-input" value={term} onChange={e=>setTerm(e.target.value)} placeholder="keyword asociado"/></div>
+        <div className="utm-field"><label>Content</label><input className="utm-input" value={content} onChange={e=>setContent(e.target.value)} placeholder="variante-a, cta-footer"/></div>
+      </div>
+      <div className="utm-form-grid">
+        <div className="utm-field"><label>Tags (separadas por coma)</label><input className="utm-input" value={tags} onChange={e=>setTags(e.target.value)} placeholder="sor-juana, hub-launch, q2-2026"/></div>
+      </div>
+      <div className="utm-form-grid">
+        <div className="utm-field"><label>Notas internas</label><input className="utm-input" value={notes} onChange={e=>setNotes(e.target.value)} placeholder="Para post de LinkedIn del miercoles"/></div>
+      </div>
+    </>}
+    {dupWarn&&<div className="utm-warn">Ya existe una UTM identica creada {formatRelTime(dupWarn.created_at)}. Al guardar se creara un duplicado.</div>}
+    {errors.length>0&&<div className="utm-err">{errors.join(' / ')}</div>}
+    <div className="utm-preview">
+      <div className="utm-preview-head"><span>Preview</span><button className="utm-copy-btn" onClick={handleCopy}>{copied?'Copiado!':'Copiar'}</button></div>
+      <code className="utm-preview-url">{previewUrl}</code>
+    </div>
+    <div className="utm-actions">
+      <button className="btn-primary" style={{padding:'8px 20px',fontSize:'12px'}} onClick={handleSave}>Guardar UTM</button>
+    </div>
+    <div className="explain">Los parametros se sluggean automaticamente (ej. "Sor Juana" - "sor-juana"). Click en Guardar para que aparezca en el dashboard y empiece a medirse.</div>
+  </div></div>);
+}
+
+// ====== UTM DASHBOARD ======
+function UtmDashboard({utms,metricsMap,onOpenDetail,onRefresh,loading}){
+  const[search,setSearch]=useState('');const[filterMedium,setFilterMedium]=useState('all');
+  const[showArchived,setShowArchived]=useState(false);const[copiedId,setCopiedId]=useState(null);
+
+  const mediums=Array.from(new Set(utms.map(u=>u.medium))).filter(Boolean);
+  const filtered=utms
+    .filter(u=>showArchived?u.archived:!u.archived)
+    .filter(u=>filterMedium==='all'||u.medium===filterMedium)
+    .filter(u=>{if(!search)return true;const s=search.toLowerCase();return(u.campaign||'').toLowerCase().includes(s)||(u.source||'').toLowerCase().includes(s)||(u.destination||'').toLowerCase().includes(s)||(u.tags||[]).some(t=>t.toLowerCase().includes(s))})
+    .sort((a,b)=>b.created_at-a.created_at);
+
+  const totals=filtered.reduce((acc,u)=>{const m=metricsMap[u.id];if(m){acc.sessions+=m.sessions||0;acc.engaged+=m.engaged||0;acc.matched++}return acc},{sessions:0,engaged:0,matched:0});
+  const avgEng=totals.sessions>0?(totals.engaged/totals.sessions*100).toFixed(0):null;
+
+  function handleCopy(u){navigator.clipboard.writeText(u.full_url).then(()=>{setCopiedId(u.id);setTimeout(()=>setCopiedId(null),1500)})}
+
+  return(<div className="panel"><div className="panel-head"><h3>UTM Dashboard</h3><span className="pill pill-purple">{filtered.length} UTM{filtered.length===1?'':'s'}</span></div><div className="panel-body">
+    <div className="utm-totals">
+      <div className="utm-total-card"><div className="utm-total-label">UTMs activas</div><div className="utm-total-val">{utms.filter(u=>!u.archived).length}</div></div>
+      <div className="utm-total-card"><div className="utm-total-label">Sessions</div><div className="utm-total-val">{fmt(totals.sessions)}</div></div>
+      <div className="utm-total-card"><div className="utm-total-label">Engagement</div><div className="utm-total-val">{avgEng?avgEng+'%':'-'}</div></div>
+      <div className="utm-total-card"><div className="utm-total-label">Con data GA4</div><div className="utm-total-val">{totals.matched}/{filtered.length}</div></div>
+    </div>
+    <div className="utm-filters">
+      <input className="utm-input" style={{flex:1,minWidth:140}} placeholder="Buscar campaign, source, tag..." value={search} onChange={e=>setSearch(e.target.value)}/>
+      {mediums.length>0&&<select className="utm-select" value={filterMedium} onChange={e=>setFilterMedium(e.target.value)}>
+        <option value="all">Todos los medium</option>{mediums.map(m=><option key={m} value={m}>{m}</option>)}
+      </select>}
+      <button className="btn-secondary" onClick={()=>setShowArchived(!showArchived)}>{showArchived?'Activas':'Archivadas'}</button>
+      <button className="btn-secondary" onClick={onRefresh} disabled={loading}>{loading?'...':'Refrescar'}</button>
+    </div>
+    {filtered.length===0?(
+      <div style={{fontSize:12,color:'var(--hint)',padding:'16px 0',textAlign:'center'}}>
+        {search||filterMedium!=='all'?'Sin UTMs que coincidan con el filtro.':showArchived?'Sin UTMs archivadas.':'Aun no tienes UTMs. Crea la primera arriba.'}
+      </div>
+    ):(
+      <div className="utm-list">
+        {filtered.map(u=>{
+          const m=metricsMap[u.id];const sessions=m?m.sessions:null;
+          const engRate=m&&m.sessions>0?(m.engaged/m.sessions*100):null;
+          return(<div className="utm-row" key={u.id} onClick={()=>onOpenDetail(u)}>
+            <div className="utm-row-main">
+              <div className="utm-row-campaign">{u.campaign}</div>
+              <div className="utm-row-meta">
+                <span className="utm-badge-src">{u.source}</span>
+                <span className="utm-badge-med">{u.medium}</span>
+                <span className="utm-row-time">{formatRelTime(u.created_at)}</span>
+              </div>
+              {u.tags&&u.tags.length>0&&<div className="utm-row-tags">{u.tags.slice(0,3).map((t,i)=><span key={i} className="utm-tag">{t}</span>)}</div>}
+            </div>
+            <div className="utm-row-metrics">
+              {sessions!==null?<>
+                <div className="utm-metric-val">{fmt(sessions)}</div>
+                <div className="utm-metric-sub">sessions</div>
+                {engRate!==null&&<div className={"utm-metric-eng "+(engRate>=60?'up':engRate>=40?'':'down')}>{engRate.toFixed(0)}% eng</div>}
+              </>:<><div className="utm-metric-val" style={{color:'var(--hint)'}}>-</div><div className="utm-metric-sub">sin data</div></>}
+            </div>
+            <div className="utm-row-actions" onClick={e=>e.stopPropagation()}>
+              <button className="row-btn" onClick={()=>handleCopy(u)}>{copiedId===u.id?'OK':'Copy'}</button>
+            </div>
+          </div>);
+        })}
+      </div>
+    )}
+    <div className="explain">Click en una fila para ver detalle. Las metricas GA4 se actualizan al refrescar.</div>
+  </div></div>);
+}
+
+// ====== UTM DETAIL CHART ======
+function UtmDetailChart({daily}){
+  const canvasRef=useRef(null);const chartRef=useRef(null);
+  useEffect(()=>{
+    if(!daily||!canvasRef.current)return;
+    if(chartRef.current)chartRef.current.destroy();
+    const ctx=canvasRef.current.getContext('2d');
+    chartRef.current=new Chart(ctx,{type:'line',data:{
+      labels:daily.map(d=>d.date.slice(5)),
+      datasets:[{label:'Sessions',data:daily.map(d=>d.sessions),borderColor:'#185FA5',backgroundColor:'rgba(24,95,165,0.08)',fill:true,tension:0.3,borderWidth:1.5,pointRadius:1,pointHitRadius:10}]
+    },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1A1A18',titleFont:{size:11,family:'DM Sans'},bodyFont:{size:11,family:'DM Sans'},padding:8,cornerRadius:8}},scales:{x:{grid:{display:false},ticks:{font:{size:10,family:'DM Sans'},color:'#9C9A92',maxTicksLimit:6}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10,family:'DM Sans'},color:'#9C9A92'},beginAtZero:true}}}});
+    return()=>{if(chartRef.current)chartRef.current.destroy()};
+  },[daily]);
+  return <div className="chart-wrap" style={{height:160}}><canvas ref={canvasRef}/></div>;
+}
+
+// ====== UTM DETAIL DRAWER ======
+function UtmDetailDrawer({utm,onClose,ga4Fetch,period,onDelete,onArchive}){
+  const[loading,setLoading]=useState(true);const[metrics,setMetrics]=useState(null);
+  const[daily,setDaily]=useState(null);const[topPages,setTopPages]=useState(null);const[devices,setDevices]=useState(null);
+  const[showQr,setShowQr]=useState(false);const[copied,setCopied]=useState(false);const[confirmDel,setConfirmDel]=useState(false);
+
+  useEffect(()=>{
+    if(!ga4Fetch||!utm)return;
+    (async()=>{
+      setLoading(true);const sd=daysAgo(period),ed=daysAgo(1);
+      const dimFilter={andGroup:{expressions:[
+        {filter:{fieldName:'sessionCampaignName',stringFilter:{value:slugify(utm.campaign)}}},
+        {filter:{fieldName:'sessionSource',stringFilter:{value:slugify(utm.source)}}},
+        {filter:{fieldName:'sessionMedium',stringFilter:{value:slugify(utm.medium)}}}
+      ]}};
+      try{
+        const[totals,dailyResp,pagesResp,devResp]=await Promise.all([
+          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],metrics:[{name:'sessions'},{name:'engagedSessions'},{name:'averageSessionDuration'},{name:'conversions'}],dimensionFilter:dimFilter}),
+          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'date'}],metrics:[{name:'sessions'}],dimensionFilter:dimFilter,orderBys:[{dimension:{dimensionName:'date'}}]}),
+          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'landingPage'}],metrics:[{name:'sessions'}],dimensionFilter:dimFilter,orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:5}),
+          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'deviceCategory'}],metrics:[{name:'sessions'}],dimensionFilter:dimFilter})
+        ]);
+        if(totals&&totals.rows&&totals.rows[0]){
+          const mv=totals.rows[0].metricValues;
+          setMetrics({sessions:parseInt(mv[0].value),engaged:parseInt(mv[1].value),avgDur:parseFloat(mv[2].value),conversions:parseInt(mv[3].value)});
+        }else{setMetrics({sessions:0,engaged:0,avgDur:0,conversions:0})}
+        if(dailyResp&&dailyResp.rows){
+          setDaily(dailyResp.rows.map(r=>{const d=r.dimensionValues[0].value;return{date:d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8),sessions:parseInt(r.metricValues[0].value)}}));
+        }
+        if(pagesResp&&pagesResp.rows){
+          const total=pagesResp.rows.reduce((s,r)=>s+parseInt(r.metricValues[0].value),0);
+          setTopPages(pagesResp.rows.map(r=>({page:r.dimensionValues[0].value,sessions:parseInt(r.metricValues[0].value),pct:total>0?(parseInt(r.metricValues[0].value)/total*100):0})));
+        }
+        if(devResp&&devResp.rows){
+          const total=devResp.rows.reduce((s,r)=>s+parseInt(r.metricValues[0].value),0);
+          setDevices(devResp.rows.map(r=>({device:r.dimensionValues[0].value,sessions:parseInt(r.metricValues[0].value),pct:total>0?(parseInt(r.metricValues[0].value)/total*100):0})));
+        }
+      }catch(e){console.warn('UTM detail error:',e.message)}
+      setLoading(false);
+    })();
+  },[utm,ga4Fetch,period]);
+
+  function handleCopy(){navigator.clipboard.writeText(utm.full_url).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),1500)})}
+  function handleArchive(){if(onArchive)onArchive(utm.id);onClose()}
+  function handleDelete(){if(!confirmDel){setConfirmDel(true);setTimeout(()=>setConfirmDel(false),3000);return}if(onDelete)onDelete(utm.id);onClose()}
+
+  const convRate=metrics&&metrics.sessions>0?(metrics.conversions/metrics.sessions*100).toFixed(1):'0';
+  const engRate=metrics&&metrics.sessions>0?(metrics.engaged/metrics.sessions*100).toFixed(0):null;
+  const durMin=metrics?Math.floor(metrics.avgDur/60):0;
+  const durSec=metrics?Math.floor(metrics.avgDur%60):0;
+
+  return ReactDOM.createPortal(
+    <div className="drawer-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="drawer">
+        <div className="drawer-handle" onClick={onClose}><span/></div>
+        <div className="drawer-header">
+          <h2>{utm.campaign}</h2>
+          <div style={{fontSize:11,color:'var(--hint)',marginTop:4}}>{utm.source} / {utm.medium} / creada {formatRelTime(utm.created_at)}</div>
+        </div>
+        <div className="drawer-body">
+          {utm.tags&&utm.tags.length>0&&<div style={{marginBottom:10,display:'flex',gap:4,flexWrap:'wrap'}}>
+            {utm.tags.map((t,i)=><span key={i} className="utm-tag">{t}</span>)}
+          </div>}
+          <div className="utm-url-box">
+            <div className="utm-url-label">URL completa</div>
+            <code className="utm-preview-url" style={{fontSize:11}}>{utm.full_url}</code>
+            <div style={{display:'flex',gap:6,marginTop:8}}>
+              <button className="btn-primary" style={{padding:'6px 14px',fontSize:11}} onClick={handleCopy}>{copied?'Copiado!':'Copiar URL'}</button>
+              <button className="btn-secondary" onClick={()=>setShowQr(!showQr)}>{showQr?'Ocultar QR':'Ver QR'}</button>
+            </div>
+            {showQr&&<div style={{marginTop:10,textAlign:'center',padding:10,background:'var(--surface)',borderRadius:8}}>
+              <img src={genQrUrl(utm.full_url,140)} alt="QR code" style={{width:140,height:140}}/>
+              <div style={{fontSize:10,color:'var(--hint)',marginTop:6}}>Click derecho / Guardar imagen</div>
+            </div>}
+          </div>
+          {utm.notes&&<div style={{margin:'10px 0',padding:'8px 12px',background:'var(--surface-alt)',borderRadius:8,fontSize:12,color:'var(--muted)',lineHeight:1.5}}>
+            <div style={{fontSize:10,fontWeight:600,color:'var(--hint)',marginBottom:4,textTransform:'uppercase',letterSpacing:0.5}}>Notas</div>
+            {utm.notes}
+          </div>}
+          {loading?<div className="loading"><div className="spinner"/>Cargando metricas GA4...</div>:<>
+            <div className="drawer-stats">
+              <div className="stat"><div className="stat-label">Sessions</div><div className="stat-val">{metrics?fmt(metrics.sessions):'-'}</div></div>
+              <div className="stat"><div className="stat-label">Engagement</div><div className="stat-val">{engRate?engRate+'%':'-'}</div></div>
+              <div className="stat"><div className="stat-label">Duracion</div><div className="stat-val">{metrics&&metrics.avgDur>0?durMin+':'+(durSec<10?'0'+durSec:durSec):'-'}</div></div>
+              <div className="stat"><div className="stat-label">Conversions</div><div className="stat-val">{metrics?fmt(metrics.conversions):'-'}</div><div className="stat-chg">{convRate}% rate</div></div>
+            </div>
+            {daily&&daily.length>0&&<div style={{marginTop:14}}>
+              <div className="diag-title">Sessions por dia</div>
+              <UtmDetailChart daily={daily}/>
+            </div>}
+            {metrics&&metrics.sessions===0&&!loading&&<div className="utm-warn" style={{marginTop:12}}>
+              Sin data en GA4 para este periodo. La UTM puede ser muy nueva, el trafico aun no ha llegado, o los parametros tienen un typo que GA4 no esta matcheando. GA4 necesita 24-48h para procesar sessions con parametros UTM.
+            </div>}
+            {topPages&&topPages.length>0&&<div className="diag-section">
+              <div className="diag-title">Top landing pages</div>
+              {topPages.map((p,i)=><div key={i} style={{marginBottom:8}}>
+                <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
+                  <code style={{fontSize:11,color:'var(--text)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'70%'}}>{p.page}</code>
+                  <span style={{fontSize:11,fontWeight:500}}>{p.sessions}</span>
+                </div>
+                <div style={{height:4,background:'var(--surface-alt)',borderRadius:2,overflow:'hidden'}}>
+                  <div style={{height:'100%',width:p.pct+'%',background:'var(--blue)'}}/>
+                </div>
+              </div>)}
+            </div>}
+            {devices&&devices.length>0&&<div className="diag-section">
+              <div className="diag-title">Dispositivo</div>
+              {devices.map((dv,i)=><div key={i} style={{marginBottom:8}}>
+                <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
+                  <span style={{fontSize:12,textTransform:'capitalize'}}>{dv.device}</span>
+                  <span style={{fontSize:11,fontWeight:500}}>{dv.pct.toFixed(0)}%</span>
+                </div>
+                <div style={{height:4,background:'var(--surface-alt)',borderRadius:2,overflow:'hidden'}}>
+                  <div style={{height:'100%',width:dv.pct+'%',background:'var(--green)'}}/>
+                </div>
+              </div>)}
+            </div>}
+            <div style={{marginTop:16,display:'flex',gap:8,flexWrap:'wrap'}}>
+              <button className="btn-secondary" onClick={handleArchive}>{utm.archived?'Desarchivar':'Archivar'}</button>
+              <button className="btn-secondary" style={{color:'var(--coral)',borderColor:confirmDel?'var(--coral)':'var(--border)'}} onClick={handleDelete}>{confirmDel?'Seguro? Click de nuevo':'Eliminar'}</button>
+              <button className="btn-secondary" style={{marginLeft:'auto'}} onClick={onClose}>Cerrar</button>
+            </div>
+          </>}
+        </div>
+      </div>
+    </div>,document.body);
+}
+
+function App(){
+  const[config,setConfig]=useState(getConfig);const[token,setToken]=useState(getToken);
+  const[period,setPeriod]=useState(28);const[loading,setLoading]=useState(false);
+  const[error,setError]=useState(null);const[ga4Warn,setGa4Warn]=useState(null);const[data,setData]=useState(null);
+  const[detailItem,setDetailItem]=useState(null);const[adsenseWarn,setAdsenseWarn]=useState(null);
+  // UTM module state
+  const[utms,setUtms]=useState(getUtms);const[utmMetrics,setUtmMetrics]=useState({});
+  const[utmLoading,setUtmLoading]=useState(false);const[utmDetail,setUtmDetail]=useState(null);
+
+  function startAuth(){if(!config?.cid)return;window.location.href='https://accounts.google.com/o/oauth2/v2/auth?client_id='+encodeURIComponent(config.cid)+'&redirect_uri='+encodeURIComponent(REDIRECT_URI)+'&response_type=token&scope='+encodeURIComponent(SCOPES)+'&include_granted_scopes=true&prompt=consent'}
+  useEffect(()=>{const h=window.location.hash;if(h.includes('access_token')){const p=new URLSearchParams(h.slice(1));const t={tk:p.get('access_token'),exp:Date.now()+parseInt(p.get('expires_in'))*1000};localStorage.setItem('sp2_token',JSON.stringify(t));setToken(t);window.history.replaceState(null,'',window.location.pathname)}},[]);
+
+  const gsc=useCallback(async(body)=>{const r=await fetch(GSC_API+'/sites/'+encodeURIComponent(config.site)+'/searchAnalytics/query',{method:'POST',headers:{'Authorization':'Bearer '+token.tk,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error('GSC '+r.status+': '+await r.text());return r.json()},[config,token]);
+  const ga4Fetch=useCallback(async(body)=>{if(!config?.ga4)return null;const r=await fetch(GA4_API+'/'+config.ga4+':runReport',{method:'POST',headers:{'Authorization':'Bearer '+token.tk,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok){if(r.status===403)setGa4Warn('GA4 403: Habilita Google Analytics Data API en Cloud Console');else setGa4Warn('GA4 error '+r.status);return null}setGa4Warn(null);return r.json()},[config,token]);
+
+  // UTM callbacks
+  const fetchUtmMetrics=useCallback(async(utmList)=>{
+    if(!config?.ga4||!token)return;
+    const list=utmList||utms.filter(u=>!u.archived);
+    if(list.length===0)return;
+    setUtmLoading(true);
+    const sd=daysAgo(period),ed=daysAgo(1);
+    try{
+      const resp=await ga4Fetch({
+        dateRanges:[{startDate:sd,endDate:ed}],
+        dimensions:[{name:'sessionCampaignName'},{name:'sessionSource'},{name:'sessionMedium'}],
+        metrics:[{name:'sessions'},{name:'engagedSessions'}],
+        limit:1000
+      });
+      if(resp&&resp.rows){
+        const idx={};
+        resp.rows.forEach(r=>{
+          const key=r.dimensionValues[0].value+'|'+r.dimensionValues[1].value+'|'+r.dimensionValues[2].value;
+          idx[key]={sessions:parseInt(r.metricValues[0].value),engaged:parseInt(r.metricValues[1].value)};
+        });
+        const newMetrics={};
+        list.forEach(u=>{
+          const key=slugify(u.campaign)+'|'+slugify(u.source)+'|'+slugify(u.medium);
+          newMetrics[u.id]=idx[key]||{sessions:0,engaged:0};
+        });
+        setUtmMetrics(prev=>({...prev,...newMetrics}));
+      }
+    }catch(e){console.warn('UTM metrics error:',e.message)}
+    setUtmLoading(false);
+  },[utms,config,token,period,ga4Fetch]);
+
+  const createUtm=useCallback((newUtm)=>{
+    const updated=[...utms,newUtm];
+    setUtms(updated);saveUtms(updated);
+    if(config?.ga4&&token){fetchUtmMetrics([newUtm])}
+  },[utms,config,token,fetchUtmMetrics]);
+
+  const deleteUtm=useCallback((id)=>{
+    const updated=utms.filter(u=>u.id!==id);
+    setUtms(updated);saveUtms(updated);
+  },[utms]);
+
+  const archiveUtm=useCallback((id)=>{
+    const updated=utms.map(u=>u.id===id?{...u,archived:!u.archived}:u);
+    setUtms(updated);saveUtms(updated);
+  },[utms]);
+
+  useEffect(()=>{if(token&&config?.ga4&&utms.length>0){fetchUtmMetrics()}},[token,config,period]);
+
+  const loadData=useCallback(async()=>{
+    if(!token||!config)return;setLoading(true);setError(null);setGa4Warn(null);
+    try{
+      const sd=daysAgo(period),ed=daysAgo(1),psd=daysAgo(period*2),ped=daysAgo(period+1);
+      const fetchTotals=async(s,e)=>{const types=['web','image','video','discover'];const res=await Promise.all(types.map(t=>gsc({startDate:s,endDate:e,type:t}).catch(()=>({rows:[]}))));let cl=0,im=0,wc=0,wp=0;res.forEach((r,i)=>{if(r.rows)r.rows.forEach(row=>{cl+=row.clicks||0;im+=row.impressions||0});if(i===0&&r.rows&&r.rows[0]){wc=r.rows[0].ctr||0;wp=r.rows[0].position||0}});return{clicks:cl,impressions:im,ctr:wc,pos:wp}};
+      const[cur,prev]=await Promise.all([fetchTotals(sd,ed),fetchTotals(psd,ped)]);
+      const dailyGsc=await gsc({startDate:sd,endDate:ed,dimensions:['date'],type:'web'});
+      const dailyMap={};(dailyGsc.rows||[]).forEach(r=>{dailyMap[r.keys[0]]={clicks:r.clicks,impressions:r.impressions}});
+      const countriesResp=await gsc({startDate:sd,endDate:ed,dimensions:['country'],type:'web',rowLimit:10});
+      const countries=(countriesResp.rows||[]).map(r=>({code:r.keys[0],clicks:r.clicks,impressions:r.impressions}));
+      const allQ=await gsc({startDate:sd,endDate:ed,dimensions:['query'],type:'web',rowLimit:5000});
+      const prevAllQ=await gsc({startDate:psd,endDate:ped,dimensions:['query'],type:'web',rowLimit:5000});
+      const rows=allQ.rows||[];const prevMap={};(prevAllQ.rows||[]).forEach(r=>{prevMap[r.keys[0]]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});
+      const queryPageResp=await gsc({startDate:sd,endDate:ed,dimensions:['query','page'],type:'web',rowLimit:5000});
+      const queryToPage={};(queryPageResp.rows||[]).forEach(r=>{const q=r.keys[0],pg=r.keys[1];if(!queryToPage[q]||r.clicks>queryToPage[q].clicks){queryToPage[q]={page:pg,clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}}});
+      const allP=await gsc({startDate:sd,endDate:ed,dimensions:['page'],type:'web',rowLimit:5000});
+      const prevAllP=await gsc({startDate:psd,endDate:ped,dimensions:['page'],type:'web',rowLimit:5000});
+      const pages=allP.rows||[];const prevPageMap={};(prevAllP.rows||[]).forEach(r=>{prevPageMap[r.keys[0]]={clicks:r.clicks,position:r.position}});
+      const candidates=rows.filter(r=>r.impressions>300&&r.position>7);
+      const escribir=[];const hasPageOpt=[];
+      candidates.forEach(r=>{const q=r.keys[0];const pi=queryToPage[q];if(pi){hasPageOpt.push({query:q,page:pi.page,impressions:r.impressions,position:r.position,clicks:r.clicks,ctr:r.ctr,action:suggestAction(r.position),type:'HAS_PAGE'})}else{escribir.push({...r,score:Math.round(r.impressions*(1/r.position)*10)})}});
+      const finalEscribir=[...escribir];const finalHasPage=[];
+      hasPageOpt.forEach(item=>{const path=shortPath(item.page);if(path==='/'||path===''||path==='/index.html'){finalEscribir.push({keys:[item.query],impressions:item.impressions,position:item.position,clicks:item.clicks,ctr:item.ctr,score:Math.round(item.impressions*(1/item.position)*10)})}else{finalHasPage.push(item)}});
+      finalEscribir.sort((a,b)=>(b.score||0)-(a.score||0));finalHasPage.sort((a,b)=>b.impressions-a.impressions);
+      const optimizar=[];rows.forEach(r=>{const exp=getExpectedCtr(r.position);if(r.impressions>200&&r.ctr<exp*0.6){const pi=queryToPage[r.keys[0]];optimizar.push({...r,type:'CTR',expected:(exp*100).toFixed(1),page:pi?pi.page:null})}});
+      const dropping=[];pages.forEach(r=>{const p=prevPageMap[r.keys[0]];if(p&&r.position-p.position>2&&r.clicks>20)dropping.push({page:r.keys[0],curPos:r.position,prevPos:p.position,clicks:r.clicks,lostClicks:p.clicks-r.clicks})});dropping.sort((a,b)=>b.lostClicks-a.lostClicks);
+      const quickWins=rows.filter(r=>r.position>=2&&r.position<=20&&r.impressions>50).sort((a,b)=>b.impressions-a.impressions).slice(0,15).map(r=>{let a='protect';if(r.position>10)a='create';else if(r.position>3)a='push';const pi=queryToPage[r.keys[0]];return{...r,action:a,page:pi?pi.page:null}});
+      const clusters={};rows.forEach(r=>{const w=r.keys[0].split(' ');let s=w.slice(0,2).join(' ');if(w.length===1)s=w[0];if(!clusters[s])clusters[s]={queries:[],clicks:0,impressions:0};clusters[s].queries.push(r);clusters[s].clicks+=r.clicks;clusters[s].impressions+=r.impressions});
+      const clusterArr=Object.entries(clusters).filter(([,v])=>v.queries.length>=3).map(([n,v])=>({name:n,count:v.queries.length,clicks:v.clicks,impressions:v.impressions})).sort((a,b)=>b.clicks-a.clicks).slice(0,8);
+      let ga4Data=null,ga4Pages=null,dailySessions=null;
+      if(config.ga4){try{
+        const[pgResp,dailyResp]=await Promise.all([
+          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'pagePath'}],metrics:[{name:'sessions'},{name:'totalUsers'},{name:'engagementRate'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:20}),
+          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'date'}],metrics:[{name:'sessions'}],orderBys:[{dimension:{dimensionName:'date'}}]})]);
+        if(pgResp?.rows){ga4Data=pgResp.rows.map(r=>({page:r.dimensionValues[0].value,sessions:parseInt(r.metricValues[0].value),users:parseInt(r.metricValues[1].value),engRate:(parseFloat(r.metricValues[2].value)*100).toFixed(1)}));ga4Pages=ga4Data}
+        if(dailyResp?.rows){const sm={};dailyResp.rows.forEach(r=>{const d=r.dimensionValues[0].value;const dt=d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8);sm[dt]=parseInt(r.metricValues[0].value)});dailySessions=sm}
+      }catch(e){console.warn('GA4:',e.message)}}
+      // ========== ADSENSE ==========
+      let adsenseData=null;
+      try{
+        let accId=getAdsenseAccountId();
+        if(!accId){
+          const accResp=await fetch(ADSENSE_API+'/accounts',{headers:{'Authorization':'Bearer '+token.tk}});
+          if(accResp.ok){const accJson=await accResp.json();if(accJson.accounts&&accJson.accounts[0]){accId=accJson.accounts[0].name;setAdsenseAccountId(accId)}}
+        }
+        if(accId){
+          const adsParams=new URLSearchParams();
+          adsParams.append('metrics','ESTIMATED_EARNINGS');adsParams.append('metrics','PAGE_VIEWS');adsParams.append('metrics','IMPRESSIONS');adsParams.append('metrics','CLICKS');adsParams.append('metrics','PAGE_VIEWS_RPM');
+          adsParams.append('dimensions','PAGE_URL');
+          adsParams.append('startDate.year',sd.split('-')[0]);adsParams.append('startDate.month',parseInt(sd.split('-')[1]));adsParams.append('startDate.day',parseInt(sd.split('-')[2]));
+          adsParams.append('endDate.year',ed.split('-')[0]);adsParams.append('endDate.month',parseInt(ed.split('-')[1]));adsParams.append('endDate.day',parseInt(ed.split('-')[2]));
+          adsParams.append('orderBy','-ESTIMATED_EARNINGS');adsParams.append('limit','50');
+          const adsResp=await fetch(ADSENSE_API+'/'+accId+'/reports:generate?'+adsParams.toString(),{headers:{'Authorization':'Bearer '+token.tk}});
+          if(adsResp.ok){
+            const adsJson=await adsResp.json();
+            if(adsJson.rows&&adsJson.headers){
+              const hi={};adsJson.headers.forEach((h,i)=>{hi[h.name]=i});
+              const totalEarnings=adsJson.totals?.cells?.[hi['ESTIMATED_EARNINGS']]?.value||0;
+              adsenseData={totalEarnings:parseFloat(totalEarnings),pages:adsJson.rows.map(r=>({
+                page:r.cells[hi['PAGE_URL']]?.value||'',
+                earnings:parseFloat(r.cells[hi['ESTIMATED_EARNINGS']]?.value||0),
+                pageViews:parseInt(r.cells[hi['PAGE_VIEWS']]?.value||0),
+                impressions:parseInt(r.cells[hi['IMPRESSIONS']]?.value||0),
+                clicks:parseInt(r.cells[hi['CLICKS']]?.value||0),
+                rpm:parseFloat(r.cells[hi['PAGE_VIEWS_RPM']]?.value||0)
+              })).filter(p=>p.earnings>0)};
+            }
+          }else if(adsResp.status===403){setAdsenseWarn('AdSense 403: Verifica permisos de la API o re-autoriza.')}
+          else{setAdsenseWarn('AdSense error '+adsResp.status)}
+          // Also fetch daily earnings for trend
+          if(accId){
+            const dailyParams=new URLSearchParams();
+            dailyParams.append('metrics','ESTIMATED_EARNINGS');
+            dailyParams.append('dimensions','DATE');
+            dailyParams.append('startDate.year',sd.split('-')[0]);dailyParams.append('startDate.month',parseInt(sd.split('-')[1]));dailyParams.append('startDate.day',parseInt(sd.split('-')[2]));
+            dailyParams.append('endDate.year',ed.split('-')[0]);dailyParams.append('endDate.month',parseInt(ed.split('-')[1]));dailyParams.append('endDate.day',parseInt(ed.split('-')[2]));
+            dailyParams.append('orderBy','+DATE');
+            const dailyAdsResp=await fetch(ADSENSE_API+'/'+accId+'/reports:generate?'+dailyParams.toString(),{headers:{'Authorization':'Bearer '+token.tk}});
+            if(dailyAdsResp.ok){
+              const dJson=await dailyAdsResp.json();
+              if(dJson.rows&&dJson.headers&&adsenseData){
+                const dhi={};dJson.headers.forEach((h,i)=>{dhi[h.name]=i});
+                adsenseData.daily=dJson.rows.map(r=>{const dv=r.cells[dhi['DATE']]?.value||'';return{date:dv,earnings:parseFloat(r.cells[dhi['ESTIMATED_EARNINGS']]?.value||0)}});
+              }
+            }
+          }
+        }
+      }catch(e){console.warn('AdSense:',e.message);setAdsenseWarn('AdSense: '+e.message)}
+      const dailyData=Object.keys(dailyMap).sort().map(date=>({date,clicks:dailyMap[date].clicks,sessions:dailySessions?dailySessions[date]||0:0}));
+      let contentVsTraffic=[];if(ga4Data){const gm={};ga4Data.forEach(g=>{gm[g.page]=g});pages.slice(0,30).forEach(r=>{const path=r.keys[0].replace(/https?:\/\/[^/]+/,'');const ga=gm[path];if(ga&&r.clicks>10){const ratio=ga.sessions/Math.max(r.clicks,1);contentVsTraffic.push({page:path,gscClicks:r.clicks,gaSessions:ga.sessions,ratio,engRate:ga.engRate})}});contentVsTraffic.sort((a,b)=>b.ratio-a.ratio);contentVsTraffic=contentVsTraffic.slice(0,10)}
+      setData({summary:{clicks:cur.clicks,impressions:cur.impressions,ctr:cur.ctr*100,pos:cur.pos,clicksChg:pct(cur.clicks,prev.clicks),imprChg:pct(cur.impressions,prev.impressions)},escribir:finalEscribir.slice(0,8),hasPageOpt:finalHasPage.slice(0,8),optimizar:optimizar.sort((a,b)=>b.impressions-a.impressions).slice(0,8),dropping:dropping.slice(0,5),quickWins,clusterArr,contentVsTraffic,ga4Pages,countries,dailyData,allRows:rows,adsense:adsenseData});
+    }catch(err){console.error(err);setError(err.message);if(err.message.includes('401')){localStorage.removeItem('sp2_token');setToken(null)}}
+    setLoading(false);
+  },[token,config,period,gsc,ga4Fetch]);
+
+  useEffect(()=>{if(token&&config)loadData()},[token,config,period]);
+  if(!config)return(<div className="app"><header><h1>SEO <em>Pulse</em></h1></header><ConfigScreen onSave={setConfig}/></div>);
+  if(!token)return(<div className="app"><header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot"/></div></header><div className="auth-screen"><h2>Conecta tu cuenta</h2><p>Acceso de lectura a Search Console y Analytics.</p><button className="auth-btn" onClick={startAuth}>Conectar con Google</button><button className="btn-secondary" onClick={()=>{localStorage.removeItem('sp2_config');setConfig(null)}}>Cambiar config</button></div></div>);
+
+  const d=data;const maxCC=d&&d.countries&&d.countries[0]?d.countries[0].clicks:1;
+  function openDetail(item){setDetailItem(item)}
+  return(<div className="app">
+    <header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot on"/></div></header>
+    <div className="controls">{[7,14,28,90].map(n=><button key={n} className={`per-btn ${period===n?'active':''}`} onClick={()=>setPeriod(n)}>{n}d</button>)}<button className="ref-btn" onClick={loadData} disabled={loading}>{loading?'...':'Actualizar'}</button></div>
+    {error&&<div className="error-msg">{error}</div>}
+    {ga4Warn&&<div className="warn-msg">{ga4Warn}</div>}
+    {adsenseWarn&&<div className="warn-msg">{adsenseWarn}</div>}
+    {loading&&!d?<div className="loading"><div className="spinner"/>Cargando...</div>:d?<>
+    <div className="stats">
+      <div className="stat"><div className="stat-label">Clicks</div><div className="stat-val">{fmt(d.summary.clicks)}</div>{d.summary.clicksChg&&<div className={`stat-chg ${d.summary.clicksChg>0?'up':'down'}`}>{d.summary.clicksChg>0?'+':''}{d.summary.clicksChg}%</div>}</div>
+      <div className="stat"><div className="stat-label">Impresiones</div><div className="stat-val">{fmt(d.summary.impressions)}</div>{d.summary.imprChg&&<div className={`stat-chg ${d.summary.imprChg>0?'up':'down'}`}>{d.summary.imprChg>0?'+':''}{d.summary.imprChg}%</div>}</div>
+      <div className="stat"><div className="stat-label">CTR prom.</div><div className="stat-val">{d.summary.ctr.toFixed(1)}%</div></div>
+      <div className="stat"><div className="stat-label">Pos. prom.</div><div className="stat-val">{d.summary.pos.toFixed(1)}</div></div>
+    </div>
+    {d.dailyData&&d.dailyData.length>0&&<div className="panel"><div className="panel-head"><h3>Tendencia</h3><span className="pill pill-green">Clicks + Sessions</span></div><div className="panel-body"><TrendChart dailyData={d.dailyData}/></div></div>}
+
+    {/* ====== REVENUE (AdSense) — v2.7 ====== */}
+    {d.adsense&&<div className="panel"><div className="panel-head"><h3>Revenue</h3><span className="pill pill-amber">AdSense</span></div><div className="panel-body">
+      <div className="rev-total"><span className="rev-amount">{fmtMoney(d.adsense.totalEarnings)}</span><span className="rev-sub">{period}d / {d.adsense.pages.length} paginas con revenue</span></div>
+      {d.adsense.pages.slice(0,10).map((p,i)=>{const maxE=d.adsense.pages[0]?.earnings||1;return<div className="rev-bar" key={i} style={{cursor:'pointer'}} onClick={()=>openDetail({page:p.page,query:null,position:0,clicks:p.clicks,impressions:p.impressions})}><span className="rev-page">{shortPath(p.page)}</span><div className="rev-bar-track"><div className="rev-bar-fill" style={{width:Math.round(p.earnings/maxE*100)+'%'}}/></div><span className="rev-val">{fmtMoney(p.earnings)}</span></div>})}
+      {d.adsense.pages.length>0&&<div style={{marginTop:8,display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}}>
+        {d.adsense.pages.slice(0,6).map((p,i)=><div key={i} style={{fontSize:10,color:'var(--hint)'}}><span style={{fontWeight:500,color:'var(--text)'}}>{shortPath(p.page).slice(0,30)}</span><br/>{fmt(p.pageViews)} views / RPM {fmtMoney(p.rpm)} / {p.clicks} clicks</div>)}
+      </div>}
+      <div className="explain">Revenue estimado por pagina. RPM = revenue por 1K page views. Click en fila para detalle.</div>
+    </div></div>}
+
+    <div className="two-col">
+      {d.countries&&d.countries.length>0&&<div className="panel"><div className="panel-head"><h3>Top paises</h3><span className="pill pill-blue">GSC</span></div><div className="panel-body">
+        {d.countries.map((c,i)=><div className="country-bar" key={i}><span className="country-name">{COUNTRY_NAMES[c.code]||c.code}</span><div className="country-track"><div className="country-fill" style={{width:Math.round(c.clicks/maxCC*100)+'%'}}/></div><span className="country-val">{fmt(c.clicks)}</span></div>)}</div></div>}
+      {d.ga4Pages&&d.ga4Pages.length>0&&<div className="panel"><div className="panel-head"><h3>Top pages</h3><span className="pill pill-blue">GA4</span></div><div className="panel-body">
+        {d.ga4Pages.slice(0,10).map((p,i)=><div className="row" key={i} style={{padding:'5px 0'}} onClick={()=>openDetail({page:'https://paislector.com'+p.page,query:null,position:0,clicks:0,impressions:0})}><div className="row-left"><div className="row-kw">{p.page}</div><div className="row-meta">{fmt(p.sessions)} sess / {fmt(p.users)} users / {p.engRate}% eng</div></div></div>)}</div></div>}
+    </div>
+
+    {/* DISCOVERY — new in v2.6 */}
+    <Discovery gscRows={d.allRows} onOpenDetail={openDetail}/>
+
+    <KwAnalyzer gscRows={d.allRows}/>
+
+    <UtmBuilder onCreated={createUtm} existingUtms={utms}/>
+    <UtmDashboard utms={utms} metricsMap={utmMetrics} onOpenDetail={setUtmDetail} onRefresh={()=>fetchUtmMetrics()} loading={utmLoading}/>
+    <div className="panel"><div className="panel-head"><h3>Escribir next</h3><span className="pill pill-green">{d.escribir.length} oportunidades</span></div><div className="panel-body">
+      {d.escribir.length===0&&<div style={{fontSize:12,color:'var(--hint)',padding:'8px 0'}}>No hay queries sin pagina dedicada que cumplan el umbral.</div>}
+      {d.escribir.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({query:r.keys[0],page:null,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / score {r.score}</div></div><span className={`score ${r.score>80?'s-hi':r.score>50?'s-md':'s-lo'}`}>{r.score}</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Content brief para "'+r.keys[0]+'" para paislector.com'),'_blank')}}>Brief</button></div>)}
+      <div className="explain">Click en fila para ver tendencia y diagnostico.</div></div></div>
+    <div className="panel"><div className="panel-head"><h3>Optimizar ahora</h3><span className="pill pill-coral">{d.optimizar.length+d.dropping.length+d.hasPageOpt.length} acciones</span></div><div className="panel-body">
+      {d.hasPageOpt.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--blue)',marginBottom:6,marginTop:2}}>Ya tienen pagina ({d.hasPageOpt.length})</div>
+      {d.hasPageOpt.map((r,i)=><div className="row" key={'hp'+i} onClick={()=>openDetail(r)}><div className="row-left"><div className="row-kw">{r.query}</div><div className="row-meta"><span className="url-tag">{shortPath(r.page)}</span> pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr / {r.action}</div></div><span className="score s-md">OPT</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Optimiza '+r.page+' para "'+r.query+'". Pos: '+r.position.toFixed(1)+'. Accion: '+r.action),'_blank')}}>Brief</button></div>)}</>}
+      {d.optimizar.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6,marginTop:d.hasPageOpt.length>0?10:2}}>CTR bajo ({d.optimizar.length})</div>
+      {d.optimizar.map((r,i)=><div className="row" key={'o'+i} onClick={()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / CTR {(r.ctr*100).toFixed(1)}% vs esperado {r.expected}% / pos {r.position.toFixed(1)}</div></div><span className="score s-lo">CTR</span></div>)}</>}
+      {d.dropping.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6,marginTop:10}}>Cayendo ({d.dropping.length})</div>
+      {d.dropping.map((r,i)=><div className="row" key={'d'+i} onClick={()=>openDetail({query:null,page:r.page,position:r.curPos,clicks:r.clicks,impressions:0})}><div className="row-left"><div className="row-kw">{shortPath(r.page)}</div><div className="row-meta">pos {r.prevPos.toFixed(1)} &rarr; {r.curPos.toFixed(1)} / -{Math.max(0,r.lostClicks)} clicks</div></div><span className="score s-lo">DROP</span></div>)}</>}
+      <div className="explain">Click en fila para diagnostico detallado.</div></div></div>
+    <div className="panel"><div className="panel-head"><h3>Quick wins</h3><span className="pill pill-amber">{d.quickWins.length} keywords</span></div><div className="panel-body">
+      {d.quickWins.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / CTR {(r.ctr*100).toFixed(1)}%</div></div><span className={`score ${r.action==='protect'?'s-hi':r.action==='push'?'s-md':'s-lo'}`}>{r.action==='protect'?'TOP3':r.action==='push'?'PUSH':'NEW'}</span></div>)}
+      <div className="explain">TOP3: proteger. PUSH: internal links. NEW: articulo nuevo.</div></div></div>
+    <div className="panel"><div className="panel-head"><h3>Cluster map</h3><span className="pill pill-purple">{d.clusterArr.length} clusters</span></div><div className="panel-body">
+      {d.clusterArr.map((c,i)=><div className="row" key={i} style={{cursor:'default'}}><div className="row-left"><div className="row-kw">{c.name}</div><div className="row-meta">{c.count} queries / {fmt(c.clicks)} clicks / {fmt(c.impressions)} impr</div></div><span className={`score ${c.count>5?'s-hi':c.count>3?'s-md':'s-lo'}`}>{c.count}q</span></div>)}
+      <div className="explain">Queries por tema. Mas queries = mas oportunidad de hub.</div></div></div>
+    {d.contentVsTraffic&&d.contentVsTraffic.length>0&&<div className="panel"><div className="panel-head"><h3>Contenido vs trafico</h3><span className="pill pill-blue">GSC + GA4</span></div><div className="panel-body">
+      {d.contentVsTraffic.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({page:'https://paislector.com'+r.page,query:null,position:0,clicks:r.gscClicks,impressions:0})}><div className="row-left"><div className="row-kw">{r.page.length>45?r.page.slice(0,45)+'...':r.page}</div><div className="row-meta">GSC: {fmt(r.gscClicks)} / GA4: {fmt(r.gaSessions)} / ratio {r.ratio.toFixed(1)}x{r.ratio>1.5?' \u2014 social fuerte':''}</div></div></div>)}
+      <div className="explain">Ratio +1.5 = trafico no-SEO. ~1 = depende de Google.</div></div></div>}
+    </>:null}
+    <div className="footer">SEO Pulse {VERSION} / $0<br/><button className="btn-secondary" style={{marginTop:6}} onClick={()=>{localStorage.clear();setConfig(null);setToken(null);setData(null);setGa4Warn(null);setAdsenseWarn(null)}}>Resetear todo</button></div>
+    {detailItem&&<PageDetailDrawer item={detailItem} onClose={()=>setDetailItem(null)} gscFn={gsc} period={period}/>}
+    {utmDetail&&<UtmDetailDrawer utm={utmDetail} onClose={()=>setUtmDetail(null)} ga4Fetch={ga4Fetch} period={period} onDelete={deleteUtm} onArchive={archiveUtm}/>}
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
