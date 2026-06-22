@@ -963,9 +963,101 @@ function OutboundClicks({ga4Fetch,period}){
   </div></div>);
 }
 
+// ====== URL INSPECTION (Index tab) ======
+function mapInspect(json,url){
+  const r=(json&&json.inspectionResult)||{};const i=r.indexStatusResult||{};const rr=r.richResultsResult||{};
+  return {url,verdict:i.verdict||null,coverageState:i.coverageState||'',robotsTxtState:i.robotsTxtState||'',
+    indexingState:i.indexingState||'',lastCrawlTime:i.lastCrawlTime||null,googleCanonical:i.googleCanonical||'',
+    userCanonical:i.userCanonical||'',crawledAs:i.crawledAs||'',richTypes:(rr.detectedItems||[]).map(d=>d.richResultType),
+    link:r.inspectionResultLink||'',ts:Date.now()};
+}
+function classifyInspect(p){
+  const m=p.googleCanonical&&p.userCanonical&&p.googleCanonical!==p.userCanonical;
+  if(m)return{key:'canon',label:'Canonical distinto al declarado',cls:'s-lo',tag:'CANON'};
+  if(p.verdict==='PASS')return{key:'ok',label:'Indexada',cls:'s-hi',tag:'IX'};
+  if(p.verdict==='NEUTRAL')return{key:'excl',label:p.coverageState||'Excluida',cls:'s-md',tag:'NO-IX'};
+  if(p.verdict==='FAIL')return{key:'fail',label:p.coverageState||'Error',cls:'s-lo',tag:'FAIL'};
+  return{key:'unk',label:p.coverageState||'Sin datos',cls:'s-md',tag:'?'};
+}
+function InspectDrawer({data,onClose}){
+  if(!data)return null;
+  const c=classifyInspect(data);
+  const m=data.googleCanonical&&data.userCanonical&&data.googleCanonical!==data.userCanonical;
+  return ReactDOM.createPortal(
+    <div onClick={onClose} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.4)',display:'flex',alignItems:'flex-end',justifyContent:'center',zIndex:200}}>
+      <div className="drawer" onClick={e=>e.stopPropagation()}>
+        <div className="drawer-handle" onClick={onClose}><span/></div>
+        <div className="drawer-header"><h2>{c.label}</h2><div className="drawer-url">{data.url}</div></div>
+        <div style={{padding:'12px 18px 24px'}}>
+          <div className={"diag-item "+(c.key==='ok'?'diag-ok':c.key==='canon'?'diag-urgent':'diag-warn')} style={{marginBottom:10}}>{data.coverageState||'Sin estado de cobertura'}</div>
+          <div style={{fontSize:12,color:'var(--muted)',lineHeight:2}}>
+            <div>robots.txt: <strong style={{color:'var(--text)'}}>{data.robotsTxtState||'—'}</strong></div>
+            <div>Indexación: <strong style={{color:'var(--text)'}}>{data.indexingState||'—'}</strong></div>
+            <div>Último rastreo: <strong style={{color:'var(--text)'}}>{data.lastCrawlTime?new Date(data.lastCrawlTime).toLocaleString():'—'}</strong>{data.crawledAs?' ('+data.crawledAs+')':''}</div>
+          </div>
+          <div className="setup-note" style={{marginTop:12}}>
+            <h3>Canonical</h3>
+            <div style={{fontSize:12,lineHeight:1.9,wordBreak:'break-all'}}>
+              <div>Tú declaras: <code>{data.userCanonical||'—'}</code></div>
+              <div>Google eligió: <code>{data.googleCanonical||'(igual al declarado)'}</code></div>
+            </div>
+          </div>
+          <div className={"diag-item "+(m?'diag-urgent':'diag-ok')} style={{marginTop:8}}>{m?'Google eligió otra URL como canónica — esta página pierde su señal.':'Google respeta tu canonical.'}</div>
+          <div style={{marginTop:14,fontSize:11,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--muted)',marginBottom:7}}>Rich results detectados por Google</div>
+          {data.richTypes.length?data.richTypes.map((t,i)=><span key={i} className="pill pill-green" style={{marginRight:6,marginBottom:6,display:'inline-block'}}>{t}</span>):<span style={{fontSize:12,color:'var(--hint)'}}>Ninguno detectado (no implica markup roto: Google restringió FAQ desde 2023).</span>}
+          {data.link&&<div style={{marginTop:16}}><a href={data.link} target="_blank" rel="noopener" className="btn-secondary" style={{textDecoration:'none',display:'inline-block'}}>Abrir en Search Console &rarr;</a></div>}
+        </div>
+      </div>
+    </div>,document.body);
+}
+function IndexTab({gscFn,inspectFn,config}){
+  const [watch,setWatch]=useState([]);
+  const [res,setRes]=useState(()=>{try{return JSON.parse(localStorage.getItem('sp2_inspect')||'{}')}catch{return{}}});
+  const [loading,setLoading]=useState(false);
+  const [manual,setManual]=useState('');
+  const [sel,setSel]=useState(null);
+  const [err,setErr]=useState(null);
+  const [progress,setProgress]=useState(null);
+  useEffect(()=>{let on=true;(async()=>{try{const r=await gscFn({startDate:daysAgo(28),endDate:daysAgo(1),dimensions:['page'],type:'web',rowLimit:25});if(on&&r&&r.rows)setWatch(r.rows.map(x=>x.keys[0]))}catch(e){}})();return()=>{on=false}},[]);
+  const save=(obj)=>{setRes(obj);try{localStorage.setItem('sp2_inspect',JSON.stringify(obj))}catch{}};
+  async function runBatch(){const list=watch.slice(0,20);setLoading(true);setErr(null);let out={...res};for(let k=0;k<list.length;k++){setProgress((k+1)+'/'+list.length);try{const j=await inspectFn(list[k]);out={...out,[list[k]]:mapInspect(j,list[k])};save(out)}catch(e){setErr(e.message)}await new Promise(r=>setTimeout(r,200))}setProgress(null);setLoading(false)}
+  async function runOne(){let u=manual.trim();if(!u)return;if(!/^https?:\/\//.test(u))u='https://'+u.replace(/^\/+/,'');setLoading(true);setErr(null);try{const j=await inspectFn(u);const p=mapInspect(j,u);save({...res,[u]:p});setSel(p)}catch(e){setErr(e.message)}setLoading(false)}
+  const items=watch.map(u=>res[u]).filter(Boolean);
+  const ix=items.filter(p=>classifyInspect(p).key==='ok').length;
+  const canon=items.filter(p=>p.googleCanonical&&p.userCanonical&&p.googleCanonical!==p.userCanonical).length;
+  const notIx=items.filter(p=>{const k=classifyInspect(p).key;return k==='excl'||k==='fail'}).length;
+  const probs=items.filter(p=>classifyInspect(p).key!=='ok');
+  return(<>
+    <div className="panel"><div className="panel-head"><h3>Inspeccionar URL</h3><span className="pill pill-blue">URL Inspection API</span></div><div className="panel-body">
+      <div style={{display:'flex',gap:8}}>
+        <input style={{flex:1,padding:'9px 12px',borderRadius:8,border:'1px solid var(--border)',fontSize:13,fontFamily:'var(--sans)',background:'var(--surface)',color:'var(--text)'}} placeholder="paislector.com/..." value={manual} onChange={e=>setManual(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')runOne()}}/>
+        <button className="btn-primary" onClick={runOne} disabled={loading}>{loading?'...':'Inspeccionar'}</button>
+      </div>
+      <div className="explain">Watchlist: {watch.length} páginas top de GSC. Límite de la API ~2.000 URLs/día.</div>
+      <button className="btn-secondary" style={{marginTop:8}} onClick={runBatch} disabled={loading||watch.length===0}>{loading&&progress?'Revisando '+progress:'Revisar watchlist ('+Math.min(watch.length,20)+')'}</button>
+    </div></div>
+    {err&&<div className="error-msg">{err}</div>}
+    {items.length>0&&<div className="stats">
+      <div className="stat"><div className="stat-label">Indexadas</div><div className="stat-val">{ix}/{items.length}</div></div>
+      <div className="stat"><div className="stat-label">Sin indexar</div><div className="stat-val">{notIx}</div></div>
+      <div className="stat"><div className="stat-label">Canonical conflicto</div><div className="stat-val">{canon}</div></div>
+      <div className="stat"><div className="stat-label">Revisadas</div><div className="stat-val">{items.length}</div></div>
+    </div>}
+    {probs.length>0&&<div className="panel"><div className="panel-head"><h3>Requieren atencion</h3><span className="pill pill-coral">{probs.length}</span></div><div className="panel-body">
+      {probs.map((p,i)=>{const c=classifyInspect(p);return <div className="row" key={i} onClick={()=>setSel(p)}><div className="row-left"><div className="row-kw">{shortPath(p.url)}</div><div className="row-meta">{c.label}{p.lastCrawlTime?' / rastreo '+new Date(p.lastCrawlTime).toLocaleDateString():''}</div></div><span className={"score "+c.cls}>{c.tag}</span></div>})}
+    </div></div>}
+    {items.length>0&&<div className="panel"><div className="panel-head"><h3>Watchlist</h3><span className="pill pill-blue">{items.length}</span></div><div className="panel-body">
+      {items.map((p,i)=>{const c=classifyInspect(p);return <div className="row" key={i} onClick={()=>setSel(p)}><div className="row-left"><div className="row-kw">{shortPath(p.url)}</div><div className="row-meta">{c.label}{p.richTypes.length?' / '+p.richTypes.join(', '):''}</div></div><span className={"score "+c.cls}>{c.tag}</span></div>})}
+      <div className="explain">Indexacion, canonical elegido por Google y schema detectado &mdash; verificado desde el lado de Google.</div>
+    </div></div>}
+    <InspectDrawer data={sel} onClose={()=>setSel(null)}/>
+  </>);
+}
+
 // ====== TAB NAV ======
 const TABS=[
   {id:'overview',label:'Overview',icon:'M3 12l2-2 7-7 7 7 2 2M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3'},
+  {id:'index',label:'Index',icon:'M9 13h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'},
   {id:'content',label:'Content',icon:'M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z'},
   {id:'tracking',label:'Tracking',icon:'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'},
   {id:'revenue',label:'Revenue',icon:'M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6'},
@@ -1021,6 +1113,7 @@ function App(){
 
   const gsc=useCallback(async(body)=>{const r=await fetch(GSC_API+'/sites/'+encodeURIComponent(config.site)+'/searchAnalytics/query',{method:'POST',headers:{'Authorization':'Bearer '+token.tk,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error('GSC '+r.status+': '+await r.text());return r.json()},[config,token]);
   const ga4Fetch=useCallback(async(body)=>{if(!config?.ga4)return null;const r=await fetch(GA4_API+'/'+config.ga4+':runReport',{method:'POST',headers:{'Authorization':'Bearer '+token.tk,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok){if(r.status===403)setGa4Warn('GA4 403: Habilita Google Analytics Data API en Cloud Console');else setGa4Warn('GA4 error '+r.status);return null}setGa4Warn(null);return r.json()},[config,token]);
+  const inspectUrl=useCallback(async(url)=>{const r=await fetch('https://searchconsole.googleapis.com/v1/urlInspection/index:inspect',{method:'POST',headers:{'Authorization':'Bearer '+token.tk,'Content-Type':'application/json'},body:JSON.stringify({inspectionUrl:url,siteUrl:config.site,languageCode:'es'})});if(!r.ok)throw new Error('Inspect '+r.status+': '+(await r.text()).slice(0,160));return r.json()},[config,token]);
 
   // UTM callbacks
   const fetchUtmMetrics=useCallback(async(utmList)=>{
@@ -1220,6 +1313,9 @@ function App(){
           <div className="explain">Queries por tema. Mas queries = mas oportunidad de hub.</div></div></div>
       </>:null}
     </>}
+
+    {/* ========== INDEX TAB ========== */}
+    {activeTab==='index'&&<IndexTab gscFn={gsc} inspectFn={inspectUrl} config={config}/>}
 
     {/* ========== CONTENT TAB ========== */}
     {activeTab==='content'&&<>
