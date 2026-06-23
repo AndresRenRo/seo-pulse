@@ -254,7 +254,7 @@ header h1 em{color:var(--blue);font-style:normal}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v3.1';
+const VERSION='v3.2';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SUGGEST_API=REDIRECT_URI+'/api/suggest';
 const SCOPES='https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly https://www.googleapis.com/auth/adsense.readonly';
@@ -1231,46 +1231,6 @@ function AudKwReport({data}){
     <div className="explain">{live?"De tu Search Console + Analytics, según el periodo seleccionado.":"Conecta y carga datos para ver tus números reales aquí."}</div>
   </div></div>);
 }
-function Auditoria({data}){
-  const [st,setSt]=useState(()=>{try{const s=JSON.parse(localStorage.getItem('sp2_audit')||'null');if(s)return s;}catch(e){}return auditDefaults();});
-  const [site,setSite]=useState("paislector.com");
-  const save=(next)=>{setSt(next);try{localStorage.setItem('sp2_audit',JSON.stringify(next))}catch(e){}};
-  const setState=(id,v)=>save({...st,[id]:{...(st[id]||{nota:""}),estado:v}});
-  const setNote=(id,v)=>save({...st,[id]:{...(st[id]||{estado:"na"}),nota:v}});
-  const {perPhase,stageFormal,current}=etAudit(deriveSignals(st));
-  const hasAhead=perPhase.some(f=>f.state==="ahead");
-  let ok=0,no=0,na=0;Object.values(st).forEach(s=>{if(s.estado==="ok")ok++;else if(s.estado==="no")no++;else na++;});
-  return(<>
-    <div className="site-row">
-      <input className="site-input" value={site} onChange={e=>setSite(e.target.value)} placeholder="dominio del cliente…"/>
-      <button className="btn-primary" onClick={()=>{}}>Auditar sitio</button>
-    </div>
-    <div className="result">
-      <div className="kick">{site} · resultado</div>
-      <div className="phase">Fase <b>{stageFormal}</b> · {stageFormal?ET_PHASES[stageFormal-1].nombre:"Sin acceso"}</div>
-      <div className="segbar">{perPhase.map(f=><i key={f.n} className={f.state}></i>)}</div>
-      {current?<div className="next">
-        <div className="lbl">Siguiente paso</div>
-        <div className="act">{current.failing[0][1]}</div>
-        <div className="why">Cierra la Fase {current.n} ({current.nombre}).{hasAhead?" Desbloquea además el trabajo que ya está hecho más adelante.":""}</div>
-      </div>:<div className="next"><div className="lbl">Estado</div><div className="act" style={{color:"var(--green)"}}>Roadmap completo</div></div>}
-      <div className="summary-chips">
-        <span className="chip s-hi tnum">{ok} cumple</span>
-        <span className="chip s-lo tnum">{no} no</span>
-        <span className="chip" style={{background:"var(--surface-alt)",color:"var(--muted)"}}>{na} N/A</span>
-      </div>
-    </div>
-    <AudKwReport data={data}/>
-    <div className="panel"><div className="panel-head"><h3>Checklist de auditoría</h3><span className="pill pill-blue">manual + auto*</span></div><div className="panel-body">
-      {AUDIT_GROUPS.map(g=><div key={g.label}>
-        <div className="seclabel">{g.label}</div>
-        {g.items.map(it=><AudCheck key={it.id} item={it} state={st[it.id]||{estado:"na",nota:""}} onState={setState} onNote={setNote}/>)}
-      </div>)}
-      <div className="explain">* "auto" = lo llenará el auditor automático cuando lo conectemos (lee el HTML server-side). Lo de juicio (answer-first, densidad) y lo de proceso (Share of Model, refresco) se queda manual. Cada ✓ alimenta el motor de fases — y esto se refleja en la home Etapa.</div>
-    </div></div>
-  </>);
-}
-
 // ====== ETAPA (home / roadmap maestro) ======
 const ET_PHASES=[
   {n:1,nombre:"Acceso",se_hace:"Que el sitio sea rastreable, indexable y visible para los crawlers de IA.",entregable:"Checklist de acceso + fix de robots.txt/CDN si bloquea.",gates:[["acceso_crawlers_ia","Permitir crawlers de IA en robots.txt / CDN"],["render_server_side","Servir el contenido crítico server-side"],["indexable","Quitar noindex y lograr indexación"]]},
@@ -1293,28 +1253,42 @@ function etAudit(signals){
 const PL_SIGNALS={acceso_crawlers_ia:true,render_server_side:true,indexable:true,meta_basico_ok:true,canonical_sin_duplicado:false,og_twitter_ok:true,headings_jerarquia_ok:true,taxonomia_limpia:true,schema_en_pila:true,schema_sin_duplicados:true,entidad_sameas:true,answer_first:false,densidad_factual:true,faq_presente:true,formato_estructurado:true,frescura:true,autor_acreditado:true,earned_media:false,share_of_model:false,utm_tracking:true,refresco_trimestral:false,alerting_anomalias:false,geo_score:72};
 const ET_STAT={sealed:["Completa","s-sealed"],current:["En curso","s-current"],ahead:["Lista · bloqueada","s-ahead"],pending:["Pendiente",""]};
 const ET_ICON={sealed:"✓",current:"●",ahead:"🔒"};
-function Etapa(){
-  const {perPhase,stageFormal,current}=etAudit(loadAuditSignals());
+function Etapa({data}){
+  const [st,setSt]=useState(()=>{try{const s=JSON.parse(localStorage.getItem('sp2_audit')||'null');if(s)return s;}catch(e){}return auditDefaults();});
   const [sel,setSel]=useState(null);
+  const [site,setSite]=useState("paislector.com");
+  const save=(next)=>{setSt(next);try{localStorage.setItem('sp2_audit',JSON.stringify(next))}catch(e){}};
+  const setState=(id,v)=>save({...st,[id]:{...(st[id]||{nota:""}),estado:v}});
+  const setNote=(id,v)=>save({...st,[id]:{...(st[id]||{estado:"na"}),nota:v}});
+  const sig=deriveSignals(st);
+  const {perPhase,stageFormal,current}=etAudit(sig);
   const active=sel?perPhase.find(f=>f.n===sel):(current||perPhase[perPhase.length-1]);
   const hasAhead=perPhase.some(f=>f.state==="ahead");
+  const hygiene=(AUDIT_GROUPS.find(g=>g.label.indexOf("higiene")>=0)||{items:[]}).items;
+  let ok=0,no=0,na=0;Object.values(st).forEach(s=>{if(s.estado==="ok")ok++;else if(s.estado==="no")no++;else na++;});
   return (<>
+    <div className="site-row">
+      <input className="site-input" value={site} onChange={e=>setSite(e.target.value)} placeholder="dominio…"/>
+      <button className="btn-primary" onClick={()=>{}}>Auditar sitio</button>
+    </div>
     <div className="hero">
-      <div className="proj">País Lector · dominio</div>
+      <div className="proj">{site} · dominio</div>
       <div className="phase">Fase <b>{stageFormal}</b> · {stageFormal?ET_PHASES[stageFormal-1].nombre:"Sin acceso"}</div>
       <div className="meta tnum">{stageFormal} de 7 fases selladas{current?" · siguiente: "+current.nombre:""}</div>
       <div className="segbar">{perPhase.map(f=><i key={f.n} className={f.state}></i>)}</div>
-      {current?(
-        <div className="next">
-          <div className="lbl">Siguiente paso</div>
-          <div className="act">{current.failing[0][1]}</div>
-          <div className="why">Sella la Fase {current.n} ({current.nombre}). {hasAhead?"Desbloquea además el trabajo que ya tienes hecho más adelante.":"Es el siguiente eslabón del roadmap."}</div>
-          <button className="btn" onClick={()=>setSel(current.n)}>Ver qué falta en la Fase {current.n} →</button>
-        </div>
-      ):(
-        <div className="next done"><div className="lbl">Estado</div><div className="act">Roadmap completo</div><div className="why">Las 7 fases están selladas. Mantén vivo el loop de la Fase 7.</div></div>
-      )}
+      {current?(<div className="next">
+        <div className="lbl">Siguiente paso</div>
+        <div className="act">{current.failing[0][1]}</div>
+        <div className="why">Sella la Fase {current.n} ({current.nombre}).{hasAhead?" Desbloquea además el trabajo que ya tienes hecho más adelante.":""}</div>
+        <button className="btn" onClick={()=>setSel(current.n)}>Ver qué falta en la Fase {current.n} →</button>
+      </div>):(<div className="next done"><div className="lbl">Estado</div><div className="act">Roadmap completo</div><div className="why">Las 7 fases están selladas. Mantén vivo el loop de la Fase 7.</div></div>)}
+      <div className="summary-chips">
+        <span className="chip s-hi tnum">{ok} cumple</span>
+        <span className="chip s-lo tnum">{no} no</span>
+        <span className="chip" style={{background:"var(--surface-alt)",color:"var(--muted)"}}>{na} N/A</span>
+      </div>
     </div>
+    <AudKwReport data={data}/>
     <div className="seclabel">El roadmap</div>
     <div className="list">
       {perPhase.map(f=>{const [txt,cls]=ET_STAT[f.state];return (
@@ -1328,20 +1302,24 @@ function Etapa(){
     {active&&<div className="detail" key={"d"+active.n}>
       <div className="dh"><div className="dname">{active.nombre}</div><div className="dtag tnum">Fase {active.n} · {active.pct}%</div></div>
       <div className="ddesc">{active.se_hace}</div>
-      {active.gates.map((g,i)=>{const pass=gatePasses(g,PL_SIGNALS);return (
-        <div key={i} className={"gate "+(pass?"g-done":"g-todo")}>
-          <div className={"gck "+(pass?"done":"todo")}>{pass?"✓":""}</div>
-          <div><div className="gtext">{g[1]}</div>{!pass&&<div className="ghint">{g[0]}{g[2]!==undefined?" ≥ "+g[2]:""}</div>}</div>
-        </div>);})}
+      {active.gates.map((g,i)=>{
+        if(g[0]==="geo_score"){const pass=sig.geo_score>=g[2];return (
+          <div key={i} className="ck"><div className="ck-top"><span className="ck-label">{g[1]} <span className="ck-auto">auto</span></span><span className={"score "+(pass?"s-hi":"s-lo")}>{sig.geo_score}/100</span></div></div>);}
+        return <AudCheck key={i} item={{id:g[0],t:g[1],sig:g[0]}} state={st[g[0]]||{estado:"na",nota:""}} onState={setState} onNote={setNote}/>;
+      })}
       <div className="deliver"><b>Entregable</b>{active.entregable}</div>
     </div>}
+    <div className="seclabel">Higiene técnica</div>
+    <div className="panel"><div className="panel-body">
+      {hygiene.map(it=><AudCheck key={it.id} item={it} state={st[it.id]||{estado:"na",nota:""}} onState={setState} onNote={setNote}/>)}
+      <div className="explain">No mueven la fase, pero importan para la salud del sitio. Los ítems con "auto*" se llenarán solos cuando conectemos el auditor server-side.</div>
+    </div></div>
   </>);
 }
 
 // ====== TAB NAV ======
 const TABS=[
   {id:'etapa',label:'Etapa',icon:'M4 4h12l-2 4 2 4H4M4 4v17'},
-  {id:'audit',label:'Auditoría',icon:'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7l-3 3-1.5-1.5'},
   {id:'overview',label:'Overview',icon:'M3 12l2-2 7-7 7 7 2 2M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3'},
   {id:'index',label:'Index',icon:'M9 13h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'},
   {id:'content',label:'Content',icon:'M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z'},
@@ -1578,10 +1556,7 @@ function App(){
     <div className="tab-content">
 
     {/* ========== ETAPA TAB ========== */}
-    {activeTab==='etapa'&&<Etapa/>}
-
-    {/* ========== AUDITORÍA TAB ========== */}
-    {activeTab==='audit'&&<Auditoria data={data}/>}
+    {activeTab==='etapa'&&<Etapa data={data}/>}
 
     {/* ========== OVERVIEW TAB ========== */}
     {activeTab==='overview'&&<>
