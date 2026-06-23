@@ -254,7 +254,7 @@ header h1 em{color:var(--blue);font-style:normal}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v3.2';
+const VERSION='v3.3';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SUGGEST_API=REDIRECT_URI+'/api/suggest';
 const SCOPES='https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly https://www.googleapis.com/auth/adsense.readonly';
@@ -1260,6 +1260,26 @@ function Etapa({data}){
   const save=(next)=>{setSt(next);try{localStorage.setItem('sp2_audit',JSON.stringify(next))}catch(e){}};
   const setState=(id,v)=>save({...st,[id]:{...(st[id]||{nota:""}),estado:v}});
   const setNote=(id,v)=>save({...st,[id]:{...(st[id]||{estado:"na"}),nota:v}});
+  const [auditing,setAuditing]=useState(false);
+  const [report,setReport]=useState(null);
+  const [auditErr,setAuditErr]=useState(null);
+  async function runAudit(){
+    setAuditing(true);setAuditErr(null);
+    try{
+      const dom=site.replace(/^https?:\/\//,'').replace(/\/$/,'');
+      const urls=(data&&data.ga4Pages)?data.ga4Pages.slice(0,10).map(p=>'https://'+dom+p.page):[];
+      const r=await fetch(REDIRECT_URI+'/api/audit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({site,urls})});
+      if(!r.ok)throw new Error('audit '+r.status+': '+(await r.text()).slice(0,160));
+      const rep=await r.json();
+      setReport(rep);
+      const next={...st};
+      Object.entries(rep.signals||{}).forEach(([k,v])=>{if(next[k])next[k]={...next[k],estado:v?'ok':'no'}});
+      const ev=rep.evidence&&rep.evidence.answer_first&&rep.evidence.answer_first[0];
+      if(ev&&next.answer_first)next.answer_first={...next.answer_first,nota:'Apertura ('+ev.words+' palabras): \"'+(ev.opening||'').slice(0,130)+'\u2026\" \u2014 requiere lectura'};
+      save(next);
+    }catch(e){setAuditErr(e.message)}
+    setAuditing(false);
+  }
   const sig=deriveSignals(st);
   const {perPhase,stageFormal,current}=etAudit(sig);
   const active=sel?perPhase.find(f=>f.n===sel):(current||perPhase[perPhase.length-1]);
@@ -1269,7 +1289,7 @@ function Etapa({data}){
   return (<>
     <div className="site-row">
       <input className="site-input" value={site} onChange={e=>setSite(e.target.value)} placeholder="dominio…"/>
-      <button className="btn-primary" onClick={()=>{}}>Auditar sitio</button>
+      <button className="btn-primary" onClick={runAudit} disabled={auditing}>{auditing?"Auditando\u2026":"Auditar sitio"}</button>
     </div>
     <div className="hero">
       <div className="proj">{site} · dominio</div>
@@ -1289,6 +1309,15 @@ function Etapa({data}){
       </div>
     </div>
     <AudKwReport data={data}/>
+    {auditErr&&<div className="error-msg">{auditErr}</div>}
+    {report&&<div className="panel"><div className="panel-head"><h3>Informe automático</h3><span className="pill pill-green">{report.sampled} págs</span></div><div className="panel-body">
+      <div style={{fontSize:13,lineHeight:2,marginBottom:4}}>
+        <div>robots.txt — {report.domainChecks.aiBlocked.length?<b style={{color:"var(--coral)"}}>bloquea {report.domainChecks.aiBlocked.join(", ")}</b>:<b style={{color:"var(--green)"}}>permite crawlers de IA</b>}</div>
+        <div>sitemap — {report.domainChecks.sitemapCount?<b>{report.domainChecks.sitemapCount} URLs</b>:<span style={{color:"var(--coral)"}}>no encontrado</span>}</div>
+      </div>
+      {Object.entries(report.counts||{}).map(([k,v])=>{const p=String(v).split("/");const full=p[0]===p[1];return <div className="row" key={k} style={{cursor:"default"}}><div className="row-left"><div className="row-kw">{k}</div></div><span className={"score "+(full?"s-hi":(+p[0]>0?"s-md":"s-lo"))}>{v}</span></div>;})}
+      <div className="explain">Señales duras llenadas automáticamente y reflejadas en las fases de arriba. La apertura de cada página quedó como evidencia en la nota de "answer-first" — eso lo lees tú.</div>
+    </div></div>}
     <div className="seclabel">El roadmap</div>
     <div className="list">
       {perPhase.map(f=>{const [txt,cls]=ET_STAT[f.state];return (
