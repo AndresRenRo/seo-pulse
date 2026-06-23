@@ -270,9 +270,9 @@ function diagnose(daily,topQueries,avgPos,avgCtr,totalClicks,totalImpr){
     const h2Pos=daily.slice(mid).reduce((s,d)=>s+d.position,0)/(daily.length-mid);
     const clickDelta=h1Clicks>0?((h2Clicks-h1Clicks)/h1Clicks*100):0;
     const posDelta=h2Pos-h1Pos;
-    if(posDelta>1.5)actions.push({level:'urgent',text:'Posicion cayendo: '+h1Pos.toFixed(1)+' \u2192 '+h2Pos.toFixed(1)+'. Revisar competidores, backlinks, core updates.'});
-    else if(posDelta>0.5)actions.push({level:'warn',text:'Leve descenso ('+h1Pos.toFixed(1)+' \u2192 '+h2Pos.toFixed(1)+'). Reforzar con internal links.'});
-    else if(posDelta<-1)actions.push({level:'ok',text:'Posicion mejorando: '+h1Pos.toFixed(1)+' \u2192 '+h2Pos.toFixed(1)+'.'});
+    if(posDelta>1.5)actions.push({level:'urgent',text:'Posicion cayendo: '+h1Pos.toFixed(1)+' → '+h2Pos.toFixed(1)+'. Revisar competidores, backlinks, core updates.'});
+    else if(posDelta>0.5)actions.push({level:'warn',text:'Leve descenso ('+h1Pos.toFixed(1)+' → '+h2Pos.toFixed(1)+'). Reforzar con internal links.'});
+    else if(posDelta<-1)actions.push({level:'ok',text:'Posicion mejorando: '+h1Pos.toFixed(1)+' → '+h2Pos.toFixed(1)+'.'});
     if(clickDelta<-25&&h1Clicks>10)actions.push({level:'urgent',text:'Clicks -'+Math.abs(clickDelta).toFixed(0)+'% segunda mitad del periodo.'});
     else if(clickDelta>25&&h2Clicks>10)actions.push({level:'ok',text:'Clicks +'+clickDelta.toFixed(0)+'% segunda mitad.'});
   }
@@ -1093,13 +1093,13 @@ function IndexTab({gscFn,inspectFn,config}){
 
 // ====== ETAPA (home / roadmap maestro) ======
 const ET_PHASES=[
-  {n:1,nombre:"Acceso",se_hace:"Que el sitio sea rastreable, indexable y visible para los crawlers de IA.",entregable:"Checklist de acceso + fix de robots.txt/CDN si bloquea.",gates:[["acceso_crawlers_ia","Permitir crawlers de IA en robots.txt / CDN"],["render_server_side","Servir el contenido critico server-side"],["indexable","Quitar noindex y lograr indexacion"]]},
-  {n:2,nombre:"Fundamentos on-page",se_hace:"Dejar impecables los fundamentos tecnicos de cada pagina.",entregable:"Checklist de publicacion on-page (junior ejecuta, sale senior).",gates:[["meta_basico_ok","Corregir title / description / canonical / lang"],["canonical_sin_duplicado","Eliminar el canonical duplicado o competido"],["headings_jerarquia_ok","Ordenar la jerarquia H1-H3"],["taxonomia_limpia","Limpiar la taxonomia de categorias y slugs"]]},
-  {n:3,nombre:"Schema de entidades",se_hace:"Emitir JSON-LD en pila, sin duplicados, segun el tipo de contenido.",entregable:"Motor de schema instalado y validado (0 errores, 0 duplicados).",gates:[["schema_en_pila","Emitir schema en pila (Article / ItemList / FAQPage / Person)"],["schema_sin_duplicados","Eliminar schema duplicado (regla de oro #1)"],["entidad_sameas","Anadir sameAs a las entidades (Wikipedia / Wikidata)"]]},
-  {n:4,nombre:"Contenido GEO",se_hace:"Estructurar el contenido para que los motores generativos lo citen.",entregable:"Brief de articulo GEO + calendario de refresco.",gates:[["answer_first","Reescribir las aperturas a answer-first (150-200 tokens)"],["densidad_factual","Anadir cifras, fuentes y citas"],["faq_presente","Incluir bloque FAQ"],["formato_estructurado","Estructurar en listas / formato extraible"],["frescura","Activar dateModified real + refresco"],["geo_score","Subir el score GEO",70]]},
+  {n:1,nombre:"Acceso",se_hace:"Que el sitio sea rastreable, indexable y visible para los crawlers de IA.",entregable:"Checklist de acceso + fix de robots.txt/CDN si bloquea.",gates:[["acceso_crawlers_ia","Permitir crawlers de IA en robots.txt / CDN"],["render_server_side","Servir el contenido crítico server-side"],["indexable","Quitar noindex y lograr indexación"]]},
+  {n:2,nombre:"Fundamentos on-page",se_hace:"Dejar impecables los fundamentos técnicos de cada página.",entregable:"Checklist de publicacion on-page (junior ejecuta, sale senior).",gates:[["meta_basico_ok","Corregir title / description / canonical / lang"],["canonical_sin_duplicado","Eliminar el canonical duplicado o competido"],["headings_jerarquia_ok","Ordenar la jerarquía H1–H3"],["taxonomia_limpia","Limpiar la taxonomía de categorías y slugs"]]},
+  {n:3,nombre:"Schema de entidades",se_hace:"Emitir JSON-LD en pila, sin duplicados, según el tipo de contenido.",entregable:"Motor de schema instalado y validado (0 errores, 0 duplicados).",gates:[["schema_en_pila","Emitir schema en pila (Article / ItemList / FAQPage / Person)"],["schema_sin_duplicados","Eliminar schema duplicado (regla de oro #1)"],["entidad_sameas","Añadir sameAs a las entidades (Wikipedia / Wikidata)"]]},
+  {n:4,nombre:"Contenido GEO",se_hace:"Estructurar el contenido para que los motores generativos lo citen.",entregable:"Brief de artículo GEO + calendario de refresco.",gates:[["answer_first","Reescribir las aperturas a answer-first (150-200 tokens)"],["densidad_factual","Añadir cifras, fuentes y citas"],["faq_presente","Incluir bloque FAQ"],["formato_estructurado","Estructurar en listas / formato extraíble"],["frescura","Activar dateModified real + refresco"],["geo_score","Subir el score GEO",70]]},
   {n:5,nombre:"Autoridad",se_hace:"Construir autoridad de entidad y de autor, dentro y fuera del sitio.",entregable:"Ficha de autor acreditado + plan de menciones / PR.",gates:[["autor_acreditado","Acreditar un autor identificable (E-E-A-T)"],["earned_media","Conseguir menciones multi-dominio / plan de PR"]]},
-  {n:6,nombre:"Medicion",se_hace:"Medir visibilidad en IA y distribucion, no solo rankings de Google.",entregable:"Panel Share of Model + tracking UTM conectado.",gates:[["share_of_model","Poner a correr Share of Model (N corridas por motor)"],["utm_tracking","Activar el tracking UTM"]]},
-  {n:7,nombre:"Optimizacion continua",se_hace:"Cerrar el loop: refresco, monitoreo de anomalias e iteracion por datos.",entregable:"Ciclo vivo de refresco trimestral + alerting de anomalias.",gates:[["refresco_trimestral","Ejecutar el calendario de refresco trimestral"],["alerting_anomalias","Montar alerting de caidas sobre el baseline"]]},
+  {n:6,nombre:"Medición",se_hace:"Medir visibilidad en IA y distribución, no solo rankings de Google.",entregable:"Panel Share of Model + tracking UTM conectado.",gates:[["share_of_model","Poner a correr Share of Model (N corridas por motor)"],["utm_tracking","Activar el tracking UTM"]]},
+  {n:7,nombre:"Optimización continua",se_hace:"Cerrar el loop: refresco, monitoreo de anomalías e iteración por datos.",entregable:"Ciclo vivo de refresco trimestral + alerting de anomalías.",gates:[["refresco_trimestral","Ejecutar el calendario de refresco trimestral"],["alerting_anomalias","Montar alerting de caídas sobre el baseline"]]},
 ];
 function gatePasses(g,s){const[k,,min]=g;const v=s[k];if(min!==undefined)return typeof v==="number"&&v>=min;return !!v;}
 function etAudit(signals){
@@ -1111,8 +1111,8 @@ function etAudit(signals){
 }
 // País Lector: evaluación manual (signals del build log). Editar aquí para recalcular la etapa.
 const PL_SIGNALS={acceso_crawlers_ia:true,render_server_side:true,indexable:true,meta_basico_ok:true,canonical_sin_duplicado:false,og_twitter_ok:true,headings_jerarquia_ok:true,taxonomia_limpia:true,schema_en_pila:true,schema_sin_duplicados:true,entidad_sameas:true,answer_first:false,densidad_factual:true,faq_presente:true,formato_estructurado:true,frescura:true,autor_acreditado:true,earned_media:false,share_of_model:false,utm_tracking:true,refresco_trimestral:false,alerting_anomalias:false,geo_score:72};
-const ET_STAT={sealed:["Completa","s-sealed"],current:["En curso","s-current"],ahead:["Lista \u00b7 bloqueada","s-ahead"],pending:["Pendiente",""]};
-const ET_ICON={sealed:"\u2713",current:"\u25cf",ahead:"\ud83d\udd12"};
+const ET_STAT={sealed:["Completa","s-sealed"],current:["En curso","s-current"],ahead:["Lista · bloqueada","s-ahead"],pending:["Pendiente",""]};
+const ET_ICON={sealed:"✓",current:"●",ahead:"🔒"};
 function Etapa(){
   const {perPhase,stageFormal,current}=etAudit(PL_SIGNALS);
   const [sel,setSel]=useState(null);
@@ -1120,19 +1120,19 @@ function Etapa(){
   const hasAhead=perPhase.some(f=>f.state==="ahead");
   return (<>
     <div className="hero">
-      <div className="proj">Pa\u00eds Lector \u00b7 dominio</div>
-      <div className="phase">Fase <b>{stageFormal}</b> \u00b7 {stageFormal?ET_PHASES[stageFormal-1].nombre:"Sin acceso"}</div>
-      <div className="meta tnum">{stageFormal} de 7 fases selladas{current?" \u00b7 siguiente: "+current.nombre:""}</div>
+      <div className="proj">País Lector · dominio</div>
+      <div className="phase">Fase <b>{stageFormal}</b> · {stageFormal?ET_PHASES[stageFormal-1].nombre:"Sin acceso"}</div>
+      <div className="meta tnum">{stageFormal} de 7 fases selladas{current?" · siguiente: "+current.nombre:""}</div>
       <div className="segbar">{perPhase.map(f=><i key={f.n} className={f.state}></i>)}</div>
       {current?(
         <div className="next">
           <div className="lbl">Siguiente paso</div>
           <div className="act">{current.failing[0][1]}</div>
-          <div className="why">Sella la Fase {current.n} ({current.nombre}). {hasAhead?"Desbloquea adem\u00e1s el trabajo que ya tienes hecho m\u00e1s adelante.":"Es el siguiente eslab\u00f3n del roadmap."}</div>
-          <button className="btn" onClick={()=>setSel(current.n)}>Ver qu\u00e9 falta en la Fase {current.n} \u2192</button>
+          <div className="why">Sella la Fase {current.n} ({current.nombre}). {hasAhead?"Desbloquea además el trabajo que ya tienes hecho más adelante.":"Es el siguiente eslabón del roadmap."}</div>
+          <button className="btn" onClick={()=>setSel(current.n)}>Ver qué falta en la Fase {current.n} →</button>
         </div>
       ):(
-        <div className="next done"><div className="lbl">Estado</div><div className="act">Roadmap completo</div><div className="why">Las 7 fases est\u00e1n selladas. Mant\u00e9n vivo el loop de la Fase 7.</div></div>
+        <div className="next done"><div className="lbl">Estado</div><div className="act">Roadmap completo</div><div className="why">Las 7 fases están selladas. Mantén vivo el loop de la Fase 7.</div></div>
       )}
     </div>
     <div className="seclabel">El roadmap</div>
@@ -1142,16 +1142,16 @@ function Etapa(){
           <div className={"ic "+f.state}>{ET_ICON[f.state]||f.n}</div>
           <div className="pn"><div className="pname">{f.nombre}</div><div className={"pstat "+cls}>{txt}</div></div>
           <div className="pct tnum">{f.pct}%</div>
-          <div className="chev">\u203a</div>
+          <div className="chev">›</div>
         </button>);})}
     </div>
     {active&&<div className="detail" key={"d"+active.n}>
-      <div className="dh"><div className="dname">{active.nombre}</div><div className="dtag tnum">Fase {active.n} \u00b7 {active.pct}%</div></div>
+      <div className="dh"><div className="dname">{active.nombre}</div><div className="dtag tnum">Fase {active.n} · {active.pct}%</div></div>
       <div className="ddesc">{active.se_hace}</div>
       {active.gates.map((g,i)=>{const pass=gatePasses(g,PL_SIGNALS);return (
         <div key={i} className={"gate "+(pass?"g-done":"g-todo")}>
-          <div className={"gck "+(pass?"done":"todo")}>{pass?"\u2713":""}</div>
-          <div><div className="gtext">{g[1]}</div>{!pass&&<div className="ghint">{g[0]}{g[2]!==undefined?" \u2265 "+g[2]:""}</div>}</div>
+          <div className={"gck "+(pass?"done":"todo")}>{pass?"✓":""}</div>
+          <div><div className="gtext">{g[1]}</div>{!pass&&<div className="ghint">{g[0]}{g[2]!==undefined?" ≥ "+g[2]:""}</div>}</div>
         </div>);})}
       <div className="deliver"><b>Entregable</b>{active.entregable}</div>
     </div>}
