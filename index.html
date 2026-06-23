@@ -156,6 +156,35 @@ header h1 em{color:var(--blue);font-style:normal}
   .stats{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}.url-tag{max-width:120px}.drawer-stats{grid-template-columns:repeat(2,1fr)}.utm-grid-2{grid-template-columns:1fr}.utm-totals{grid-template-columns:repeat(2,1fr)}
 }
 .lazy-placeholder{padding:40px 20px;text-align:center;color:var(--hint);font-size:13px}
+/* AUDIT (auditoría) */
+.site-row{display:flex;gap:8px;margin-bottom:16px}
+.site-input{flex:1;padding:11px 13px;border-radius:11px;border:1px solid var(--border);font-size:14px;font-family:var(--sans);background:var(--card);color:var(--ink)}
+.site-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-tint)}
+.ck{padding:11px 0;border-bottom:1px solid var(--line)}
+.ck:last-child{border-bottom:none}
+.ck-top{display:flex;align-items:center;gap:10px}
+.ck-label{flex:1;min-width:0;font-size:14px;font-weight:500}
+.ck-auto{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:2px 6px;border-radius:5px;background:var(--blue-tint);color:var(--blue);margin-left:7px}
+.seg{display:flex;gap:3px;background:var(--surface-alt);padding:3px;border-radius:9px}
+.seg button{border:none;background:transparent;font:inherit;font-size:12px;font-weight:600;color:var(--hint);padding:4px 9px;border-radius:7px;cursor:pointer;min-width:30px}
+.seg button.on-ok{background:var(--green);color:#fff}
+.seg button.on-no{background:var(--coral);color:#fff}
+.seg button.on-na{background:var(--muted);color:#fff}
+.ck-note{margin-top:7px}
+.ck-note input{width:100%;padding:7px 10px;border-radius:8px;border:1px solid var(--border);font-size:12.5px;font-family:var(--sans);background:var(--surface-alt);color:var(--ink)}
+.ck-note input:focus{outline:none;border-color:var(--blue);background:#fff}
+.result{background:linear-gradient(180deg,#fff,#FAFBFF);border:1px solid var(--blue-tint);border-radius:18px;box-shadow:var(--shadow);padding:20px;margin-bottom:14px}
+.result .kick{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+.result .phase{font-size:30px;font-weight:800;letter-spacing:-0.03em;margin-top:5px}
+.result .phase b{color:var(--blue)}
+.summary-chips{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:600;padding:5px 11px;border-radius:20px}
+.tabsmall{display:flex;gap:6px;margin-bottom:10px}
+.tabsmall button{border:none;background:var(--surface-alt);font:inherit;font-size:12.5px;font-weight:600;color:var(--muted);padding:6px 12px;border-radius:9px;cursor:pointer}
+.tabsmall button.active{background:var(--ink);color:#fff}
+.row-rank{font-size:11px;font-weight:700;color:var(--hint);flex:0 0 16px}
+.row-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.row-val{font-size:14px;font-weight:700;text-align:right}
 /* ETAPA (home) */
 .hero{background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:22px;margin-bottom:16px}
 .hero .proj{font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted)}
@@ -225,7 +254,7 @@ header h1 em{color:var(--blue);font-style:normal}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v3.0';
+const VERSION='v3.1';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SUGGEST_API=REDIRECT_URI+'/api/suggest';
 const SCOPES='https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly https://www.googleapis.com/auth/adsense.readonly';
@@ -1091,6 +1120,157 @@ function IndexTab({gscFn,inspectFn,config}){
   </>);
 }
 
+// ====== AUDITORÍA (checklist + reporte + etapa) ======
+const AUDIT_GROUPS=[
+  {label:"Técnico — higiene", items:[
+    {id:"sitemap", t:"Sitemap.xml presente y enviado a GSC", sig:null, def:"ok"},
+    {id:"ssl", t:"SSL / HTTPS activo y sin mixed content", sig:null, def:"ok"},
+    {id:"mobile", t:"Mobile-friendly / responsive", sig:null, def:"ok"},
+    {id:"speed", t:"Velocidad (Core Web Vitals) aceptable", sig:null, def:"ok"},
+    {id:"errors", t:"Sin 404s ni cadenas de redirect rotas", sig:null, def:"na"},
+  ]},
+  {label:"Acceso + fundamentos", items:[
+    {id:"acceso_crawlers_ia", t:"robots.txt permite crawlers de IA", sig:"acceso_crawlers_ia", def:"ok"},
+    {id:"render_server_side", t:"Contenido crítico server-side (no tras JS)", sig:"render_server_side", def:"ok"},
+    {id:"indexable", t:"Indexable (sin noindex accidental)", sig:"indexable", def:"ok"},
+    {id:"meta_basico_ok", t:"Meta básico: title / description / lang", sig:"meta_basico_ok", def:"ok"},
+    {id:"canonical_sin_duplicado", t:"Canonical sin duplicado ni competido", sig:"canonical_sin_duplicado", def:"no"},
+    {id:"headings_jerarquia_ok", t:"Jerarquía H1–H3 limpia (un H1)", sig:"headings_jerarquia_ok", def:"ok"},
+    {id:"taxonomia_limpia", t:"Taxonomía / URLs limpias", sig:"taxonomia_limpia", def:"ok"},
+  ]},
+  {label:"Schema (JSON-LD)", items:[
+    {id:"schema_en_pila", t:"Schema en pila (Article/ItemList/FAQPage/Person)", sig:"schema_en_pila", def:"ok"},
+    {id:"schema_sin_duplicados", t:"Sin schema duplicado (regla de oro #1)", sig:"schema_sin_duplicados", def:"ok"},
+    {id:"entidad_sameas", t:"sameAs en entidades (Wikipedia/Wikidata)", sig:"entidad_sameas", def:"ok"},
+  ]},
+  {label:"Contenido GEO", items:[
+    {id:"answer_first", t:"Aperturas answer-first (150–200 tokens)", sig:"answer_first", def:"no"},
+    {id:"densidad_factual", t:"Densidad factual: cifras + fuentes + citas", sig:"densidad_factual", def:"ok"},
+    {id:"faq_presente", t:"Bloque FAQ presente", sig:"faq_presente", def:"ok"},
+    {id:"formato_estructurado", t:"Formato estructurado / listas extraíbles", sig:"formato_estructurado", def:"ok"},
+    {id:"frescura", t:"Frescura: dateModified real + refresco", sig:"frescura", def:"ok"},
+  ]},
+  {label:"Autoridad + medición", items:[
+    {id:"autor_acreditado", t:"Autor acreditado e identificable (E-E-A-T)", sig:"autor_acreditado", def:"ok"},
+    {id:"earned_media", t:"Earned media / menciones multi-dominio", sig:"earned_media", def:"no"},
+    {id:"share_of_model", t:"Share of Model corriendo", sig:"share_of_model", def:"no"},
+    {id:"utm_tracking", t:"Tracking UTM vivo", sig:"utm_tracking", def:"ok"},
+    {id:"refresco_trimestral", t:"Calendario de refresco trimestral", sig:"refresco_trimestral", def:"no"},
+    {id:"alerting_anomalias", t:"Alerting de anomalías sobre baseline", sig:"alerting_anomalias", def:"no"},
+  ]},
+];
+function auditDefaults(){const init={};AUDIT_GROUPS.forEach(g=>g.items.forEach(it=>{init[it.id]={estado:it.def,nota:""}}));return init;}
+function deriveSignals(state){
+  const s={};
+  AUDIT_GROUPS.forEach(g=>g.items.forEach(it=>{if(it.sig)s[it.sig]=((state[it.id]&&state[it.id].estado)==="ok")}));
+  const geo=["answer_first","densidad_factual","faq_presente","formato_estructurado","frescura"];
+  s.geo_score=Math.round(100*geo.filter(k=>s[k]).length/geo.length);
+  return s;
+}
+function loadAuditSignals(){
+  try{const a=JSON.parse(localStorage.getItem('sp2_audit')||'null');if(a)return deriveSignals(a);}catch(e){}
+  return deriveSignals(auditDefaults());
+}
+const AUDIT_SAMPLE={
+  totals:{clicks:"12.4K",impr:"388K",ctr:"3.2%",pos:"18.3"},
+  bucket:{top3:9,p4_10:34,p11_20:88,total:412},
+  topKw:[{kw:"poemas de amor cortos",clicks:1840,pos:4.2},{kw:"sor juana inés de la cruz poemas",clicks:1210,pos:2.8},{kw:"sylvia plath poemas",clicks:880,pos:6.1},{kw:"jaime sabines poemas",clicks:640,pos:5.4},{kw:"alejandra pizarnik frases",clicks:520,pos:9.3}],
+  topPages:[{p:"/poemas-de-amor/",clicks:2310},{p:"/sor-juana/redondillas/",clicks:1490},{p:"/sylvia-plath/",clicks:1020},{p:"/jaime-sabines/los-amorosos/",clicks:870},{p:"/pizarnik/",clicks:610}],
+  topSites:[{d:"google.com",v:"orgánico",clicks:9800},{d:"open.substack.com",v:"newsletter",clicks:1120},{d:"facebook.com",v:"social",clicks:540},{d:"t.co",v:"social",clicks:210},{d:"bing.com",v:"orgánico",clicks:160}],
+};
+function AudSeg({val,onChange}){
+  const opt=[["ok","✓"],["no","✗"],["na","N/A"]];
+  return(<div className="seg">{opt.map(([k,lab])=><button key={k} className={val===k?("on-"+k):""} onClick={()=>onChange(k)}>{lab}</button>)}</div>);
+}
+function AudCheck({item,state,onState,onNote}){
+  return(<div className="ck">
+    <div className="ck-top">
+      <span className="ck-label">{item.t}{item.sig?<span className="ck-auto">auto*</span>:null}</span>
+      <AudSeg val={state.estado} onChange={v=>onState(item.id,v)}/>
+    </div>
+    <div className="ck-note"><input placeholder="Nota / evidencia (opcional)…" value={state.nota} onChange={e=>onNote(item.id,e.target.value)}/></div>
+  </div>);
+}
+function AudKwReport({data}){
+  const [tab,setTab]=useState("kw");
+  const live=!!(data&&data.allRows&&data.summary);
+  let totals,bucket,topKw,topPages,topSites,siteLabel;
+  if(live){
+    const rows=[...data.allRows].sort((a,b)=>b.clicks-a.clicks);
+    totals={clicks:fmt(data.summary.clicks),impr:fmt(data.summary.impressions),ctr:data.summary.ctr.toFixed(1)+"%",pos:data.summary.pos.toFixed(1)};
+    const inb=(lo,hi)=>data.allRows.filter(r=>r.position>=lo&&r.position<=hi).length;
+    bucket={top3:inb(1,3),p4_10:inb(4,10),p11_20:inb(11,20),total:data.allRows.length};
+    topKw=rows.slice(0,5).map(r=>({kw:r.keys[0],clicks:r.clicks,pos:r.position}));
+    topPages=(data.ga4Pages||[]).slice(0,5).map(r=>({p:r.page,clicks:r.sessions}));
+    topSites=(data.countries||[]).slice(0,5).map(r=>({d:(COUNTRY_NAMES[r.code]||r.code),v:"país",clicks:r.clicks}));
+    siteLabel="Top países";
+  }else{
+    const s=AUDIT_SAMPLE;totals=s.totals;bucket=s.bucket;topKw=s.topKw;topPages=s.topPages;topSites=s.topSites;siteLabel="Top sites";
+  }
+  return(<div className="panel"><div className="panel-head"><h3>Keywords y tráfico</h3><span className={"pill "+(live?"pill-green":"pill-amber")}>{live?"en vivo":"datos de muestra"}</span></div><div className="panel-body">
+    <div className="stats">
+      <div className="stat"><div className="stat-label">Clicks</div><div className="stat-val tnum">{totals.clicks}</div></div>
+      <div className="stat"><div className="stat-label">Impresiones</div><div className="stat-val tnum">{totals.impr}</div></div>
+      <div className="stat"><div className="stat-label">CTR</div><div className="stat-val tnum">{totals.ctr}</div></div>
+      <div className="stat"><div className="stat-label">Pos. media</div><div className="stat-val tnum">{totals.pos}</div></div>
+    </div>
+    <div style={{display:"flex",gap:8,margin:"6px 0 12px",flexWrap:"wrap"}}>
+      <span className="chip s-hi tnum">{bucket.top3} en top 3</span>
+      <span className="chip s-md tnum">{bucket.p4_10} en 4–10</span>
+      <span className="chip s-lo tnum">{bucket.p11_20} en 11–20</span>
+      <span className="chip" style={{marginLeft:"auto",color:"var(--hint)"}}>{bucket.total} KWs</span>
+    </div>
+    <div className="tabsmall">
+      <button className={tab==="kw"?"active":""} onClick={()=>setTab("kw")}>Top KWs</button>
+      <button className={tab==="pg"?"active":""} onClick={()=>setTab("pg")}>Top páginas</button>
+      <button className={tab==="st"?"active":""} onClick={()=>setTab("st")}>{siteLabel}</button>
+    </div>
+    {tab==="kw"&&topKw.map((r,i)=><div className="row" key={i} style={{cursor:"default"}}><span className="row-rank">{i+1}</span><div className="row-left"><div className="row-kw">{r.kw}</div></div><span className="row-val tnum">{(r.clicks||0).toLocaleString()}</span><span className={"score "+(r.pos<=3?"s-hi":r.pos<=10?"s-md":"s-lo")}>P{Math.round(r.pos)}</span></div>)}
+    {tab==="pg"&&topPages.map((r,i)=><div className="row" key={i} style={{cursor:"default"}}><span className="row-rank">{i+1}</span><div className="row-left"><div className="row-kw">{r.p}</div></div><span className="row-val tnum">{(r.clicks||0).toLocaleString()}</span></div>)}
+    {tab==="st"&&topSites.map((r,i)=><div className="row" key={i} style={{cursor:"default"}}><span className="row-rank">{i+1}</span><div className="row-left"><div className="row-kw">{r.d}</div>{r.v?<div className="row-sub">{r.v}</div>:null}</div><span className="row-val tnum">{(r.clicks||0).toLocaleString()}</span></div>)}
+    <div className="explain">{live?"De tu Search Console + Analytics, según el periodo seleccionado.":"Conecta y carga datos para ver tus números reales aquí."}</div>
+  </div></div>);
+}
+function Auditoria({data}){
+  const [st,setSt]=useState(()=>{try{const s=JSON.parse(localStorage.getItem('sp2_audit')||'null');if(s)return s;}catch(e){}return auditDefaults();});
+  const [site,setSite]=useState("paislector.com");
+  const save=(next)=>{setSt(next);try{localStorage.setItem('sp2_audit',JSON.stringify(next))}catch(e){}};
+  const setState=(id,v)=>save({...st,[id]:{...(st[id]||{nota:""}),estado:v}});
+  const setNote=(id,v)=>save({...st,[id]:{...(st[id]||{estado:"na"}),nota:v}});
+  const {perPhase,stageFormal,current}=etAudit(deriveSignals(st));
+  const hasAhead=perPhase.some(f=>f.state==="ahead");
+  let ok=0,no=0,na=0;Object.values(st).forEach(s=>{if(s.estado==="ok")ok++;else if(s.estado==="no")no++;else na++;});
+  return(<>
+    <div className="site-row">
+      <input className="site-input" value={site} onChange={e=>setSite(e.target.value)} placeholder="dominio del cliente…"/>
+      <button className="btn-primary" onClick={()=>{}}>Auditar sitio</button>
+    </div>
+    <div className="result">
+      <div className="kick">{site} · resultado</div>
+      <div className="phase">Fase <b>{stageFormal}</b> · {stageFormal?ET_PHASES[stageFormal-1].nombre:"Sin acceso"}</div>
+      <div className="segbar">{perPhase.map(f=><i key={f.n} className={f.state}></i>)}</div>
+      {current?<div className="next">
+        <div className="lbl">Siguiente paso</div>
+        <div className="act">{current.failing[0][1]}</div>
+        <div className="why">Cierra la Fase {current.n} ({current.nombre}).{hasAhead?" Desbloquea además el trabajo que ya está hecho más adelante.":""}</div>
+      </div>:<div className="next"><div className="lbl">Estado</div><div className="act" style={{color:"var(--green)"}}>Roadmap completo</div></div>}
+      <div className="summary-chips">
+        <span className="chip s-hi tnum">{ok} cumple</span>
+        <span className="chip s-lo tnum">{no} no</span>
+        <span className="chip" style={{background:"var(--surface-alt)",color:"var(--muted)"}}>{na} N/A</span>
+      </div>
+    </div>
+    <AudKwReport data={data}/>
+    <div className="panel"><div className="panel-head"><h3>Checklist de auditoría</h3><span className="pill pill-blue">manual + auto*</span></div><div className="panel-body">
+      {AUDIT_GROUPS.map(g=><div key={g.label}>
+        <div className="seclabel">{g.label}</div>
+        {g.items.map(it=><AudCheck key={it.id} item={it} state={st[it.id]||{estado:"na",nota:""}} onState={setState} onNote={setNote}/>)}
+      </div>)}
+      <div className="explain">* "auto" = lo llenará el auditor automático cuando lo conectemos (lee el HTML server-side). Lo de juicio (answer-first, densidad) y lo de proceso (Share of Model, refresco) se queda manual. Cada ✓ alimenta el motor de fases — y esto se refleja en la home Etapa.</div>
+    </div></div>
+  </>);
+}
+
 // ====== ETAPA (home / roadmap maestro) ======
 const ET_PHASES=[
   {n:1,nombre:"Acceso",se_hace:"Que el sitio sea rastreable, indexable y visible para los crawlers de IA.",entregable:"Checklist de acceso + fix de robots.txt/CDN si bloquea.",gates:[["acceso_crawlers_ia","Permitir crawlers de IA en robots.txt / CDN"],["render_server_side","Servir el contenido crítico server-side"],["indexable","Quitar noindex y lograr indexación"]]},
@@ -1114,7 +1294,7 @@ const PL_SIGNALS={acceso_crawlers_ia:true,render_server_side:true,indexable:true
 const ET_STAT={sealed:["Completa","s-sealed"],current:["En curso","s-current"],ahead:["Lista · bloqueada","s-ahead"],pending:["Pendiente",""]};
 const ET_ICON={sealed:"✓",current:"●",ahead:"🔒"};
 function Etapa(){
-  const {perPhase,stageFormal,current}=etAudit(PL_SIGNALS);
+  const {perPhase,stageFormal,current}=etAudit(loadAuditSignals());
   const [sel,setSel]=useState(null);
   const active=sel?perPhase.find(f=>f.n===sel):(current||perPhase[perPhase.length-1]);
   const hasAhead=perPhase.some(f=>f.state==="ahead");
@@ -1161,6 +1341,7 @@ function Etapa(){
 // ====== TAB NAV ======
 const TABS=[
   {id:'etapa',label:'Etapa',icon:'M4 4h12l-2 4 2 4H4M4 4v17'},
+  {id:'audit',label:'Auditoría',icon:'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7l-3 3-1.5-1.5'},
   {id:'overview',label:'Overview',icon:'M3 12l2-2 7-7 7 7 2 2M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3'},
   {id:'index',label:'Index',icon:'M9 13h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'},
   {id:'content',label:'Content',icon:'M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z'},
@@ -1398,6 +1579,9 @@ function App(){
 
     {/* ========== ETAPA TAB ========== */}
     {activeTab==='etapa'&&<Etapa/>}
+
+    {/* ========== AUDITORÍA TAB ========== */}
+    {activeTab==='audit'&&<Auditoria data={data}/>}
 
     {/* ========== OVERVIEW TAB ========== */}
     {activeTab==='overview'&&<>
