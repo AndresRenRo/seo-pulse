@@ -1,2536 +1,640 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SEO Pulse — País Lector</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500&display=swap');
-:root{--blue:#0047E0;--blue-press:#00309E;--blue-tint:#E6EDFF;--blue-soft:#F2F5FF;--ink:#111111;--text:#111111;--muted:#5B5A55;--hint:#6B6963;--bg:#F4F3EF;--surface:#FFFFFF;--surface-alt:#F4F3EF;--card:#FFFFFF;--border:#E4E1D9;--line:#ECEAE4;--green:#0B6B45;--green-light:#DDF5EA;--coral:#B3401A;--coral-light:#FCE6DF;--blue-l:#E6EDFF;--blue-light:#E6EDFF;--amber:#7A5A00;--amber-light:#FFF3C4;--purple:#5A3FD6;--purple-light:#EEEAFB;--red:#B42318;--red-light:#FCE8E6;--radius:14px;--serif:'Inter',sans-serif;--sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--display:'Space Grotesk','Inter',sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;--shadow:none}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01";line-height:1.45}
-.tnum,.stat-val,.utm-metric-val,.utm-total-val,.rev-amount{font-variant-numeric:tabular-nums}
-.app{max-width:640px;margin:0 auto;padding:18px 18px 88px}
-header{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 16px;margin-bottom:6px}
-header h1{font-size:19px;font-weight:800;letter-spacing:-0.02em}
-header h1 em{color:var(--blue);font-style:normal}
-.header-right{display:flex;align-items:center;gap:8px}
-.ver{font-size:11px;color:var(--hint);font-weight:600}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--hint)}.dot.on{background:var(--green)}
-.auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:55vh;text-align:center;gap:18px}
-.auth-screen h2{font-size:26px;font-weight:800;letter-spacing:-0.02em}
-.auth-screen p{color:var(--muted);font-size:14px;max-width:380px;line-height:1.6}
-.auth-btn{display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:var(--radius);border:1px solid var(--border);background:var(--card);font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ink);cursor:pointer}
-.auth-btn:hover{border-color:var(--blue);color:var(--blue)}
-.setup-note{background:var(--surface-alt);border-radius:var(--radius);padding:16px;text-align:left;max-width:440px;width:100%}
-.setup-note h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:10px}
-.setup-note ol{font-size:13px;color:var(--muted);line-height:1.8;padding-left:18px}
-.setup-note code{background:var(--card);padding:2px 6px;border-radius:5px;font-size:12px}
-.config-form{display:flex;flex-direction:column;gap:12px;max-width:440px;width:100%}
-.config-form label{font-size:12px;font-weight:600;color:var(--muted)}
-.config-form input{width:100%;padding:11px 13px;border-radius:11px;border:1px solid var(--border);font-size:14px;font-family:var(--sans);background:var(--card);color:var(--ink)}
-.config-form input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-tint)}
-.config-row{display:flex;gap:10px}.config-row>div{flex:1;display:flex;flex-direction:column;gap:4px}
-.btn-primary{padding:12px 20px;border-radius:13px;border:none;background:var(--blue);color:#fff;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}.btn-primary:hover{background:var(--blue-press)}
-.btn-secondary{padding:9px 15px;border-radius:11px;border:1px solid var(--border);background:var(--card);font-family:var(--sans);font-size:13px;font-weight:600;color:var(--muted);cursor:pointer}.btn-secondary:hover{border-color:var(--blue);color:var(--blue)}
-.controls,.period-row{display:flex;gap:6px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
-.period-label{font-size:11px;color:var(--hint);text-transform:uppercase;letter-spacing:0.05em;margin-right:2px;font-weight:600}
-.per-btn{padding:7px 13px;border-radius:10px;border:none;background:var(--surface-alt);font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer}
-.per-btn.active{background:var(--ink);color:#fff}
-.ref-btn{margin-left:auto;padding:7px 12px;border-radius:10px;border:none;background:transparent;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--blue);cursor:pointer}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
-.stat{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:14px 15px}
-.stat-label{font-size:12px;color:var(--muted);margin-bottom:3px;font-weight:500}.stat-val{font-family:var(--sans);font-size:23px;font-weight:800;letter-spacing:-0.03em}.stat-chg{font-size:12px;margin-top:2px;font-weight:600}
-.up{color:var(--green)}.down{color:var(--red)}
-.panel{background:var(--card);border-radius:18px;box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
-.panel-head{display:flex;align-items:center;justify-content:space-between;padding:15px 18px 11px}
-.panel-head h3{font-size:15px;font-weight:700;letter-spacing:-0.01em}
-.pill{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:700}
-.pill-green{background:var(--green-light);color:var(--green)}.pill-coral{background:var(--coral-light);color:var(--coral)}.pill-blue{background:var(--blue-tint);color:var(--blue)}.pill-amber{background:var(--amber-light);color:var(--amber)}.pill-purple{background:var(--purple-light);color:var(--purple)}.pill-red{background:var(--red-light);color:var(--red)}
-.panel-body{padding:0 18px 16px}
-.row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s}.row:last-child{border-bottom:none}.row:hover{background:#FAFBFC}
-.row-left{flex:1;min-width:0}.row-kw{font-size:14px;font-weight:600;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row-meta{font-size:12px;color:var(--muted);margin-top:1px;line-height:1.4}
-.row-btn{font-size:12px;font-weight:600;padding:6px 11px;border-radius:9px;border:1px solid var(--blue-tint);background:var(--blue-soft);cursor:pointer;white-space:nowrap;color:var(--blue)}.row-btn:hover{background:var(--blue-tint)}
-.score{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:22px;border-radius:8px;font-size:11px;font-weight:700;padding:0 7px}
-.s-hi{background:var(--green-light);color:var(--green)}.s-md{background:var(--amber-light);color:var(--amber)}.s-lo{background:var(--coral-light);color:var(--coral)}.s-new{background:var(--purple-light);color:var(--purple)}
-.explain{font-size:12px;color:var(--hint);padding:11px 0 2px;line-height:1.5}
-.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--hint);font-size:13px;gap:8px}
-.spinner{width:15px;height:15px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin 0.6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.error-msg{padding:12px 14px;background:var(--red-light);border-radius:var(--radius);color:var(--red);font-size:12.5px;margin-bottom:12px;font-weight:500}
-.warn-msg,.adsense-warn{padding:11px 14px;background:var(--amber-light);border-radius:var(--radius);color:var(--amber);font-size:12px;margin-bottom:12px;font-weight:500}
-.footer{text-align:center;padding:20px 0;font-size:11px;color:var(--hint)}
-.kw-textarea{width:100%;min-height:84px;padding:11px 13px;border-radius:11px;border:1px solid var(--border);font-size:13px;font-family:var(--sans);background:var(--card);resize:vertical;line-height:1.6;color:var(--ink)}.kw-textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-tint)}
-.kw-actions{display:flex;gap:8px;margin-top:10px;align-items:center}.kw-count{font-size:12px;color:var(--hint);margin-left:auto}
-.chart-wrap{position:relative;height:200px;margin:4px 0 10px}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.country-bar{display:flex;align-items:center;gap:8px;padding:7px 0}
-.country-name{font-size:13px;min-width:34px;font-weight:500}
-.country-track{flex:1;height:8px;background:var(--surface-alt);border-radius:5px;overflow:hidden}
-.country-fill{height:100%;border-radius:5px;background:var(--blue)}
-.country-val{font-size:12px;color:var(--muted);min-width:44px;text-align:right;font-weight:600}
-.url-tag{font-size:11px;color:var(--blue);background:var(--blue-tint);padding:1px 6px;border-radius:5px;display:inline-block;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
-.drawer-overlay{position:fixed;inset:0;background:rgba(10,11,13,0.4);z-index:100;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s}
-.drawer{background:var(--card);width:100%;max-width:640px;max-height:88vh;border-radius:22px 22px 0 0;overflow-y:auto;padding:0;animation:slideUp 0.25s ease-out}
-.drawer-handle{display:flex;justify-content:center;padding:10px 0 4px;cursor:pointer}.drawer-handle span{width:38px;height:4px;border-radius:2px;background:var(--border)}
-.drawer-header{padding:8px 20px 14px;border-bottom:1px solid var(--line)}
-.drawer-header h2{font-size:21px;font-weight:700;letter-spacing:-0.02em;margin-bottom:2px}
-.drawer-header .drawer-url{font-size:12px;color:var(--blue);word-break:break-all}
-.drawer-body{padding:16px 20px 26px}
-.drawer-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-.drawer-stats .stat{padding:11px 12px}.drawer-stats .stat-val{font-size:18px}
-.diag-section{margin-top:16px}
-.diag-title{font-size:13px;font-weight:700;margin-bottom:8px}
-.diag-item{padding:10px 13px;background:var(--surface-alt);border-radius:11px;margin-bottom:7px;font-size:13px;line-height:1.55}
-.diag-label{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;display:inline-block;margin-right:6px}
-.diag-urgent{background:var(--red-light);color:var(--red)}.diag-warn{background:var(--amber-light);color:var(--amber)}.diag-ok{background:var(--green-light);color:var(--green)}.diag-info{background:var(--blue-tint);color:var(--blue)}
-.top-queries-list .row{cursor:default}.top-queries-list .row:hover{background:transparent}
-.disc-input-row{display:flex;gap:8px;align-items:center}.disc-input{flex:1;padding:11px 13px;border-radius:11px;border:1px solid var(--border);font-size:14px;font-family:var(--sans);background:var(--card);color:var(--ink)}.disc-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-tint)}
-.disc-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
-.disc-chip{font-size:12.5px;font-weight:500;padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:var(--card);cursor:pointer;color:var(--muted);transition:all .15s}.disc-chip:hover{border-color:var(--blue);color:var(--blue)}
-.disc-rank{font-size:9px;color:var(--hint);margin-left:2px}
-.disc-searching{font-size:12px;color:var(--hint);padding:8px 0;display:flex;align-items:center;gap:6px}
-.rev-total{display:flex;align-items:baseline;gap:8px;margin-bottom:12px}.rev-amount{font-family:var(--sans);font-size:36px;font-weight:800;letter-spacing:-0.03em;color:var(--ink)}.rev-sub{font-size:12px;color:var(--muted)}
-.rev-bar{display:flex;align-items:center;gap:8px;padding:7px 0}
-.rev-bar-track{flex:1;height:8px;background:var(--surface-alt);border-radius:5px;overflow:hidden}
-.rev-bar-fill{height:100%;border-radius:5px;background:var(--amber)}
-.rev-val{font-size:12px;color:var(--ink);min-width:54px;text-align:right;font-weight:700}
-.rev-page{font-size:13px;min-width:0;flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.utm-form-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
-.utm-grid-2{grid-template-columns:1fr 1fr}
-.utm-field{display:flex;flex-direction:column;gap:5px}
-.utm-field label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em}
-.utm-input,.utm-select{width:100%;padding:11px 12px;border-radius:11px;border:1px solid var(--border);font-size:14px;font-family:var(--sans);background:var(--card);color:var(--ink)}
-.utm-input:focus,.utm-select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-tint)}
-.utm-select{cursor:pointer;font-size:13px}
-.utm-hint{font-size:11px;color:var(--hint);margin-top:2px;line-height:1.4}
-.utm-advanced-toggle{font-size:12.5px;font-weight:600;color:var(--blue);cursor:pointer;padding:6px 0;margin:2px 0;user-select:none}
-.utm-preview{margin:12px 0 10px;padding:12px 13px;background:var(--surface-alt);border-radius:12px}
-.utm-preview-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.utm-preview-head>span{font-size:10px;color:var(--hint);text-transform:uppercase;letter-spacing:0.05em;font-weight:700}
-.utm-preview-url{display:block;font-family:ui-monospace,'SF Mono',monospace;font-size:12px;color:var(--ink);word-break:break-all;line-height:1.5;padding:4px 0}
-.utm-copy-btn{font-size:11px;font-weight:600;padding:4px 11px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;font-family:var(--sans)}.utm-copy-btn:hover{border-color:var(--blue);color:var(--blue)}
-.utm-err{padding:10px 13px;background:var(--red-light);border-radius:11px;color:var(--red);font-size:12px;margin-bottom:8px;line-height:1.5;font-weight:500}
-.utm-warn{padding:10px 13px;background:var(--amber-light);border-radius:11px;color:var(--amber);font-size:12px;margin:8px 0;line-height:1.5}
-.utm-actions{display:flex;gap:8px;margin-top:4px;align-items:center}
-.utm-totals{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-.utm-total-card{background:var(--surface-alt);border-radius:12px;padding:11px 12px}
-.utm-total-label{font-size:11px;color:var(--muted);margin-bottom:2px;line-height:1.3}
-.utm-total-val{font-family:var(--sans);font-size:20px;font-weight:800;letter-spacing:-0.02em;color:var(--ink)}
-.utm-filters{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
-.utm-list{display:flex;flex-direction:column;gap:0}
-.utm-row{display:flex;align-items:center;gap:11px;padding:13px 0;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s}
-.utm-row:last-child{border-bottom:none}.utm-row:hover{background:#FAFBFC}
-.utm-row-main{flex:1;min-width:0}
-.utm-row-campaign{font-size:14px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
-.utm-row-meta{display:flex;align-items:center;gap:5px;font-size:11px;flex-wrap:wrap}
-.utm-badge-src{padding:2px 7px;background:var(--blue-tint);color:var(--blue);border-radius:6px;font-weight:600}
-.utm-badge-med{padding:2px 7px;background:var(--purple-light);color:var(--purple);border-radius:6px;font-weight:600}
-.utm-row-time{color:var(--hint);margin-left:2px}
-.utm-row-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
-.utm-tag{font-size:10px;padding:2px 7px;background:var(--green-light);color:var(--green);border-radius:10px;font-weight:600}
-.utm-row-metrics{text-align:right;min-width:68px}
-.utm-metric-val{font-family:var(--sans);font-size:19px;font-weight:800;letter-spacing:-0.02em;color:var(--ink);line-height:1}
-.utm-metric-sub{font-size:10px;color:var(--hint);margin-top:2px}
-.utm-metric-eng{font-size:11px;margin-top:3px;color:var(--muted);font-weight:600}
-.utm-metric-eng.up{color:var(--green)}.utm-metric-eng.down{color:var(--coral)}
-.utm-row-actions{display:flex;gap:4px}
-.utm-url-box{padding:12px 13px;background:var(--surface-alt);border-radius:12px;margin-bottom:10px}
-.utm-url-label{font-size:10px;color:var(--hint);text-transform:uppercase;letter-spacing:0.05em;font-weight:700;margin-bottom:4px}
-.tab-nav{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.tab-nav::-webkit-scrollbar{display:none}
-.tab-item{padding:11px 13px;font-size:14px;font-family:var(--sans);font-weight:600;color:var(--hint);background:transparent;border:none;cursor:pointer;white-space:nowrap;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;position:relative}
-.tab-item:hover{color:var(--muted)}
-.tab-item.active{color:var(--blue);border-bottom-color:var(--blue)}
-.tab-badge{display:inline-block;margin-left:6px;padding:1px 6px;background:var(--blue);color:white;font-size:10px;border-radius:9px;font-weight:700;vertical-align:middle}
-.tab-content{padding-bottom:20px}
-.mobile-tab-bar{display:none}
-@media(max-width:480px){
-  .tab-nav{display:none}
-  .mobile-tab-bar{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px));justify-content:space-around;z-index:50;box-shadow:0 -2px 12px rgba(10,11,13,0.05)}
-  .mobile-tab-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 6px;cursor:pointer;border:none;background:transparent;flex:1;min-width:0}
-  .mobile-tab-icon{width:20px;height:20px;stroke:var(--hint);fill:none;stroke-width:2;transition:stroke .15s}
-  .mobile-tab-label{font-size:9px;color:var(--hint);transition:color .15s;white-space:nowrap;font-weight:600}
-  .mobile-tab-item.active .mobile-tab-icon{stroke:var(--blue)}
-  .mobile-tab-item.active .mobile-tab-label{color:var(--blue)}
-  .stats{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}.url-tag{max-width:120px}.drawer-stats{grid-template-columns:repeat(2,1fr)}.utm-grid-2{grid-template-columns:1fr}.utm-totals{grid-template-columns:repeat(2,1fr)}
-}
-.lazy-placeholder{padding:40px 20px;text-align:center;color:var(--hint);font-size:13px}
-/* AUDIT (auditoría) */
-.site-row{display:flex;gap:8px;margin-bottom:16px}
-.site-input{flex:1;padding:11px 13px;border-radius:11px;border:1px solid var(--border);font-size:14px;font-family:var(--sans);background:var(--card);color:var(--ink)}
-.site-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-tint)}
-.ck{padding:11px 0;border-bottom:1px solid var(--line)}
-.ck:last-child{border-bottom:none}
-.ck-top{display:flex;align-items:center;gap:10px}
-.ck-label{flex:1;min-width:0;font-size:14px;font-weight:500}
-.ck-auto{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:2px 6px;border-radius:5px;background:var(--blue-tint);color:var(--blue);margin-left:7px}
-.seg{display:flex;gap:3px;background:var(--surface-alt);padding:3px;border-radius:9px}
-.seg button{border:none;background:transparent;font:inherit;font-size:12px;font-weight:600;color:var(--hint);padding:4px 9px;border-radius:7px;cursor:pointer;min-width:30px}
-.seg button.on-ok{background:var(--green);color:#fff}
-.seg button.on-no{background:var(--coral);color:#fff}
-.seg button.on-na{background:var(--muted);color:#fff}
-.ck-note{margin-top:7px}
-.ck-note input{width:100%;padding:7px 10px;border-radius:8px;border:1px solid var(--border);font-size:12.5px;font-family:var(--sans);background:var(--surface-alt);color:var(--ink)}
-.ck-note input:focus{outline:none;border-color:var(--blue);background:#fff}
-.result{background:linear-gradient(180deg,#fff,#FAFBFF);border:1px solid var(--blue-tint);border-radius:18px;box-shadow:var(--shadow);padding:20px;margin-bottom:14px}
-.result .kick{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
-.result .phase{font-size:30px;font-weight:800;letter-spacing:-0.03em;margin-top:5px}
-.result .phase b{color:var(--blue)}
-.summary-chips{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-.chip{font-size:12px;font-weight:600;padding:5px 11px;border-radius:20px}
-.tabsmall{display:flex;gap:6px;margin-bottom:10px}
-.tabsmall button{border:none;background:var(--surface-alt);font:inherit;font-size:12.5px;font-weight:600;color:var(--muted);padding:6px 12px;border-radius:9px;cursor:pointer}
-.tabsmall button.active{background:var(--ink);color:#fff}
-.row-rank{font-size:11px;font-weight:700;color:var(--hint);flex:0 0 16px}
-.row-sub{font-size:11px;color:var(--muted);margin-top:1px}
-.row-val{font-size:14px;font-weight:700;text-align:right}
-/* ETAPA (home) */
-.hero{background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:22px;margin-bottom:16px}
-.hero .proj{font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted)}
-.hero .phase{font-size:clamp(28px,7vw,38px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-top:7px}
-.hero .phase b{color:var(--blue)}
-.hero .meta{font-size:13.5px;color:var(--muted);margin-top:7px;font-weight:500}
-.segbar{display:flex;gap:5px;margin-top:16px}
-.segbar i{height:7px;flex:1;border-radius:4px;background:var(--border)}
-.segbar i.sealed{background:var(--green)}
-.segbar i.current{background:var(--blue)}
-.segbar i.ahead{background:repeating-linear-gradient(135deg,var(--amber) 0 4px,var(--amber-light) 4px 8px)}
-.next{margin-top:20px;border-top:1px solid var(--line);padding-top:16px}
-.next .lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
-.next .act{font-size:18px;font-weight:700;letter-spacing:-0.01em;margin:8px 0 5px;line-height:1.25}
-.next .why{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:15px}
-.next.done .act{color:var(--green)}
-.btn{display:flex;align-items:center;justify-content:center;background:var(--blue);color:#fff;border:none;font:inherit;font-size:15px;font-weight:600;padding:13px 20px;border-radius:14px;cursor:pointer;width:100%;transition:background .15s}
-.btn:hover{background:var(--blue-press)}
-.btn:active{transform:translateY(1px)}
-.seclabel{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.02em;margin:6px 4px 10px}
-.list{background:var(--card);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
-.prow{display:flex;align-items:center;gap:14px;padding:15px 18px;cursor:pointer;border:none;border-bottom:1px solid var(--line);transition:background .12s;width:100%;text-align:left;background:none;font:inherit}
-.prow:last-child{border-bottom:none}
-.prow:hover{background:#FAFBFC}
-.prow.active{background:var(--blue-tint)}
-.ic{flex:0 0 36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700}
-.ic.sealed{background:var(--green);color:#fff}
-.ic.current{background:var(--blue);color:#fff}
-.ic.ahead{background:var(--amber-light);color:var(--amber)}
-.ic.pending{background:var(--surface-alt);color:var(--hint)}
-.prow .pn{flex:1;min-width:0}
-.prow .pname{font-size:15.5px;font-weight:600;letter-spacing:-0.01em}
-.prow .pstat{font-size:12.5px;color:var(--muted);margin-top:1px;font-weight:500}
-.prow .pstat.s-current{color:var(--blue)}
-.prow .pstat.s-ahead{color:var(--amber)}
-.prow .pstat.s-sealed{color:var(--green)}
-.prow .pct{font-size:14px;font-weight:700;color:var(--ink);letter-spacing:-0.01em}
-.prow .chev{color:var(--hint);font-size:18px;margin-left:2px}
-.detail{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:22px;margin-top:16px}
-.detail .dh{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
-.detail .dname{font-size:21px;font-weight:700;letter-spacing:-0.02em}
-.detail .dtag{font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap}
-.detail .ddesc{font-size:13.5px;color:var(--muted);line-height:1.5;margin:8px 0 16px}
-.gate{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--line);align-items:flex-start}
-.gate:first-of-type{border-top:none}
-.gck{flex:0 0 20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px}
-.gck.done{background:var(--green-light);color:var(--green)}
-.gck.todo{border:1.5px solid var(--border);background:#fff}
-.gtext{font-size:14px;line-height:1.4}
-.gate.g-done .gtext{color:var(--muted)}
-.gate.g-todo .gtext{color:var(--ink);font-weight:600}
-.ghint{font-size:12px;color:var(--hint);margin-top:2px}
-.deliver{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);line-height:1.5}
-.deliver b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--hint);font-weight:700;margin-bottom:4px}
-@keyframes etfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.hero,.list,.detail{animation:etfade .4s cubic-bezier(.2,.7,.2,1) both}
-.list{animation-delay:.05s}.detail{animation-delay:.08s}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.md-brief{font-size:13.5px;line-height:1.6;color:var(--text);background:var(--surface-alt);border-radius:12px;padding:14px 16px;overflow-x:auto}.md-brief h2{font-size:17px;margin:4px 0 8px}.md-brief h3{font-size:14.5px;margin:14px 0 6px;color:var(--blue)}.md-brief h4{font-size:13.5px;margin:10px 0 4px}.md-brief p{margin:2px 0}.md-li{display:flex;gap:6px;margin:2px 0}.md-bul{flex:0 0 auto;color:var(--hint)}.md-flag{background:#FFF3C4;color:#7A5A00;border-radius:4px;padding:0 4px;font-size:12px;font-weight:600}.md-brief code{background:var(--surface);padding:0 4px;border-radius:4px}
-@media (prefers-color-scheme: dark){.md-flag{background:#4A3B00;color:#FFE08A}}
-/* ===== v4.0 Sala de redacción ===== */
-body{background:var(--bg)}
-.shell{display:flex;flex-wrap:wrap;min-height:100vh;align-items:stretch}
-.side{flex:1 1 232px;max-width:272px;padding:26px 16px;background:#111;color:#F4F3EF;display:flex;flex-direction:column;gap:26px;position:sticky;top:0;height:100vh;overflow-y:auto}
-.side-brand{display:flex;flex-direction:column;gap:10px;padding:0 10px}
-.side-logo{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-0.02em}
-.side-site{display:inline-flex;align-self:flex-start;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:#D6D3CC;border:1px solid #3A3A3A;border-radius:999px;padding:5px 10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.side-dot{width:7px;height:7px;border-radius:99px;background:#3DDC97;flex:0 0 auto}
-.side-group{display:flex;flex-direction:column;gap:3px}
-.side-label{padding:0 12px 6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A8A49C}
-.side-item{display:flex;align-items:center;gap:12px;min-height:42px;padding:0 12px;border-radius:10px;border:0;background:transparent;color:#D6D3CC;font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;text-align:left;width:100%}
-.side-item:hover{background:#1F1F1F;color:#fff}
-.side-item.active{background:#F4F3EF;color:#111;font-weight:600}
-.side-badge{margin-left:auto;font-family:var(--mono);font-size:11px;background:#2A2A2A;color:#E8E6E1;border-radius:99px;padding:2px 8px}
-.side-item.active .side-badge{background:#111;color:#F4F3EF}
-.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px}
-.side-ver{padding:0 12px;font-family:var(--mono);font-size:11px;color:#8C8981}
-.credit-card{background:#1E1E1E;border:1px solid #2E2E2E;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:9px}
-.credit-amt{font-family:var(--display);font-size:22px;font-weight:700}.credit-amt span{font-size:13px;font-weight:500;color:#A8A49C}
-.credit-track{height:6px;border-radius:99px;background:#2E2E2E;overflow:hidden}.credit-fill{height:6px;background:#3DDC97}
-.credit-meta{font-size:12px;color:#C9C5BD;line-height:1.5}
-.app{flex:999 1 560px;min-width:0;max-width:1180px;margin:0;padding:34px clamp(18px,4vw,52px) 64px}
-.page-head{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:26px}
-.eyebrow{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
-.page-title{font-family:var(--display);font-size:44px;line-height:1;letter-spacing:-0.03em;font-weight:700}
-.page-sub{font-size:15px;color:#3F3E3A;margin-top:8px}
-.panel,.stat{box-shadow:none;border:1px solid var(--border)}
-.panel{border-radius:16px}
-.panel-head h3,.card-title,.sec-head h2,.card-head h2{font-family:var(--display);font-weight:700;letter-spacing:-0.01em}
-.panel-head h3{font-size:17px}
-.btn-primary{border-radius:12px}.btn-primary:disabled{opacity:.6;cursor:default}
-.kw-textarea{white-space:pre-wrap;overflow-x:hidden}
-.tab-nav,.mobile-tab-bar{display:none!important}
-.tag{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:3px 8px}
-.tag-blue{color:#0039B8;background:#E6EDFF}.tag-green{color:#0B6B45;background:#DDF5EA}.tag-coral{color:#9A2B12;background:#FCE6DF}.tag-amber{color:#7A5A00;background:#FFF3C4}.tag-mint{color:#111;background:#3DDC97}
-.mono-meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
-.cta-primary,.cta-outline,.cta-light{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:11px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
-.cta-primary{background:var(--blue);color:#fff;border:0}.cta-primary:hover{background:var(--blue-press)}
-.cta-outline{background:#fff;color:#111;border:1px solid #111}.cta-outline:hover{background:#111;color:#fff}
-.cta-outline.amber{border-color:#7A5A00;color:#5B4300;background:transparent}.cta-outline:disabled{opacity:.55;cursor:default}.cta-outline.amber:disabled:hover{background:transparent;color:#5B4300}
-.cta-light{background:#F4F3EF;color:#111;border:0}
-.link-btn{border:0;background:transparent;color:var(--blue);font:600 13px var(--sans);cursor:pointer;min-height:32px}
-.hoy{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
-.hoy-main{flex:999 1 520px;min-width:0;display:flex;flex-direction:column;gap:12px}
-.hoy-side{flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:16px}
-.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.sec-head h2{font-size:20px}.sec-head span{font-size:13px;color:var(--muted)}
-.prio{background:#fff;border:1px solid var(--border);border-radius:16px;padding:18px 20px;display:flex;flex-wrap:wrap;gap:16px;align-items:center}
-.prio-n{font-family:var(--display);font-size:28px;font-weight:700;color:#C9C5BD;width:34px}
-.prio-body{flex:1 1 280px;min-width:0;display:flex;flex-direction:column;gap:6px}
-.prio-tags{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.prio-title{font-weight:600;font-size:16px;overflow-wrap:anywhere}
-.prio-desc{font-size:14px;color:#3F3E3A;line-height:1.5}
-.empty{background:#fff;border:1px dashed var(--border);border-radius:16px;padding:22px;font-size:14px;color:var(--muted)}
-.card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
-.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.card-head h2,.card-title{font-size:18px}
-.card-ink{background:#111;color:#F4F3EF;border-color:#111}.card-ink p{font-size:14px;color:#D6D3CC;line-height:1.5}
-.ink-title{font-family:var(--display);font-size:22px;line-height:1.15;font-weight:700}
-.board-row{display:flex;align-items:center;gap:10px;font-size:13px}.board-row>span:first-child{width:84px;color:#3F3E3A;flex:0 0 auto}
-.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:12px;background:var(--bg);border-radius:8px;padding:5px 9px}.chip-blue{background:#E6EDFF;color:#0039B8;font-weight:600}
-.muted-s{font-size:12px;color:var(--muted)}
-.mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.mini{background:var(--bg);border-radius:12px;padding:12px}.mini div{font-size:12px;color:var(--muted)}.mini b{display:block;font-family:var(--mono);font-size:16px;font-weight:500;margin-top:4px}
-.prod{display:flex;flex-direction:column;gap:20px}
-.prod-kw{font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-0.02em}
-.stepper{list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
-.step{background:#fff;border:1px solid var(--border);border-radius:14px;padding:13px;display:flex;flex-direction:column;gap:6px;min-width:0}
-.step.soon{border-style:dashed;border-color:#C9C5BD}
-.step.current{background:#111;color:#fff;border-color:#111}
-.step-top{display:flex;align-items:center;gap:8px}
-.step-dot{width:22px;height:22px;border-radius:99px;border:1.5px solid #8C8981;color:#5B5A55;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:0 0 auto}
-.step.done .step-dot{background:#0B6B45;border-color:#0B6B45;color:#fff}
-.step.current .step-dot{background:#fff;border-color:#fff;color:#111}
-.step-n{font-size:12px;color:var(--muted)}.step.current .step-n{color:#C9C5BD}
-.step-l{font-weight:600;font-size:14px;overflow-wrap:anywhere}.step-x{font-weight:500}.v-crear{color:#0B6B45}.v-diferenciar{color:#7A5A00}.v-actualizar{color:#9A2B12}.step-soon{font-weight:500;color:var(--muted)}
-.prod-cols{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
-.prod-main{flex:999 1 480px;min-width:0}
-.verify{flex:1 1 260px;min-width:0;background:#FFFBEA;border:1px solid #F0DF9A;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
-.verify .card-head h2{font-size:18px}
-.verify-note{font-size:13px;color:#5B4300;line-height:1.5}
-.verify-item{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;cursor:pointer}.verify-item input{width:18px;height:18px;margin-top:1px;accent-color:#7A5A00;flex:0 0 auto}
-.radar{display:flex;flex-direction:column;gap:20px}
-.radar-filters{display:flex;flex-wrap:wrap;gap:8px}
-.filter{display:inline-flex;align-items:center;min-height:38px;padding:0 14px;border-radius:99px;font-size:13px;font-weight:500;border:1px solid var(--border);background:#fff;color:#3F3E3A}.filter.on{background:#111;color:#fff;border-color:#111;font-weight:600}.filter.off{color:var(--muted)}
-.radar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.idea{background:#fff;border:1px solid var(--border);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px}
-.idea-ink{background:#111;color:#F4F3EF;border-color:#111}.idea-ink .mono-meta{color:#A8A49C}
-.idea-title{font-family:var(--display);font-size:22px;line-height:1.15;letter-spacing:-0.02em;overflow-wrap:anywhere}
-.idea-facts{background:var(--bg);border-radius:12px;padding:12px;font-size:13px}.idea-facts div{display:flex;justify-content:space-between;gap:8px}.idea-ink .idea-facts{background:#1E1E1E}
-.idea .cta-primary,.idea .cta-light{margin-top:auto}
-.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}.how-grid p{font-size:14px;color:#3F3E3A;line-height:1.5;margin-top:4px}.mono-blue{font-family:var(--mono);font-size:12px;color:#0039B8}
-#root>.app{margin:0 auto;max-width:640px}
-.cierre{margin-top:16px}
-.cierre-step{display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--line);padding-top:12px}.cierre-step.check{cursor:pointer}.cierre-step.check input{width:20px;height:20px;accent-color:#0B6B45;margin-top:2px}
-.cierre-n{font-family:var(--display);font-weight:700;font-size:18px;color:#C9C5BD;width:18px;flex:0 0 auto}
-.cierre-body{flex:1;min-width:0}
-.pub-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.pub-row .disc-input{flex:1 1 220px;min-height:38px}
-.pub-item{display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--line);padding-top:12px}
-.pub-hitos{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0 4px}
-.verify-res{display:flex;flex-direction:column;gap:2px;margin:2px 0 4px 28px;font-size:12.5px;line-height:1.45;color:#5B4300}
-.verify-res a{font-size:12px;overflow-wrap:anywhere}
-.opt-wrap{display:flex;flex-direction:column;gap:16px}
-.opt-item{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px}
-.opt-top{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:space-between;align-items:baseline}
-.share-row{display:flex;gap:10px;align-items:center}.share-row>span:first-child{flex:0 1 46%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.share-row .strong{color:var(--ink);font-weight:600}
-.share-bar{flex:1;height:6px;border-radius:99px;background:var(--line);overflow:hidden}.share-bar i{display:block;height:6px;background:var(--blue)}
-.opt-rec{background:var(--bg);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
-.act-row{display:flex;gap:10px;align-items:flex-start}.act-row .sig{flex:0 0 auto;margin-top:2px}
-.variant{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px}.variant.now{background:transparent;border-style:dashed}
-.var-t{color:#1A0DAB;font-size:16px;line-height:1.3}.var-m{font-size:13.5px;color:#3F3E3A;line-height:1.45}.mono-meta.over{color:#B3401A;font-weight:600}
-.plan-cta{background:#111;color:#F4F3EF;border-radius:18px;padding:22px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;margin-bottom:24px}.plan-cta>div:first-child{flex:1 1 360px;display:flex;flex-direction:column;gap:8px}.plan-cta p{font-size:14px;color:#D6D3CC;line-height:1.5}
-.plan-hoy{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:28px;align-items:stretch}
-.plan-neck{flex:1 1 300px;background:#111;color:#F4F3EF;border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:10px}.plan-neck p{font-size:14px;color:#D6D3CC;line-height:1.55}
-.plan-neck.big .ink-title{font-size:28px}
-.neck-dato{font-family:var(--mono);font-size:13px;color:#3DDC97;line-height:1.5}
-.plan-links{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:auto}.link-btn.light{color:#BFD0FF}
-.plan-today{flex:999 1 420px;min-width:0;background:#fff;border:1px solid var(--border);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px}
-.today-note{font-size:14px;color:#3F3E3A;line-height:1.5}
-.today-item{display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--line);padding-top:12px}
-.today-item input{width:20px;height:20px;margin-top:2px;accent-color:#0B6B45;flex:0 0 auto}
-.today-body{flex:1;min-width:0}.today-t{font-weight:600;font-size:15px;line-height:1.4}.today-why{font-size:13.5px;color:#3F3E3A;line-height:1.5;margin-top:2px}
-.today-item.done .today-t{text-decoration:line-through;color:var(--muted)}
-.plan-panel{display:flex;flex-direction:column;gap:16px;margin-bottom:28px}
-.plan-cols{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}.plan-cols>.card{flex:1 1 340px;min-width:0}
-.plan-obj{font-size:15px;line-height:1.5;color:#111;font-weight:500}
-.meta-row{display:flex;gap:12px;border-top:1px solid var(--line);padding-top:10px}.meta-n{font-family:var(--display);font-weight:700;font-size:20px;color:#C9C5BD;width:22px;flex:0 0 auto}
-.piece-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.save-btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 13px var(--sans);cursor:pointer}.save-btn.on{color:var(--blue);border-color:var(--blue-tint);background:var(--blue-soft)}
-.idea-ink .save-btn{border-color:#3A3A3A;color:#D6D3CC}.idea-ink .save-btn.on{background:#1E2A4A;color:#BFD0FF;border-color:#1E2A4A}
-.comp{margin-top:12px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
-.comp-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.comp-title{font-family:var(--display);font-size:17px;font-weight:700}
-.comp-sub{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#0039B8;margin-bottom:4px}
-.comp-p{font-size:14px;line-height:1.55;color:#3F3E3A}
-.comp-list{display:flex;flex-direction:column;gap:10px}
-.comp-row{display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--line);padding-top:10px}
-.comp-rank{font-family:var(--mono);font-size:13px;color:var(--muted);width:18px}
-.comp-dom{font-family:var(--mono);font-size:12px;color:var(--muted);overflow-wrap:anywhere}.comp-t{font-weight:600;font-size:14px;display:block;margin-top:2px}.comp-cubre{font-size:13px;color:#3F3E3A;margin-top:3px;line-height:1.45}
-.radar-run{gap:10px}.field-label{font-size:13px;font-weight:600}
-.radar-run-row{display:flex;flex-wrap:wrap;gap:8px}.radar-run-row .disc-input{flex:1 1 280px;min-height:44px}
-.radar-summary{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;font-size:14px;color:#3F3E3A}
-button.filter{cursor:pointer;font-family:var(--sans)}
-.idea-why{font-size:14px;line-height:1.5;color:#3F3E3A}.idea-ink .idea-why{color:#D6D3CC}
-.pieces{display:flex;flex-direction:column;gap:10px}
-.piece{border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:6px}.idea-ink .piece{border-color:#2E2E2E}
-.piece-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
-.piece-kw{font-family:var(--mono);font-size:13px;overflow-wrap:anywhere}
-.piece-type{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);flex:0 0 auto}.idea-ink .piece-type{color:#A8A49C}
-.piece-meta{display:flex;flex-wrap:wrap;gap:6px}
-.sig{font-size:11px;font-weight:600;border-radius:6px;padding:2px 7px}
-.sig-hi{background:#DDF5EA;color:#0B6B45}.sig-md{background:#FFF3C4;color:#7A5A00}.sig-off{background:#ECEAE4;color:#5B5A55}.sig-ok{background:#E6EDFF;color:#0039B8}.sig-warn{background:#FCE6DF;color:#9A2B12}
-.piece-var{font-size:12px;color:var(--muted);line-height:1.4}.idea-ink .piece-var{color:#A8A49C}
-.cta-light.sm,.cta-outline.sm{min-height:36px;padding:0 12px;font-size:13px;align-self:flex-start}
-.link-btn.discard{align-self:flex-start;color:var(--muted);margin-top:auto}.idea-ink .link-btn.discard{color:#A8A49C}
-@media(max-width:900px){
-  .side{position:sticky;top:0;z-index:20;height:auto;max-width:none;flex:1 1 100%;flex-direction:row;align-items:center;gap:6px;padding:10px 12px calc(10px) 12px;overflow-x:auto;scrollbar-width:none}
-  .side::-webkit-scrollbar{display:none}
-  .side-brand{padding:0 6px 0 2px;flex:0 0 auto}.side-site,.side-label,.credit-card,.side-ver{display:none}
-  .side-logo{font-size:17px}
-  .side-group,.side-foot{flex-direction:row;margin-top:0;gap:4px;flex:0 0 auto}
-  .side-item{min-height:38px;width:auto;white-space:nowrap;padding:0 11px}
-  .app{padding:22px 16px 48px}
-  .page-title{font-size:34px}
-  .stepper{grid-template-columns:repeat(5,minmax(120px,1fr));overflow-x:auto}
-}
-</style>
-</head>
-<body>
-<div id="root"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
-<script type="text/babel">
-const {useState,useEffect,useCallback,useRef,useMemo}=React;
-const VERSION='v4.4';
-const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
-const SUGGEST_API=REDIRECT_URI+'/api/suggest';
-const CLAUDE_API=REDIRECT_URI+'/api/claude';
-// Llama al endpoint protegido. onText recibe el texto acumulado mientras llega (streaming).
-async function callClaude(task,data,onText){
-  const t=(()=>{try{const x=JSON.parse(localStorage.getItem('sp2_token')||'null');return x&&x.exp>Date.now()?x:null}catch{return null}})();
-  if(!t)throw new Error('Conecta Google primero');
-  const r=await fetch(CLAUDE_API,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t.tk},body:JSON.stringify({task,data})});
-  if(!r.ok){let m='Error '+r.status;try{m=(await r.json()).error||m}catch{}throw new Error(m)}
-  const reader=r.body.getReader();const dec=new TextDecoder();let buf='',full='',uModel='',uIn=0,uOut=0;
-  while(true){
-    const {done,value}=await reader.read();if(done)break;
-    buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop();
-    for(const line of lines){
-      if(!line.startsWith('data:'))continue;const p=line.slice(5).trim();if(!p)continue;
-      let ev;try{ev=JSON.parse(p)}catch{continue}
-      if(ev.type==='message_start'&&ev.message){uModel=ev.message.model||'';const u=ev.message.usage||{};uIn=(u.input_tokens||0)+(u.cache_creation_input_tokens||0)+(u.cache_read_input_tokens||0)}
-      else if(ev.type==='message_delta'&&ev.usage){uOut=ev.usage.output_tokens||uOut}
-      else if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.type==='text_delta'){full+=ev.delta.text;if(onText)onText(full)}
-      else if(ev.type==='error'){throw new Error((ev.error&&ev.error.message)||'Error en streaming')}
-    }
-  }
-  recordUsage(uModel,uIn,uOut);
-  return full}
-const SCOPES='openid email https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly https://www.googleapis.com/auth/adsense.readonly';
-const GSC_API='https://www.googleapis.com/webmasters/v3';
-const GA4_API='https://analyticsdata.googleapis.com/v1beta';
-const ADSENSE_API='https://adsense.googleapis.com/v2';
-const COUNTRY_NAMES={MEX:'Mexico',USA:'USA',ARG:'Argentina',COL:'Colombia',ESP:'Spain',PER:'Peru',CHL:'Chile',ECU:'Ecuador',VEN:'Venezuela',BOL:'Bolivia',GTM:'Guatemala',DOM:'Rep. Dom.',CRI:'Costa Rica',PAN:'Panama',URY:'Uruguay',PRY:'Paraguay',HND:'Honduras',SLV:'El Salvador',NIC:'Nicaragua',CUB:'Cuba',BRA:'Brasil',DEU:'Alemania',FRA:'Francia',GBR:'UK',ITA:'Italia',JPN:'Japon'};
-
-function fmt(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return Math.round(n).toLocaleString()}
-function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().split('T')[0]}
-function pct(c,p){if(!p)return null;return((c-p)/p*100).toFixed(1)}
-function getConfig(){try{return JSON.parse(localStorage.getItem('sp2_config')||'null')}catch{return null}}
-function getToken(){try{const t=JSON.parse(localStorage.getItem('sp2_token')||'null');if(t&&t.exp>Date.now())return t;return null}catch{return null}}
-function getSavedKws(){try{return JSON.parse(localStorage.getItem('sp2_extrakws')||'null')}catch{return null}}
-function shortPath(url){return url.replace(/https?:\/\/[^/]+/,'')}
-function fmtMoney(n){if(n>=1000)return'$'+(n/1000).toFixed(1)+'K';if(n>=1)return'$'+n.toFixed(2);if(n>=0.01)return'$'+n.toFixed(2);return'$'+n.toFixed(3)}
-function getAdsenseAccountId(){try{return localStorage.getItem('sp2_adsense_account')||null}catch{return null}}
-function setAdsenseAccountId(id){try{localStorage.setItem('sp2_adsense_account',id)}catch{}}
-const expectedCtr=[0,0.396,0.187,0.110,0.076,0.053,0.044,0.032,0.024,0.020,0.016,0.014,0.012,0.010,0.009,0.008,0.007,0.006,0.006,0.005,0.005];
-function getExpectedCtr(pos){const p=Math.round(Math.min(Math.max(pos,1),20));return expectedCtr[p]||0.005}
-function suggestAction(pos){if(pos<=3)return'Mejorar CTR (title/meta)';if(pos<=7)return'Push a top 3 (internal links + contenido)';if(pos<=15)return'Expandir contenido + links internos';return'Reescribir o nuevo articulo dedicado'}
-
-// ====== UTM UTILS ======
-function getUtms(){try{return JSON.parse(localStorage.getItem('sp2_utms')||'[]')}catch{return[]}}
-function saveUtms(arr){try{localStorage.setItem('sp2_utms',JSON.stringify(arr))}catch{}}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
-function slugify(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)}
-function buildUtmUrl(u){const p=new URLSearchParams();if(u.source)p.set('utm_source',slugify(u.source));if(u.medium)p.set('utm_medium',slugify(u.medium));if(u.campaign)p.set('utm_campaign',slugify(u.campaign));if(u.term)p.set('utm_term',slugify(u.term));if(u.content)p.set('utm_content',slugify(u.content));const sep=u.destination.includes('?')?'&':'?';return u.destination+sep+p.toString()}
-function validateUtm(u){const errs=[];if(!u.destination||!u.destination.startsWith('http'))errs.push('Destination URL debe empezar con http');if(!u.source)errs.push('Source es requerido');if(!u.medium)errs.push('Medium es requerido');if(!u.campaign)errs.push('Campaign es requerido');return errs}
-function findUtmDuplicate(list,u,excludeId){return list.find(x=>x.id!==excludeId&&x.destination===u.destination&&slugify(x.source)===slugify(u.source)&&slugify(x.medium)===slugify(u.medium)&&slugify(x.campaign)===slugify(u.campaign))}
-function formatRelTime(ts){const d=Date.now()-ts;const m=Math.floor(d/60000);if(m<1)return'ahora';if(m<60)return'hace '+m+'m';const h=Math.floor(m/60);if(h<24)return'hace '+h+'h';const da=Math.floor(h/24);if(da<30)return'hace '+da+'d';const mo=Math.floor(da/30);return'hace '+mo+'mo'}
-function uniqValues(list,field){return Array.from(new Set(list.map(x=>x[field]).filter(Boolean))).slice(0,6)}
-function genQrUrl(text,size){size=size||120;return'https://api.qrserver.com/v1/create-qr-code/?size='+size+'x'+size+'&data='+encodeURIComponent(text)+'&margin=0'}
-
-function diagnose(daily,topQueries,avgPos,avgCtr,totalClicks,totalImpr){
-  const actions=[];
-  if(daily&&daily.length>=6){
-    const mid=Math.floor(daily.length/2);
-    const h1Clicks=daily.slice(0,mid).reduce((s,d)=>s+d.clicks,0);
-    const h2Clicks=daily.slice(mid).reduce((s,d)=>s+d.clicks,0);
-    const h1Pos=daily.slice(0,mid).reduce((s,d)=>s+d.position,0)/mid;
-    const h2Pos=daily.slice(mid).reduce((s,d)=>s+d.position,0)/(daily.length-mid);
-    const clickDelta=h1Clicks>0?((h2Clicks-h1Clicks)/h1Clicks*100):0;
-    const posDelta=h2Pos-h1Pos;
-    if(posDelta>1.5)actions.push({level:'urgent',text:'Posicion cayendo: '+h1Pos.toFixed(1)+' → '+h2Pos.toFixed(1)+'. Revisar competidores, backlinks, core updates.'});
-    else if(posDelta>0.5)actions.push({level:'warn',text:'Leve descenso ('+h1Pos.toFixed(1)+' → '+h2Pos.toFixed(1)+'). Reforzar con internal links.'});
-    else if(posDelta<-1)actions.push({level:'ok',text:'Posicion mejorando: '+h1Pos.toFixed(1)+' → '+h2Pos.toFixed(1)+'.'});
-    if(clickDelta<-25&&h1Clicks>10)actions.push({level:'urgent',text:'Clicks -'+Math.abs(clickDelta).toFixed(0)+'% segunda mitad del periodo.'});
-    else if(clickDelta>25&&h2Clicks>10)actions.push({level:'ok',text:'Clicks +'+clickDelta.toFixed(0)+'% segunda mitad.'});
-  }
-  const expCtr=getExpectedCtr(avgPos);
-  if(avgCtr<expCtr*0.5)actions.push({level:'urgent',text:'CTR muy bajo: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'% esperado. Reescribir title/meta.'});
-  else if(avgCtr<expCtr*0.75)actions.push({level:'warn',text:'CTR bajo: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'%. Oportunidad en title/meta.'});
-  else actions.push({level:'ok',text:'CTR saludable: '+(avgCtr*100).toFixed(1)+'% vs '+(expCtr*100).toFixed(1)+'%.'});
-  if(avgPos<=3)actions.push({level:'info',text:'Top 3: Proteger. Mantener fresco, no cambios grandes.'});
-  else if(avgPos<=7)actions.push({level:'info',text:'Pos '+avgPos.toFixed(1)+': Push a top 3 con 3-5 internal links + FAQ schema.'});
-  else if(avgPos<=15)actions.push({level:'warn',text:'Pos '+avgPos.toFixed(1)+': Expandir contenido +500 palabras, H2s, media, internal links.'});
-  else actions.push({level:'urgent',text:'Pos '+avgPos.toFixed(1)+': Reescritura o nuevo articulo dedicado.'});
-  if(topQueries&&topQueries.length>0&&totalClicks>0&&topQueries[0].clicks/totalClicks>0.6)actions.push({level:'warn',text:'Trafico concentrado en "'+topQueries[0].keys[0]+'" ('+((topQueries[0].clicks/totalClicks)*100).toFixed(0)+'%). Diversificar long-tail.'});
-  if(totalImpr>1000&&totalClicks<10)actions.push({level:'urgent',text:fmt(totalImpr)+' impr pero '+totalClicks+' clicks. Title/meta no conecta.'});
-  return actions;
-}
-
-function DetailChart({daily}){
-  const canvasRef=useRef(null);const chartRef=useRef(null);
-  useEffect(()=>{
-    if(!daily||!canvasRef.current)return;
-    if(chartRef.current)chartRef.current.destroy();
-    const ctx=canvasRef.current.getContext('2d');
-    chartRef.current=new Chart(ctx,{type:'line',data:{
-      labels:daily.map(d=>d.date.slice(5)),
-      datasets:[
-        {label:'Clicks',data:daily.map(d=>d.clicks),borderColor:'#0052FF',backgroundColor:'rgba(0,82,255,0.10)',fill:true,tension:0.3,borderWidth:1.5,pointRadius:1,pointHitRadius:10,yAxisID:'y'},
-        {label:'Posicion',data:daily.map(d=>d.position),borderColor:'#D85A30',backgroundColor:'transparent',fill:false,tension:0.3,borderWidth:1.5,pointRadius:1,pointHitRadius:10,borderDash:[4,3],yAxisID:'y1'}
-      ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,font:{size:11,family:'DM Sans'},padding:8}},tooltip:{backgroundColor:'#1A1A18',titleFont:{size:11,family:'DM Sans'},bodyFont:{size:11,family:'DM Sans'},padding:8,cornerRadius:8,callbacks:{label:function(c){if(c.datasetIndex===1)return'Pos: '+c.parsed.y.toFixed(1);return c.dataset.label+': '+c.parsed.y}}}},
-      scales:{x:{grid:{display:false},ticks:{font:{size:10,family:'DM Sans'},color:'#9C9A92',maxTicksLimit:7}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10,family:'DM Sans'},color:'#0052FF'},title:{display:true,text:'Clicks',font:{size:10,family:'DM Sans'},color:'#0052FF'}},y1:{position:'right',reverse:true,grid:{display:false},ticks:{font:{size:10,family:'DM Sans'},color:'#D85A30'},title:{display:true,text:'Posicion',font:{size:10,family:'DM Sans'},color:'#D85A30'}}}}});
-    return()=>{if(chartRef.current)chartRef.current.destroy()};
-  },[daily]);
-  return <div className="chart-wrap"><canvas ref={canvasRef}/></div>;
-}
-
-function TrendChart({dailyData}){
-  const canvasRef=useRef(null);const chartRef=useRef(null);
-  useEffect(()=>{
-    if(!dailyData||!canvasRef.current)return;
-    if(chartRef.current)chartRef.current.destroy();
-    const ctx=canvasRef.current.getContext('2d');
-    chartRef.current=new Chart(ctx,{type:'line',data:{
-      labels:dailyData.map(d=>d.date.slice(5)),
-      datasets:[
-        {label:'Clicks',data:dailyData.map(d=>d.clicks),borderColor:'#0052FF',backgroundColor:'rgba(0,82,255,0.10)',fill:true,tension:0.3,borderWidth:1.5,pointRadius:0,pointHitRadius:10},
-        {label:'Sessions',data:dailyData.map(d=>d.sessions||0),borderColor:'#185FA5',backgroundColor:'rgba(24,95,165,0.06)',fill:true,tension:0.3,borderWidth:1.5,pointRadius:0,pointHitRadius:10}
-      ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,font:{size:11,family:'DM Sans'},padding:8}},tooltip:{backgroundColor:'#1A1A18',titleFont:{size:11,family:'DM Sans'},bodyFont:{size:11,family:'DM Sans'},padding:8,cornerRadius:8}},
-      scales:{x:{grid:{display:false},ticks:{font:{size:10,family:'DM Sans'},color:'#9C9A92',maxTicksLimit:7}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10,family:'DM Sans'},color:'#9C9A92'}}}}});
-    return()=>{if(chartRef.current)chartRef.current.destroy()};
-  },[dailyData]);
-  return <div className="chart-wrap"><canvas ref={canvasRef}/></div>;
-}
-
-function PageDetailDrawer({item,onClose,gscFn,period}){
-  const[loading,setLoading]=useState(true);const[daily,setDaily]=useState(null);const[topQueries,setTopQueries]=useState(null);const[diag,setDiag]=useState([]);
-  const page=item.page||null;const query=item.query||item.keys?.[0]||null;
-  useEffect(()=>{
-    if(!gscFn)return;
-    (async()=>{
-      setLoading(true);const sd=daysAgo(period),ed=daysAgo(1);
-      try{
-        const filters=[];
-        if(page)filters.push({dimension:'page',operator:'equals',expression:page});
-        else if(query)filters.push({dimension:'query',operator:'equals',expression:query});
-        const body={startDate:sd,endDate:ed,dimensions:['date'],type:'web'};
-        if(filters.length>0)body.dimensionFilterGroups=[{filters}];
-        const resp=await gscFn(body);
-        const d=(resp.rows||[]).map(r=>({date:r.keys[0],clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}));
-        setDaily(d);
-        let tq=null;
-        if(page){const qResp=await gscFn({startDate:sd,endDate:ed,dimensions:['query'],type:'web',dimensionFilterGroups:[{filters:[{dimension:'page',operator:'equals',expression:page}]}],rowLimit:10});tq=qResp.rows||[];setTopQueries(tq)}
-        const totalClicks=d.reduce((s,r)=>s+r.clicks,0);const totalImpr=d.reduce((s,r)=>s+r.impressions,0);
-        const avgPos=d.length>0?d.reduce((s,r)=>s+r.position,0)/d.length:item.position||0;
-        const avgCtr=totalImpr>0?totalClicks/totalImpr:0;
-        setDiag(diagnose(d,tq,avgPos,avgCtr,totalClicks,totalImpr));
-      }catch(e){setDiag([{level:'urgent',text:'Error: '+e.message}])}
-      setLoading(false);
-    })();
-  },[page,query,gscFn,period]);
-  const title=query||shortPath(page||'');
-  const totalClicks=daily?daily.reduce((s,r)=>s+r.clicks,0):item.clicks||0;
-  const totalImpr=daily?daily.reduce((s,r)=>s+r.impressions,0):item.impressions||0;
-  const avgPos=daily&&daily.length>0?daily.reduce((s,r)=>s+r.position,0)/daily.length:item.position||0;
-  const avgCtr=totalImpr>0?(totalClicks/totalImpr*100):0;
-  return ReactDOM.createPortal(
-    <div className="drawer-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
-      <div className="drawer"><div className="drawer-handle" onClick={onClose}><span/></div>
-        <div className="drawer-header"><h2>{title}</h2>{page&&<div className="drawer-url">{shortPath(page)}</div>}</div>
-        <div className="drawer-body">
-          {loading?<div className="loading"><div className="spinner"/>Cargando detalle...</div>:<>
-          <div className="drawer-stats">
-            <div className="stat"><div className="stat-label">Clicks</div><div className="stat-val">{fmt(totalClicks)}</div></div>
-            <div className="stat"><div className="stat-label">Impresiones</div><div className="stat-val">{fmt(totalImpr)}</div></div>
-            <div className="stat"><div className="stat-label">CTR</div><div className="stat-val">{avgCtr.toFixed(1)}%</div></div>
-            <div className="stat"><div className="stat-label">Pos. prom.</div><div className="stat-val">{avgPos.toFixed(1)}</div></div>
-          </div>
-          {daily&&daily.length>0&&<DetailChart daily={daily}/>}
-          <div className="diag-section"><div className="diag-title">Diagnostico y acciones</div>
-            {diag.map((a,i)=><div className="diag-item" key={i}><span className={'diag-label '+(a.level==='urgent'?'diag-urgent':a.level==='warn'?'diag-warn':a.level==='ok'?'diag-ok':'diag-info')}>{a.level==='urgent'?'URGENTE':a.level==='warn'?'ATENCION':a.level==='ok'?'BIEN':'INFO'}</span>{a.text}</div>)}</div>
-          {topQueries&&topQueries.length>0&&<div className="diag-section"><div className="diag-title">Top queries de esta pagina</div><div className="top-queries-list">
-            {topQueries.map((q,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw">{q.keys[0]}</div><div className="row-meta">{fmt(q.clicks)} clicks / {fmt(q.impressions)} impr / pos {q.position.toFixed(1)}</div></div><span className={`score ${q.position<=3?'s-hi':q.position<=10?'s-md':'s-lo'}`}>P{Math.round(q.position)}</span></div>)}</div></div>}
-          <div style={{marginTop:16,display:'flex',gap:8}}>
-            <button className="btn-primary" style={{fontSize:12,padding:'9px 18px'}} onClick={()=>window.open('https://claude.ai/new?q='+encodeURIComponent('Analisis SEO para '+(page||'paislector.com')+'. Query: "'+(query||title)+'". Pos: '+avgPos.toFixed(1)+'. CTR: '+avgCtr.toFixed(1)+'%. Impr: '+totalImpr+'. Diagnostico: '+diag.map(a=>a.text).join(' | ')+'. Plan de accion: title, meta, contenido, internal links.'),'_blank')}>Brief en Claude</button>
-            <button className="btn-secondary" onClick={onClose}>Cerrar</button>
-          </div></>}
-        </div>
-      </div>
-    </div>,document.body);
-}
-
-// =========== DISCOVERY PANEL ===========
-function Discovery({gscRows,onOpenDetail}){
-  const[seed,setSeed]=useState('');const[searching,setSearching]=useState(false);const[results,setResults]=useState(null);const[expanded,setExpanded]=useState({});
-  const gscMap=useRef({});
-  useEffect(()=>{if(gscRows){const m={};gscRows.forEach(r=>{const k=r.keys[0].toLowerCase();m[k]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});gscMap.current=m}},[gscRows]);
-
-  async function fetchSuggestions(query){
-    try{const r=await fetch(SUGGEST_API+'?q='+encodeURIComponent(query)+'&lang=es');if(!r.ok)return[];const d=await r.json();return d.suggestions||[]}catch{return[]}}
-
-  async function runDiscovery(){
-    if(!seed.trim())return;setSearching(true);setResults(null);setExpanded({});
-    // Fetch suggestions for seed + seed + " " (a-z alphabet soup)
-    const queries=[seed.trim()];
-    const alpha='abcdefghijklmnopqrstuvwxyz'.split('');
-    // Add top 5 alphabet expansions for breadth
-    const alphaQueries=alpha.slice(0,10).map(l=>seed.trim()+' '+l);
-    queries.push(...alphaQueries);
-    const allSuggestions=new Set();
-    const batches=[];
-    // Fetch in parallel batches of 4
-    for(let i=0;i<queries.length;i+=4){batches.push(queries.slice(i,i+4))}
-    for(const batch of batches){
-      const batchResults=await Promise.all(batch.map(q=>fetchSuggestions(q)));
-      batchResults.forEach(suggestions=>suggestions.forEach(s=>allSuggestions.add(s.toLowerCase().trim())));
-    }
-    // Remove exact seed
-    allSuggestions.delete(seed.trim().toLowerCase());
-    // Cross-reference against GSC
-    const analyzed=Array.from(allSuggestions).map(kw=>{
-      const exact=gscMap.current[kw];
-      if(exact)return{kw,status:'ranking',clicks:exact.clicks,impressions:exact.impressions,position:exact.position,ctr:exact.ctr};
-      // Partial match
-      const partials=Object.keys(gscMap.current).filter(q=>q.includes(kw)||kw.includes(q));
-      if(partials.length>0){
-        const best=partials.reduce((a,b)=>gscMap.current[a].impressions>gscMap.current[b].impressions?a:b);
-        const d=gscMap.current[best];
-        return{kw,status:'partial',matchedQuery:best,clicks:d.clicks,impressions:d.impressions,position:d.position,ctr:d.ctr};
-      }
-      return{kw,status:'gap',clicks:0,impressions:0,position:0,ctr:0};
-    });
-    // Sort: gaps first, then partials, then ranking
-    analyzed.sort((a,b)=>{const order={gap:0,partial:1,ranking:2};return order[a.status]-order[b.status]||b.impressions-a.impressions});
-    setResults(analyzed);setSearching(false);
-  }
-
-  function handleExpand(kw){
-    if(expanded[kw])return;
-    setExpanded(prev=>({...prev,[kw]:'loading'}));
-    fetchSuggestions(kw).then(suggestions=>{
-      const sub=suggestions.filter(s=>s.toLowerCase()!==kw).map(s=>{
-        const k=s.toLowerCase().trim();const exact=gscMap.current[k];
-        if(exact)return{kw:k,status:'ranking',clicks:exact.clicks,impressions:exact.impressions,position:exact.position};
-        return{kw:k,status:'gap',clicks:0,impressions:0,position:0};
-      });
-      setExpanded(prev=>({...prev,[kw]:sub}));
-    });
-  }
-
-  const gaps=results?results.filter(r=>r.status==='gap'):[];
-  const partials=results?results.filter(r=>r.status==='partial'):[];
-  const ranking=results?results.filter(r=>r.status==='ranking'):[];
-
-  return(<div className="panel"><div className="panel-head"><h3>Discovery</h3><span className="pill pill-purple">Autocomplete + GSC</span></div><div className="panel-body">
-    <div className="disc-input-row">
-      <input className="disc-input" placeholder='Tema seed: "poemas de amor", "sylvia plath"...' value={seed} onChange={e=>setSeed(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')runDiscovery()}}/>
-      <button className="btn-primary" style={{padding:'9px 16px',fontSize:'12px',whiteSpace:'nowrap'}} onClick={runDiscovery} disabled={searching}>{searching?'...':'Descubrir'}</button>
-    </div>
-    <div className="disc-chips">
-      {['poemas de amor','pablo neruda','cuentos cortos','sylvia plath','sor juana','haiku','poesia','frases de libros'].map(s=><span key={s} className="disc-chip" onClick={()=>{setSeed(s);}}>{s}</span>)}
-    </div>
-    {searching&&<div className="disc-searching"><div className="spinner"/>Buscando en Google Autocomplete y cruzando con GSC...</div>}
-    {results&&results.length>0&&<>
-      <div style={{marginTop:12,display:'flex',gap:6}}>
-        <span className="score s-lo" style={{fontSize:11,height:22,minWidth:40}}>{gaps.length} gaps</span>
-        <span className="score s-md" style={{fontSize:11,height:22,minWidth:50}}>{partials.length} parcial</span>
-        <span className="score s-hi" style={{fontSize:11,height:22,minWidth:55}}>{ranking.length} ranking</span>
-        <span style={{fontSize:10,color:'var(--hint)',marginLeft:'auto'}}>{results.length} total</span>
-      </div>
-      {/* GAPS */}
-      {gaps.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6}}>No rankeas ({gaps.length})</div>
-        {gaps.map((r,i)=><div key={'dg'+i}><div className="row" onClick={()=>handleExpand(r.kw)}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">Sin datos en GSC — click para expandir</div></div><span className="score s-new">GAP</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Content brief para "'+r.kw+'" para paislector.com. Incluye: search intent, estructura H2, keywords secundarias, meta description sugerida.'),'_blank')}}>Brief</button></div>
-          {expanded[r.kw]==='loading'&&<div className="disc-searching" style={{paddingLeft:12}}><div className="spinner"/>Expandiendo...</div>}
-          {Array.isArray(expanded[r.kw])&&expanded[r.kw].length>0&&<div style={{paddingLeft:16,borderLeft:'2px solid var(--purple-light)',marginLeft:6,marginBottom:4}}>
-            {expanded[r.kw].map((sub,j)=><div className="row" key={'sub'+j} style={{padding:'4px 0'}}><div className="row-left"><div className="row-kw" style={{fontSize:11}}>{sub.kw}</div>{sub.status==='ranking'&&<div className="row-meta">pos {sub.position.toFixed(1)} / {fmt(sub.clicks)} clicks</div>}</div><span className={`score ${sub.status==='gap'?'s-new':sub.position<=10?'s-md':'s-lo'}`}>{sub.status==='gap'?'GAP':'P'+Math.round(sub.position)}</span></div>)}
-          </div>}
-        </div>)}
-      </div>}
-      {/* PARTIALS */}
-      {partials.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--amber)',marginBottom:6}}>Parcial ({partials.length})</div>
-        {partials.map((r,i)=><div className="row" key={'dp'+i} onClick={()=>onOpenDetail&&onOpenDetail({query:r.matchedQuery,page:null,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">~"{r.matchedQuery}" / pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr</div></div><span className="score s-md">~{r.position.toFixed(0)}</span></div>)}
-      </div>}
-      {/* RANKING */}
-      {ranking.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--green)',marginBottom:6}}>Ya rankeas ({ranking.length})</div>
-        {ranking.map((r,i)=><div className="row" key={'dr'+i} onClick={()=>onOpenDetail&&onOpenDetail({query:r.kw,page:null,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">pos {r.position.toFixed(1)} / {fmt(r.clicks)} clicks / {fmt(r.impressions)} impr</div></div><span className={`score ${r.position<=3?'s-hi':r.position<=10?'s-md':'s-lo'}`}>P{r.position.toFixed(0)}</span></div>)}
-      </div>}
-      <div className="explain">Datos de Google Autocomplete cruzados con tu GSC. GAP = Google sugiere pero no apareces. Parcial = match similar. Click en GAP para expandir sub-queries. Orden de sugerencias refleja popularidad relativa.</div>
-    </>}
-    {results&&results.length===0&&<div style={{fontSize:12,color:'var(--hint)',padding:'12px 0'}}>Sin sugerencias para "{seed}". Prueba otro seed.</div>}
-  </div></div>);
-}
-
-function ConfigScreen({onSave}){
-  const[cid,setCid]=useState('');const[site,setSite]=useState('sc-domain:paislector.com');const[ga4,setGa4]=useState('properties/405100005');
-  return(<div className="auth-screen"><h2>Configura SEO Pulse</h2><p>Conecta Google Cloud Console con GSC y GA4.</p>
-    <div className="setup-note"><h3>Setup</h3><ol><li><strong>console.cloud.google.com</strong></li><li>Habilita <strong>Search Console API</strong> y <strong>Google Analytics Data API</strong></li><li>OAuth 2.0 Client ID tipo Web</li><li>Redirect URI: <code>{REDIRECT_URI}</code></li></ol></div>
-    <div className="config-form"><div><label>OAuth Client ID</label><input placeholder="264065...googleusercontent.com" value={cid} onChange={e=>setCid(e.target.value)}/></div>
-    <div className="config-row"><div><label>Site URL (GSC)</label><input value={site} onChange={e=>setSite(e.target.value)}/></div><div><label>GA4 Property ID</label><input value={ga4} onChange={e=>setGa4(e.target.value)}/></div></div>
-    <button className="btn-primary" onClick={()=>{if(!cid)return alert('Client ID requerido');const c={cid,site,ga4};localStorage.setItem('sp2_config',JSON.stringify(c));onSave(c)}}>Guardar y conectar</button></div></div>);
-}
-
-function KwAnalyzer({gscRows,onCheck,onBrief}){
-  const[text,setText]=useState('');const[results,setResults]=useState(getSavedKws);const gscMap=useRef({});
-  useEffect(()=>{if(gscRows){const m={};gscRows.forEach(r=>{m[r.keys[0].toLowerCase()]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});gscMap.current=m;if(results)analyzeKws(results.map(r=>r.kw))}},[gscRows]);
-  function analyzeKws(kwList){const analyzed=kwList.map(kw=>{const k=kw.toLowerCase().trim();const exact=gscMap.current[k];if(exact)return{kw:k,status:'ranking',clicks:exact.clicks,impressions:exact.impressions,position:exact.position,ctr:exact.ctr};const partial=Object.keys(gscMap.current).filter(q=>q.includes(k)||k.includes(q));if(partial.length>0){const best=partial.reduce((a,b)=>gscMap.current[a].impressions>gscMap.current[b].impressions?a:b);const d=gscMap.current[best];return{kw:k,status:'partial',matchedQuery:best,clicks:d.clicks,impressions:d.impressions,position:d.position,ctr:d.ctr}}return{kw:k,status:'gap',clicks:0,impressions:0,position:0,ctr:0}});analyzed.sort((a,b)=>{const order={gap:0,partial:1,ranking:2};return order[a.status]-order[b.status]||b.impressions-a.impressions});setResults(analyzed);localStorage.setItem('sp2_extrakws',JSON.stringify(analyzed))}
-  function handleAnalyze(){const kws=text.split('\n').map(l=>l.replace(/["\t,;]/g,'').trim()).filter(l=>l.length>2);if(kws.length===0)return;analyzeKws(kws)}
-  const gaps=results?results.filter(r=>r.status==='gap'):[];const partials=results?results.filter(r=>r.status==='partial'):[];const ranking=results?results.filter(r=>r.status==='ranking'):[];
-  return(<div className="panel"><div className="panel-head"><h3>KW Analyzer</h3><span className="pill pill-red">Semrush / externo</span></div><div className="panel-body">
-    <textarea className="kw-textarea" placeholder="Pega keywords (una por linea)" value={text} onChange={e=>setText(e.target.value)}/>
-    <div className="kw-actions"><button className="btn-primary" style={{padding:'7px 16px',fontSize:'12px'}} onClick={handleAnalyze}>Analizar vs GSC</button>{results&&<button className="btn-secondary" onClick={()=>{setResults(null);setText('');localStorage.removeItem('sp2_extrakws')}}>Limpiar</button>}<span className="kw-count">{text.split('\n').filter(l=>l.trim().length>2).length} kws</span></div>
-    {results&&results.length>0&&<><div style={{marginTop:12,display:'flex',gap:6}}><span className="score s-lo" style={{fontSize:11,height:22,minWidth:40}}>{gaps.length} gaps</span><span className="score s-md" style={{fontSize:11,height:22,minWidth:50}}>{partials.length} parcial</span><span className="score s-hi" style={{fontSize:11,height:22,minWidth:55}}>{ranking.length} ranking</span></div>
-    {gaps.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6}}>No rankeas ({gaps.length})</div>{gaps.slice(0,10).map((r,i)=><div className="row" key={'g'+i}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">Sin datos en GSC</div></div><span className="score s-new">GAP</span><button className="row-btn" style={{marginRight:6}} onClick={()=>onCheck&&onCheck(r.kw)}>Chequear</button><button className="row-btn" onClick={()=>onBrief&&onBrief(r.kw)}>Brief</button></div>)}</div>}
-    {partials.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--amber)',marginBottom:6}}>Parcial ({partials.length})</div>{partials.slice(0,10).map((r,i)=><div className="row" key={'p'+i}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">~"{r.matchedQuery}" / pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr</div></div><span className="score s-md">~{r.position.toFixed(0)}</span><button className="row-btn" style={{marginLeft:6}} onClick={()=>onCheck&&onCheck(r.kw)}>Chequear</button></div>)}</div>}
-    {ranking.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--green)',marginBottom:6}}>Ya rankeas ({ranking.length})</div>{ranking.slice(0,10).map((r,i)=><div className="row" key={'r'+i}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">pos {r.position.toFixed(1)} / {fmt(r.clicks)} clicks</div></div><span className={`score ${r.position<=3?'s-hi':r.position<=10?'s-md':'s-lo'}`}>P{r.position.toFixed(0)}</span></div>)}</div>}
-    <div className="explain">GAP = contenido nuevo. Parcial = similar. Ranking = compites.</div></>}
-  </div></div>);
-}
-
-// ====== ANTICANIBALIZACION + BRIEFS (v3.6) ======
-const CANIBAL_STOP=new Set(['de','la','el','los','las','en','y','a','para','por','con','del','que','un','una','unos','unas','al','lo','se','su','sus','es','o','mas','como','sobre','mi','tu','te','me','sin','le','les']);
-function normTokens(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]+/g,' ').split(/\s+/).filter(w=>w.length>1&&!CANIBAL_STOP.has(w)).map(w=>w.length>4?w.replace(/(es|s)$/,''):w)}
-let gscQPCache=null;
-async function loadQueryPageRows(gscFn){if(gscQPCache)return gscQPCache;const r=await gscFn({startDate:daysAgo(92),endDate:daysAgo(2),dimensions:['query','page'],type:'web',rowLimit:25000});gscQPCache=(r&&r.rows)||[];return gscQPCache}
-function relatedRows(rows,keyword){const kt=[...new Set(normTokens(keyword))];if(!kt.length)throw new Error('La keyword no tiene términos útiles');const kNorm=normTokens(keyword).join(' ');const out=[];for(const r of rows){const q=r.keys[0];const qtArr=normTokens(q);const qt=new Set(qtArr);let shared=0;kt.forEach(t=>{if(qt.has(t))shared++});if(shared===0)continue;const exact=qtArr.join(' ')===kNorm;out.push({q,page:r.keys[1],impressions:r.impressions,clicks:r.clicks,position:r.position,overlap:exact?1.01:shared/kt.length})}out.sort((a,b)=>b.overlap-a.overlap||b.impressions-a.impressions);return out}
-function groupPages(scored){const byPage={};scored.slice(0,120).forEach(x=>{const p=byPage[x.page]||(byPage[x.page]={url:x.page,impressions:0,clicks:0,position:999,maxOverlap:0,queries:[]});p.impressions+=x.impressions;p.clicks+=x.clicks;p.position=Math.min(p.position,x.position);p.maxOverlap=Math.max(p.maxOverlap,x.overlap);p.queries.push({q:x.q,impressions:x.impressions,position:x.position})});const pages=Object.values(byPage).sort((a,b)=>b.maxOverlap-a.maxOverlap||b.impressions-a.impressions).slice(0,15);pages.forEach(p=>p.queries.sort((a,b)=>b.impressions-a.impressions));return pages}
-function getCanibal(keyword){try{const h=JSON.parse(localStorage.getItem('sp2_canibal')||'{}');return h[(keyword||'').trim().toLowerCase()]||null}catch{return null}}
-function saveCanibal(keyword,res){try{const h=JSON.parse(localStorage.getItem('sp2_canibal')||'{}');h[keyword.trim().toLowerCase()]={ts:Date.now(),res};localStorage.setItem('sp2_canibal',JSON.stringify(h))}catch{}}
-function parseJsonLoose(txt){const c=txt.replace(/```json|```/g,'').trim();return JSON.parse(c.slice(c.indexOf('{'),c.lastIndexOf('}')+1))}
-async function canibalAnalyze(gscFn,site,keyword){
-  const rows=await loadQueryPageRows(gscFn);const pages=groupPages(relatedRows(rows,keyword));let res;
-  if(pages.length===0)res={veredicto:'crear',url_principal:null,resumen:'Ninguna página del sitio recibe impresiones por queries relacionadas en los últimos 90 días.',conflictos:[],angulo_sugerido:null};
-  else res=parseJsonLoose(await callClaude('anticanibal',{keyword,site,pages}));
-  saveCanibal(keyword,res);return{res,pages}}
-
-let lastCanibalNonce=0;
-function CanibalCheck({gscFn,config,seed,seedNonce,onBrief,onDone}){
-  const[kw,setKw]=useState('');const[st,setSt]=useState('idle');const[res,setRes]=useState(null);const[err,setErr]=useState(null);const[cands,setCands]=useState([]);const[doneKw,setDoneKw]=useState('');
-  const ref=useRef(null);
-  useEffect(()=>{if(seed&&seedNonce>lastCanibalNonce){lastCanibalNonce=seedNonce;setKw(seed);run(seed);if(ref.current)ref.current.scrollIntoView({behavior:'smooth',block:'start'})}},[seedNonce]);
-  async function run(k){
-    const keyword=(k||kw).trim();if(keyword.length<3)return;
-    setSt('loading');setRes(null);setErr(null);setCands([]);
-    try{const r=await canibalAnalyze(gscFn,config&&config.site,keyword);setCands(r.pages);setRes(r.res);setDoneKw(keyword);setSt('done');if(onDone)onDone(keyword)}catch(e){setErr(e.message);setSt('error')}
-  }
-  const V={crear:{label:'CREAR',cls:'s-hi',txt:'Sin conflicto: adelante con el artículo nuevo'},actualizar:{label:'ACTUALIZAR',cls:'s-lo',txt:'Ya tienes una página para esta intención'},diferenciar:{label:'DIFERENCIAR',cls:'s-md',txt:'Viable solo con otro ángulo'}};
-  const v=res?(V[res.veredicto]||V.diferenciar):null;
-  return(<div className="panel" ref={ref}><div className="panel-head"><h3>Anticanibalización</h3><span className="pill pill-blue">GSC 90d + Claude</span></div><div className="panel-body">
-    <div style={{display:'flex',gap:8}}><input className="disc-input" style={{flex:1}} placeholder='Keyword para un artículo nuevo: "mejores novelas de bolaño"' value={kw} onChange={e=>setKw(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&st!=='loading')run()}}/><button className="btn-primary" style={{padding:'7px 16px',fontSize:'12px'}} disabled={st==='loading'} onClick={()=>run()}>{st==='loading'?'Analizando…':'Chequear'}</button></div>
-    {st==='error'&&<div style={{marginTop:10,fontSize:12,color:'var(--coral)'}}>Error: {err}</div>}
-    {st==='loading'&&<div className="loading" style={{padding:'14px 0'}}><div className="spinner"/>Revisando GSC y analizando intención…</div>}
-    {res&&<div style={{marginTop:12}}>
-      <div className="row"><div className="row-left"><div className="row-kw" style={{whiteSpace:'normal'}}>{v.txt}</div><div className="row-meta" style={{whiteSpace:'normal'}}>{res.resumen}</div></div><span className={'score '+v.cls} style={{minWidth:96}}>{v.label}</span></div>
-      {res.url_principal&&<div className="row"><div className="row-left"><div className="row-meta">Página a actualizar</div><div className="row-kw"><span className="url-tag">{shortPath(res.url_principal)}</span></div></div><button className="row-btn" onClick={()=>window.open(res.url_principal,'_blank')}>Abrir</button></div>}
-      {res.angulo_sugerido&&<div className="row"><div className="row-left"><div className="row-meta">Ángulo sugerido</div><div className="row-kw" style={{whiteSpace:'normal'}}>{res.angulo_sugerido}</div></div></div>}
-      {res.conflictos&&res.conflictos.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6}}>Páginas en conflicto ({res.conflictos.length})</div>{res.conflictos.map((c,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw"><span className="url-tag">{shortPath(c.url||'')}</span></div><div className="row-meta" style={{whiteSpace:'normal'}}>{c.motivo}</div></div><span className={'score '+(c.riesgo==='alto'?'s-lo':c.riesgo==='medio'?'s-md':'s-hi')}>{(c.riesgo||'').toUpperCase()}</span></div>)}</div>}
-      {onBrief&&res.veredicto!=='actualizar'&&<div style={{marginTop:10}}><button className="btn-primary" style={{padding:'7px 16px',fontSize:'12px'}} onClick={()=>onBrief(doneKw)}>Crear brief con este veredicto →</button></div>}
-    </div>}
-    {cands.length>0&&<details style={{marginTop:10,fontSize:12}}><summary style={{cursor:'pointer',color:'var(--muted)'}}>Datos de GSC analizados ({cands.length} páginas)</summary>{cands.map((p,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw"><span className="url-tag">{shortPath(p.url)}</span></div><div className="row-meta">{fmt(p.impressions)} impr · mejor pos {p.position.toFixed(1)} · {p.queries.slice(0,3).map(q=>q.q).join(', ')}</div></div></div>)}</details>}
-    <div className="explain">Compara contra 90 días de Search Console. Pendiente: sumar posts recientes y borradores de WordPress.</div>
-  </div></div>);
-}
-
-// ---- Markdown mínimo para mostrar briefs ----
-function mdInline(s){const parts=[];const re=/(\*\*[^*]+\*\*|`[^`]+`|\*[^*\s][^*]*\*|\[(?:PEGAR|VERIFICAR|COTEJAR)[^\]]*\])/g;let last=0,m,i=0;
-  while((m=re.exec(s))){if(m.index>last)parts.push(s.slice(last,m.index));const t=m[0];
-    if(t.startsWith('**'))parts.push(<strong key={i++}>{t.slice(2,-2)}</strong>);
-    else if(t.startsWith('`'))parts.push(<code key={i++}>{t.slice(1,-1)}</code>);
-    else if(t.startsWith('['))parts.push(<span key={i++} className="md-flag">{t}</span>);
-    else parts.push(<em key={i++}>{t.slice(1,-1)}</em>);last=m.index+t.length}
-  if(last<s.length)parts.push(s.slice(last));return parts}
-function MdView({text}){return(<div className="md-brief">{text.split('\n').map((l,i)=>{
-  if(/^#\s/.test(l))return<h2 key={i}>{mdInline(l.replace(/^#\s+/,''))}</h2>;
-  if(/^##\s/.test(l))return<h3 key={i}>{mdInline(l.replace(/^##\s+/,''))}</h3>;
-  if(/^#{3,}\s/.test(l))return<h4 key={i}>{mdInline(l.replace(/^#{3,}\s+/,''))}</h4>;
-  const li=l.match(/^(\s*)[-*]\s+(\[[ xX]\]\s+)?(.*)$/);if(li){const ind=Math.min(3,Math.floor(li[1].length/2));return<div key={i} className="md-li" style={{paddingLeft:12+ind*16}}><span className="md-bul">{li[2]?'☐':'•'}</span><span>{mdInline(li[3])}</span></div>}
-  const ol=l.match(/^(\s*)(\d+)[.)]\s+(.*)$/);if(ol){const ind=Math.min(3,Math.floor(ol[1].length/2));return<div key={i} className="md-li" style={{paddingLeft:12+ind*16}}><span className="md-bul">{ol[2]}.</span><span>{mdInline(ol[3])}</span></div>}
-  if(/^\s*(---|\*\*\*)\s*$/.test(l))return<hr key={i}/>;
-  if(!l.trim())return<div key={i} style={{height:6}}/>;
-  return<p key={i}>{mdInline(l)}</p>})}</div>)}
-
-// ---- Generador de briefs ----
-const BRIEF_TIPOS=[['auto','Automático (según la keyword)'],['resena','Reseña (cuento o novela)'],['poemas','Lista: N poemas de [autor]'],['cuentos','Lista: 10 cuentos de [autor]'],['archivo','Archivo: carta o texto histórico'],['obra','Obra para leer gratis (/obras/)']];
-function getBriefs(){try{return JSON.parse(localStorage.getItem('sp2_briefs')||'{}')}catch{return{}}}
-function saveBrief(kw,obj){try{const h=getBriefs();h[kw.trim().toLowerCase()]=obj;const keys=Object.keys(h).sort((a,b)=>h[b].ts-h[a].ts);keys.slice(30).forEach(k=>delete h[k]);localStorage.setItem('sp2_briefs',JSON.stringify(h))}catch{}}
-async function fetchSuggestions(kw){const pre=['','que ','por que ','cual es '];const res=await Promise.all(pre.map(p=>fetch(SUGGEST_API+'?q='+encodeURIComponent(p+kw)+'&lang=es').then(r=>r.ok?r.json():{suggestions:[]}).then(d=>d.suggestions||[]).catch(()=>[])));return[...new Set(res.flat().map(x=>x.trim()).filter(Boolean))].slice(0,30)}
-function CompView({comp}){
-  const[open,setOpen]=useState(false);const res=comp.resultados||[];
-  const dif=(comp.dificultad||'').toLowerCase();
-  return(<div className="comp">
-    <div className="comp-head"><div><div className="side-label" style={{padding:0,color:'var(--muted)'}}>Competencia en Google México</div><div className="comp-title">{res.length} resultados analizados</div></div>{dif&&<span className={'sig '+(dif==='alta'?'sig-warn':dif==='media'?'sig-md':'sig-hi')}>Dificultad {dif}</span>}</div>
-    {comp.dificultad_motivo&&<p className="comp-p">{comp.dificultad_motivo}</p>}
-    {comp.huecos&&comp.huecos.length>0&&<div><div className="comp-sub">Huecos que puedes ganar</div>{comp.huecos.map((h,i)=><div key={i} className="md-li"><span className="md-bul">→</span><span>{h}</span></div>)}</div>}
-    {comp.angulo&&<div><div className="comp-sub">Ángulo recomendado</div><p className="comp-p">{comp.angulo}</p></div>}
-    <button className="link-btn" onClick={()=>setOpen(o=>!o)} aria-expanded={open}>{open?'Ocultar resultados':'Ver quién rankea'}</button>
-    {open&&<div className="comp-list">{res.map((r,i)=><div key={i} className="comp-row">
-      <div className="comp-rank">{i+1}</div>
-      <div style={{minWidth:0,flex:1}}><div className="comp-dom">{r.dominio} · {r.tipo}{r.formato?' · '+r.formato:''}</div>{r.url?<a href={r.url} target="_blank" rel="noopener" className="comp-t">{r.titulo}</a>:<div className="comp-t">{r.titulo}</div>}{r.cubre&&<div className="comp-cubre">{r.cubre.join(' · ')}</div>}</div>
-      {r.fuerza&&<span className={'sig '+(r.fuerza==='alta'?'sig-warn':r.fuerza==='media'?'sig-md':'sig-hi')} title={r.razon||''}>{r.fuerza}</span>}
-    </div>)}{comp.patrones&&comp.patrones.length>0&&<div style={{marginTop:6}}><div className="comp-sub">Lo que premia este SERP</div>{comp.patrones.map((x,i)=><div key={i} className="md-li"><span className="md-bul">•</span><span>{x}</span></div>)}</div>}</div>}
-  </div>);
-}
-let lastBriefNonce=0;
-function BriefGen({gscFn,config,seed,seedNonce,onDone,focusKw}){
-  const[kw,setKw]=useState('');const[tipo,setTipo]=useState('auto');const[extraOn,setExtraOn]=useState(false);const[extraN,setExtraN]=useState(1);const[notes,setNotes]=useState('');
-  const[st,setSt]=useState('idle');const[stage,setStage]=useState('');const[text,setText]=useState('');const[err,setErr]=useState(null);const[saved,setSaved]=useState(()=>getBriefs());const[copied,setCopied]=useState(false);
-  const[compOn,setCompOn]=useState(()=>{try{return localStorage.getItem('sp2_comp_on')!=='0'}catch{return true}});const[comp,setComp]=useState(null);const[compWarn,setCompWarn]=useState(null);
-  const ref=useRef(null);
-  useEffect(()=>{if(seed&&seedNonce>lastBriefNonce){lastBriefNonce=seedNonce;setKw(seed);setText('');setSt('idle');if(ref.current)ref.current.scrollIntoView({behavior:'smooth',block:'start'})}},[seedNonce]);
-  useEffect(()=>{if(!focusKw||st==='loading')return;setKw(focusKw);const b=getBriefs()[focusKw.toLowerCase()];if(b){setTipo(b.tipo||'auto');setText(b.text);setComp(b.comp||null);setSt('done');setErr(null)}else{setText('');setComp(null);setSt('idle')}},[focusKw]);
-  async function run(){
-    const keyword=kw.trim();if(keyword.length<3)return;
-    setSt('loading');setErr(null);setText('');
-    try{
-      let can=getCanibal(keyword);
-      if(!can){setStage('Chequeando canibalización…');const r=await canibalAnalyze(gscFn,config&&config.site,keyword);can={res:r.res}}
-      if(can.res&&can.res.veredicto==='actualizar'&&!window.confirm('El chequeo dice ACTUALIZAR: ya tienes una página para esta intención ('+(can.res.url_principal||'ver chequeo')+').\n\n¿Generar el brief de todos modos?')){setSt('idle');setStage('');return}
-      setStage('Juntando datos de GSC y sugerencias…');
-      const rows=await loadQueryPageRows(gscFn);
-      const qmap={};relatedRows(rows,keyword).forEach(x=>{const q=qmap[x.q]||(qmap[x.q]={q:x.q,impressions:0,position:999});q.impressions+=x.impressions;q.position=Math.min(q.position,x.position)});
-      const queries=Object.values(qmap).sort((a,b)=>b.impressions-a.impressions).slice(0,40);
-      const pmap={};rows.forEach(r=>{pmap[r.keys[1]]=(pmap[r.keys[1]]||0)+r.impressions});
-      const pages=Object.entries(pmap).sort((a,b)=>b[1]-a[1]).slice(0,50).map(([url,impressions])=>({url,impressions}));
-      const suggestions=await fetchSuggestions(keyword);
-      let compRes=null;setComp(null);setCompWarn(null);
-      if(compOn){setStage('Analizando la competencia en Google México…');try{compRes=parseJsonLoose(await callClaude('competencia',{keyword}));if(compRes.error){setCompWarn('Competencia: '+compRes.error);compRes=null}else setComp(compRes)}catch(e){setCompWarn('No se pudo analizar la competencia ('+e.message+'). El brief sigue sin ella.')}}
-      setStage('Escribiendo el brief…');
-      const out=await callClaude('brief',{keyword,tipo,year:new Date().getFullYear(),site:config&&config.site,canibal:can.res,queries,suggestions,pages,extra:extraOn?extraN:0,notes,competencia:compRes},t=>{setText(t);setStage('')});
-      saveBrief(keyword,{ts:Date.now(),tipo,text:out,canibal:can.res,comp:compRes});setSaved(getBriefs());setSt('done');setStage('');if(onDone)onDone(keyword);
-    }catch(e){setErr(e.message);setSt('error');setStage('')}
-  }
-  function download(){const blob=new Blob([text],{type:'text/markdown'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='brief-'+slugify(kw)+'.md';a.click();URL.revokeObjectURL(a.href)}
-  const savedKeys=Object.keys(saved).sort((a,b)=>saved[b].ts-saved[a].ts);
-  const canNow=getCanibal(kw);
-  return(<div className="panel" ref={ref}><div className="panel-head"><h3>Generador de briefs</h3><span className="pill pill-green">Plantillas País Lector</span></div><div className="panel-body">
-    <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-      <input className="disc-input" style={{flex:'1 1 260px'}} placeholder='Keyword: "reseña de pedro páramo"' value={kw} onChange={e=>setKw(e.target.value)}/>
-      <select className="disc-input" style={{flex:'0 1 260px'}} value={tipo} onChange={e=>setTipo(e.target.value)}>{BRIEF_TIPOS.map(([k,l])=><option key={k} value={k}>{l}</option>)}</select>
-    </div>
-    <div style={{display:'flex',gap:12,alignItems:'center',flexWrap:'wrap',marginTop:10,fontSize:13}}>
-      <label style={{display:'flex',gap:6,alignItems:'center',cursor:'pointer'}}><input type="checkbox" checked={compOn} onChange={e=>{setCompOn(e.target.checked);try{localStorage.setItem('sp2_comp_on',e.target.checked?'1':'0')}catch{}}}/>Analizar competencia en Google</label>
-      <label style={{display:'flex',gap:6,alignItems:'center',cursor:'pointer'}}><input type="checkbox" checked={extraOn} onChange={e=>setExtraOn(e.target.checked)}/>Recomendar secciones nuevas</label>
-      {extraOn&&<select className="disc-input" style={{width:'auto',padding:'4px 8px'}} value={extraN} onChange={e=>setExtraN(+e.target.value)}>{[1,2,3].map(n=><option key={n} value={n}>{n} {n===1?'sección':'secciones'}</option>)}</select>}
-    </div>
-    <textarea className="kw-textarea" style={{marginTop:10,minHeight:56}} placeholder="Notas opcionales: ángulo que quieres, obras a incluir o excluir, tono…" value={notes} onChange={e=>setNotes(e.target.value)}/>
-    <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap',marginTop:8}}>
-      <button className="btn-primary" style={{padding:'7px 16px',fontSize:'12px'}} disabled={st==='loading'} onClick={run}>{st==='loading'?'Generando…':'Generar brief'}</button>
-      {savedKeys.length>0&&<select className="disc-input" style={{width:'auto',padding:'5px 8px',fontSize:12}} value="" onChange={e=>{const k=e.target.value;if(!k)return;const b=saved[k];setKw(k);setTipo(b.tipo||'auto');setText(b.text);setComp(b.comp||null);setSt('done');setErr(null);if(onDone)onDone(k)}}><option value="">Briefs guardados ({savedKeys.length})</option>{savedKeys.map(k=><option key={k} value={k}>{k}</option>)}</select>}
-    </div>
-    {canNow&&canNow.res&&st!=='loading'&&<div style={{marginTop:8,fontSize:12,color:'var(--muted)'}}>Canibalización: <strong>{(canNow.res.veredicto||'').toUpperCase()}</strong> ({formatRelTime(canNow.ts)})</div>}
-    {stage&&<div className="loading" style={{padding:'14px 0'}}><div className="spinner"/>{stage}</div>}
-    {st==='error'&&<div style={{marginTop:10,fontSize:12,color:'var(--coral)'}}>Error: {err}</div>}
-    {compWarn&&<div style={{marginTop:10,fontSize:12,color:'var(--amber)'}}>{compWarn}</div>}
-    {comp&&<CompView comp={comp}/>}
-    {text&&<div style={{marginTop:12}}>
-      {st==='done'&&<div style={{display:'flex',gap:8,marginBottom:8}}><button className="row-btn" onClick={()=>{navigator.clipboard.writeText(text).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),1500)})}}>{copied?'Copiado ✓':'Copiar'}</button><button className="row-btn" onClick={download}>Descargar .md</button></div>}
-      <MdView text={text}/>
-    </div>}
-    <div className="explain">Usa el chequeo de canibalización guardado (o lo corre si falta), queries de GSC, sugerencias de Google y tus URLs para enlazado. Lo marcado en amarillo se verifica antes de publicar.</div>
-  </div></div>);
-}
-
-// ====== REDISEÑO v4.0: navegación, Hoy, Producción, Radar ======
-const CREDIT_MONTHLY=100,CREDIT_DAY=27;
-const PRICES={haiku:[0.10,0.50],sonnet:[2,10],opus:[4,20]};
-function cycleBounds(now){const d=now?new Date(now):new Date();const y=d.getFullYear(),m=d.getMonth();const start=d.getDate()>=CREDIT_DAY?new Date(y,m,CREDIT_DAY):new Date(y,m-1,CREDIT_DAY);const next=new Date(start.getFullYear(),start.getMonth()+1,CREDIT_DAY);return{start,next}}
-function getUsage(){try{const u=JSON.parse(localStorage.getItem('sp2_usage')||'null');const{start}=cycleBounds();if(u&&u.cycle===start.toISOString().slice(0,10))return u}catch{}return{cycle:cycleBounds().start.toISOString().slice(0,10),usd:0,calls:0,tokIn:0,tokOut:0}}
-function recordUsage(model,tokIn,tokOut){try{const fam=/haiku/.test(model||'')?'haiku':/opus/.test(model||'')?'opus':'sonnet';const p=PRICES[fam];const u=getUsage();u.usd+=tokIn/1e6*p[0]+tokOut/1e6*p[1];u.calls+=1;u.tokIn+=tokIn;u.tokOut+=tokOut;localStorage.setItem('sp2_usage',JSON.stringify(u));window.dispatchEvent(new Event('sp-usage'))}catch{}}
-const MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-const DIAS=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-const MESES_L=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const TIPO_LABEL={auto:'brief',resena:'reseña',poemas:'lista de poemas',cuentos:'lista de cuentos',archivo:'archivo',obra:'obra'};
-function getCanibalAll(){try{return JSON.parse(localStorage.getItem('sp2_canibal')||'{}')}catch{return{}}}
-function verifyItems(text){if(!text)return[];const lines=text.split('\n');const out=[];lines.forEach(l=>{const m=l.match(/^\s*[-*]\s+\[[ xX]\]\s+(.*)$/);if(m)out.push(m[1].trim())});return out}
-function getVerify(kw){try{const h=JSON.parse(localStorage.getItem('sp2_verify')||'{}');return h[(kw||'').toLowerCase()]||[]}catch{return[]}}
-function setVerify(kw,arr){try{const h=JSON.parse(localStorage.getItem('sp2_verify')||'{}');h[kw.toLowerCase()]=arr;localStorage.setItem('sp2_verify',JSON.stringify(h))}catch{}}
-function verifyStatus(kw,text){const items=verifyItems(text);const done=getVerify(kw).filter(i=>i<items.length).length;return{total:items.length,done}}
-
-function NavIcon({d}){return<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d}/></svg>}
-function SideNav({activeTab,onTabChange,badges,site}){
-  const[u,setU]=useState(getUsage);
-  useEffect(()=>{const f=()=>setU(getUsage());window.addEventListener('sp-usage',f);return()=>window.removeEventListener('sp-usage',f)},[]);
-  const{next}=cycleBounds();const pct=Math.min(100,u.usd/CREDIT_MONTHLY*100);
-  const item=t=><button key={t.id} className={'side-item'+(activeTab===t.id?' active':'')} aria-current={activeTab===t.id?'page':undefined} onClick={()=>onTabChange(t.id)}>{t.primary&&<NavIcon d={t.icon}/>}<span>{t.label}</span>{badges&&badges[t.id]>0&&<span className="side-badge">{badges[t.id]}</span>}</button>;
-  return(<nav className="side" aria-label="Navegación principal">
-    <div className="side-brand"><div className="side-logo">SEO Pulse</div><div className="side-site"><span className="side-dot"/>{(site||'').replace('sc-domain:','').replace(/^https?:\/\//,'').replace(/\/$/,'')}</div></div>
-    <div className="side-group">{TABS.filter(t=>t.group==='main').map(item)}</div>
-    <div className="side-group"><div className="side-label">Análisis</div>{TABS.filter(t=>t.group==='analisis').map(item)}</div>
-    <div className="side-foot">
-      <div className="credit-card"><div className="side-label" style={{padding:0}}>Créditos API</div><div className="credit-amt">USD {CREDIT_MONTHLY} <span>/ mes</span></div><div className="credit-track"><div className="credit-fill" style={{width:Math.max(2,pct)+'%'}}/></div><div className="credit-meta">Usado: ${u.usd.toFixed(2)} (estimado) · {u.calls} llamadas<br/>Próximo crédito: {next.getDate()} {MES[next.getMonth()]}</div></div>
-      {TABS.filter(t=>t.group==='foot').map(item)}
-      <div className="side-ver">{VERSION}</div>
-    </div>
-  </nav>);
-}
-
-function HoyItem({n,it}){return(<article className="prio">
-  <div className="prio-n">{String(n).padStart(2,'0')}</div>
-  <div className="prio-body"><div className="prio-tags"><span className={'tag tag-'+it.tone}>{it.tag}</span>{it.meta&&<span className="mono-meta">{it.meta}</span>}</div><div className="prio-title">{it.title}</div><div className="prio-desc">{it.desc}</div></div>
-  <button className={it.primary?'cta-primary':'cta-outline'} onClick={it.action}>{it.cta}</button>
-</article>)}
-
-function Hoy({d,loading,onGo,onCheck,onBrief,openDetail,gscFn,onAct}){
-  const briefs=getBriefs();const can=getCanibalAll();const items=[];
-  Object.entries(briefs).sort((a,b)=>b[1].ts-a[1].ts).slice(0,2).forEach(([kw,b])=>{const v=verifyStatus(kw,b.text);const pending=v.total&&v.done<v.total;items.push({tag:'Producción',tone:'blue',primary:true,meta:(TIPO_LABEL[b.tipo]||'brief')+' · '+formatRelTime(b.ts)+(v.total?' · '+v.done+'/'+v.total+' verificados':''),title:<>Brief listo: <em>{kw}</em></>,desc:pending?'Termina la verificación de datos y pasa a redactar.':'Listo para el siguiente paso: redactar el artículo.',cta:'Abrir',action:()=>onGo('produccion',kw)})});
-  Object.entries(can).filter(([kw,c])=>!briefs[kw]&&c.res&&c.res.veredicto!=='actualizar').sort((a,b)=>b[1].ts-a[1].ts).slice(0,2).forEach(([kw,c])=>items.push({tag:'Producción',tone:'blue',meta:'canibalización: '+c.res.veredicto+' · '+formatRelTime(c.ts),title:<>Chequeo listo: <em>{kw}</em></>,desc:c.res.angulo_sugerido||c.res.resumen||'',cta:'Crear brief',action:()=>onBrief(kw)}));
-  if(d){
-    (d.escribir||[]).filter(r=>!can[r.keys[0].toLowerCase()]).slice(0,2).forEach(r=>items.push({tag:'Oportunidad',tone:'green',meta:fmt(r.impressions)+' impr · pos '+r.position.toFixed(1),title:<>“{r.keys[0]}”</>,desc:'Recibe impresiones y no tiene una página dedicada.',cta:'Chequear',action:()=>onCheck(r.keys[0])}));
-    (d.dropping||[]).slice(0,1).forEach(r=>items.push({tag:'Cayendo',tone:'coral',meta:'pos '+r.prevPos.toFixed(1)+' → '+r.curPos.toFixed(1),title:shortPath(r.page),desc:'Perdió posiciones contra el periodo anterior'+(r.lostClicks>0?' ('+fmt(r.lostClicks)+' clics menos).':'.'),cta:'Diagnóstico',action:()=>openDetail({query:null,page:r.page,position:r.curPos,clicks:r.clicks,impressions:0})}));
-    (d.optimizar||[]).slice(0,1).forEach(r=>items.push({tag:'CTR bajo',tone:'amber',meta:fmt(r.impressions)+' impr · CTR '+(r.ctr*100).toFixed(1)+'%',title:<>“{r.keys[0]}”</>,desc:'Muchas impresiones y pocos clics: revisa el title y la meta.',cta:'Diagnóstico',action:()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}));
-  }
-  const list=items.slice(0,6);
-  const chequeos=Object.keys(can).filter(k=>!briefs[k]);
-  return(<><PlanHoy d={d} gscFn={gscFn} onAct={onAct} onGo={onGo}/><div className="hoy">
-    <section className="hoy-main" aria-labelledby="prio-h">
-      <div className="sec-head"><h2 id="prio-h">Señales de los datos</h2><span>Producción primero, luego oportunidades</span></div>
-      {loading&&!d&&list.length===0&&<div className="loading"><div className="spinner"/>Cargando datos…</div>}
-      {list.map((it,i)=><HoyItem key={i} n={i+1} it={it}/>)}
-      {!loading&&list.length===0&&<div className="empty">Nada urgente. Busca ideas en el Radar o chequea una keyword nueva.</div>}
-    </section>
-    <aside className="hoy-side">
-      <section className="card" aria-labelledby="tab-h">
-        <div className="card-head"><h2 id="tab-h">Tablero</h2><button className="link-btn" onClick={()=>onGo('produccion')}>Abrir</button></div>
-        <div className="board-row"><span>Chequeo</span><div className="chips">{chequeos.length?chequeos.slice(0,4).map(k=><span className="chip" key={k}>{k}</span>):<span className="muted-s">Vacío</span>}</div></div>
-        <div className="board-row"><span>Brief</span><div className="chips">{Object.keys(briefs).length?Object.keys(briefs).slice(0,4).map(k=><span className="chip chip-blue" key={k}>{k}</span>):<span className="muted-s">Vacío</span>}</div></div>
-        {(()=>{const pb=getPub();const red=Object.keys(pb).filter(k=>pb[k].redactado&&!pb[k].url);const pu=Object.keys(pb).filter(k=>pb[k].url);return<><div className="board-row"><span>Redacción</span><div className="chips">{red.length?red.slice(0,4).map(k=><span className="chip" key={k}>{k}</span>):<span className="muted-s">Vacío</span>}</div></div><div className="board-row"><span>Publicado</span><div className="chips">{pu.length?pu.slice(0,4).map(k=><span className="chip" key={k}>{k}</span>):<span className="muted-s">Vacío</span>}</div></div></>})()}
-      </section>
-      <section className="card card-ink" aria-labelledby="rad-h">
-        <div className="side-label" style={{padding:0}}>Radar</div>
-        {(()=>{const rr=getRadar();const nk=rr&&rr.temporadas?rr.temporadas.reduce((a,t)=>a+t.piezas.filter(p=>p.demand>0).length,0):0;return nk?<><h2 id="rad-h" className="ink-title">{nk} keywords nuevas con demanda</h2><p>Temporadas que no cubres, validadas con Google y sin canibalizar tu sitio.</p></>:<><h2 id="rad-h" className="ink-title">{d&&d.escribir&&d.escribir.length?d.escribir.length+' queries sin página propia':'Qué atacar después'}</h2><p>Demanda que ya te encuentra en Google y todavía no tiene artículo.</p></>})()}
-        <button className="cta-light" onClick={()=>onGo('radar')}>Ver en el radar</button>
-      </section>
-      {d&&<section className="card" aria-labelledby="pul-h">
-        <h2 id="pul-h" className="card-title">Pulso</h2>
-        <div className="mini-grid">
-          <div className="mini"><div>Clics</div><b>{fmt(d.summary.clicks)}</b></div>
-          <div className="mini"><div>Impresiones</div><b>{fmt(d.summary.impressions)}</b></div>
-          <div className="mini"><div>CTR</div><b>{d.summary.ctr.toFixed(1)}%</b></div>
-          <div className="mini"><div>Posición</div><b>{d.summary.pos.toFixed(1)}</b></div>
-        </div>
-      </section>}
-    </aside>
-  </div></>);
-}
-
-function Stepper({kw}){
-  const c=kw?getCanibal(kw):null;const b=kw?getBriefs()[kw.toLowerCase()]:null;const p=kw?getPub()[kw.toLowerCase()]||{}:{};
-  const steps=[{l:'Keyword',ok:!!kw},{l:'Chequeo',ok:!!c,x:c&&c.res?c.res.veredicto:''},{l:'Brief',ok:!!b},{l:'Redacción',ok:!!p.redactado},{l:'Publicado',ok:!!p.url}];
-  const cur=steps.findIndex(s=>!s.ok);
-  return(<ol className="stepper" aria-label="Pasos">{steps.map((s,i)=><li key={i} className={'step'+(s.ok?' done':'')+(i===cur?' current':'')} aria-current={i===cur?'step':undefined}>
-    <div className="step-top"><span className="step-dot">{s.ok?<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>:i+1}</span><span className="step-n">Paso {i+1}</span></div>
-    <div className="step-l">{s.l}{s.x?<span className={'step-x v-'+s.x}> · {s.x}</span>:null}</div>
-  </li>)}</ol>);
-}
-
-const VRES={confirmado:['sig-hi','Confirmado'],corregir:['sig-warn','Corregir'],no_encontrado:['sig-off','Sin evidencia'],manual:['sig-md','Manual']};
-function VerifyPanel({kw,ver}){
-  const b=kw?getBriefs()[kw.toLowerCase()]:null;const items=verifyItems(b&&b.text);
-  const[checked,setChecked]=useState(()=>getVerify(kw));const[vres,setVres]=useState(()=>lsGet('sp2_verify_res',{})[kw]||null);const[vst,setVst]=useState('');const[verr,setVerr]=useState(null);
-  useEffect(()=>{setChecked(getVerify(kw));setVres(lsGet('sp2_verify_res',{})[kw]||null);setVerr(null)},[kw,ver]);
-  function toggle(i){const s=new Set(checked);s.has(i)?s.delete(i):s.add(i);const arr=[...s];setChecked(arr);setVerify(kw,arr)}
-  async function runWeb(){setVst('Verificando con búsqueda web…');setVerr(null);try{const r=parseJsonLoose(await callClaude('verificar',{keyword:kw,items}));const h=lsGet('sp2_verify_res',{});h[kw]={ts:Date.now(),items:r.items||[]};lsSet('sp2_verify_res',h);setVres(h[kw]);const conf=(r.items||[]).filter(x=>x.estado==='confirmado').map(x=>x.i);const arr=[...new Set([...getVerify(kw),...conf])];setChecked(arr);setVerify(kw,arr)}catch(e){setVerr(e.message)}setVst('')}
-  const rOf=i=>vres&&vres.items?vres.items.find(x=>x.i===i):null;
-  return(<aside className="verify" aria-labelledby="ver-h">
-    <div className="card-head"><h2 id="ver-h">Por verificar</h2><span className="mono-meta" style={{color:'var(--amber)'}}>{checked.filter(i=>i<items.length).length}/{items.length}</span></div>
-    {!b&&<p className="verify-note">Aquí aparece la checklist del brief cuando lo generes.</p>}
-    {b&&items.length===0&&<p className="verify-note">Este brief no trae datos marcados para verificar.</p>}
-    {items.length>0&&<p className="verify-note">La búsqueda web marca sola lo que confirma. Lo que diga “Corregir” trae el dato correcto y su fuente.</p>}
-    {items.length>0&&<button className="cta-outline amber" disabled={!!vst} onClick={runWeb}>{vst||(vres?'Volver a verificar':'Verificar con búsqueda web')}</button>}
-    {vres&&<div className="mono-meta" style={{color:'#7A5A00'}}>verificado {formatRelTime(vres.ts)}{items.length>15?' · solo los primeros 15':''}</div>}
-    {verr&&<div className="error-msg">{verr}</div>}
-    {items.map((t,i)=>{const r=rOf(i);const tag=r&&VRES[r.estado];return(<div key={i}>
-      <label className="verify-item"><input type="checkbox" checked={checked.includes(i)} onChange={()=>toggle(i)}/><span>{t}</span></label>
-      {r&&<div className="verify-res"><span>{tag&&<span className={'sig '+tag[0]}>{tag[1]}</span>} {r.estado==='corregir'&&r.dato_correcto?<b>{r.dato_correcto}</b>:null} {r.nota}</span>{r.fuente&&/^https?:/.test(r.fuente)&&<a href={r.fuente} target="_blank" rel="noopener">{r.fuente.replace(/^https?:\/\//,'').slice(0,60)}</a>}</div>}
-    </div>)})}
-  </aside>);
-}
-
-function Produccion({gscFn,config,canibalSeed,briefSeed,onBriefSeed,focusKw}){
-  const latest=()=>{const b=Object.entries(getBriefs()).sort((a,c)=>c[1].ts-a[1].ts)[0];const c=Object.entries(getCanibalAll()).sort((a,x)=>x[1].ts-a[1].ts)[0];if(b&&c)return b[1].ts>c[1].ts?b[0]:c[0];return(b&&b[0])||(c&&c[0])||''};
-  const[current,setCurrent]=useState(()=>focusKw||latest());const[ver,setVer]=useState(0);const ps=usePlanStore();
-  useEffect(()=>{if(focusKw)setCurrent(focusKw)},[focusKw]);
-  const done=kw=>{setCurrent(kw.trim().toLowerCase());setVer(v=>v+1)};
-  return(<div className="prod">
-    <div className="prod-top"><div><div className="eyebrow">Pieza actual</div><div className="prod-kw">{current?<em>{current}</em>:'Elige una keyword'}</div></div></div>
-    <Stepper kw={current} key={'s'+ver+current+ps.v}/>
-    <div className="prod-cols">
-      <div className="prod-main">
-        <CanibalCheck gscFn={gscFn} config={config} seed={canibalSeed.kw} seedNonce={canibalSeed.n} onBrief={onBriefSeed} onDone={done}/>
-        <BriefGen gscFn={gscFn} config={config} seed={briefSeed.kw} seedNonce={briefSeed.n} onDone={done} focusKw={current}/>
-        <CierrePanel kw={current} ver={ver}/>
-      </div>
-      <VerifyPanel kw={current} ver={ver}/>
-    </div>
-    <PublicadasPanel gscFn={gscFn}/>
-  </div>);
-}
-
-const GENERIC_TOK=new Set(normTokens('poema poemas cuento cuentos reseña resumen libro libros novela novelas frase frases carta cartas analisis completo completa mejor mejores corto cortos amor pdf español obra obras autor autora leer gratis significado biografia vida quien fue trata historia personaje personajes texto final'));
-function getRadar(){try{return JSON.parse(localStorage.getItem('sp2_radar')||'null')}catch{return null}}
-function saveRadar(r){try{localStorage.setItem('sp2_radar',JSON.stringify(r))}catch{}}
-function getSavedIdeas(){try{return JSON.parse(localStorage.getItem('sp2_radar_saved')||'[]')}catch{return[]}}
-function setSavedIdeas(a){try{localStorage.setItem('sp2_radar_saved',JSON.stringify(a.slice(-200)))}catch{}window.dispatchEvent(new Event('sp-saved'))}
-function toggleSavedIdea(p,t){const a=getSavedIdeas();const i=a.findIndex(x=>x.keyword===p.keyword);if(i>=0)a.splice(i,1);else a.push({keyword:p.keyword,tipo:p.tipo,pieza:p.pieza,demand:p.demand,variants:p.variants,conflict:p.conflict,autor:t.autor,muerte:t.muerte,temporada:t.titulo,ts:Date.now()});setSavedIdeas(a);return a}
-function getRadarDiscard(){try{return JSON.parse(localStorage.getItem('sp2_radar_discard')||'[]')}catch{return[]}}
-function addRadarDiscard(x){try{const a=getRadarDiscard();if(!a.includes(x))a.push(x);localStorage.setItem('sp2_radar_discard',JSON.stringify(a.slice(-150)))}catch{}}
-async function validateKeyword(kw,rows){
-  let sugg=[];try{const r=await fetch(SUGGEST_API+'?q='+encodeURIComponent(kw)+'&lang=es');if(r.ok){const j=await r.json();sugg=j.suggestions||[]}}catch{}
-  const norm=x=>x.trim().toLowerCase();const variants=sugg.map(norm).filter(x=>x!==norm(kw)).slice(0,3);
-  let conflict=null;try{const dist=[...new Set(normTokens(kw))].filter(t=>!GENERIC_TOK.has(t));const rel=relatedRows(rows,kw).filter(x=>{if(!dist.length)return x.overlap>=0.66;const qt=new Set(normTokens(x.q));const hit=dist.filter(t=>qt.has(t)).length;return qt.has(dist[dist.length-1])&&hit/dist.length>=0.5});if(rel.length){const by={};rel.forEach(x=>{by[x.page]=(by[x.page]||0)+x.impressions});const top=Object.entries(by).sort((a,b)=>b[1]-a[1])[0];conflict={page:top[0],impressions:top[1]}}}catch{}
-  return{demand:sugg.length,variants,conflict}}
-const TIPO_CORTO={resena:'reseña',poemas:'poemas',cuentos:'cuentos',archivo:'archivo',obra:'obra'};
-
-function RadarVecinos({gscFn,config,onCheck}){
-  const[data,setData]=useState(getRadar);const[focus,setFocus]=useState(()=>{const r=getRadar();return r?r.focus||'':''});
-  const[st,setSt]=useState('idle');const[stage,setStage]=useState('');const[err,setErr]=useState(null);const[showOff,setShowOff]=useState(false);
-  const[saved,setSaved]=useState(getSavedIdeas);const isSaved=kw=>saved.some(x=>x.keyword===kw);
-  async function run(){
-    setSt('loading');setErr(null);
-    try{
-      setStage('Leyendo tu cobertura en GSC…');
-      const rows=await loadQueryPageRows(gscFn);
-      const pmap={},qmap={};rows.forEach(r=>{pmap[r.keys[1]]=(pmap[r.keys[1]]||0)+r.impressions;qmap[r.keys[0]]=(qmap[r.keys[0]]||0)+r.impressions});
-      const urls=Object.entries(pmap).sort((a,b)=>b[1]-a[1]).slice(0,200).map(([u])=>shortPath(u));
-      const queries=Object.entries(qmap).sort((a,b)=>b[1]-a[1]).slice(0,120).map(([q])=>q);
-      const prev=getRadar();const exclude=[...getRadarDiscard(),...(prev&&prev.temporadas?prev.temporadas.map(t=>t.autor):[]),...getSavedIdeas().map(x=>x.keyword)];
-      setStage('Claude está proponiendo temporadas…');
-      const j=parseJsonLoose(await callClaude('radar',{site:config&&config.site,focus,urls,queries,exclude}));
-      const temps=(j.temporadas||[]).filter(t=>t&&t.autor&&Array.isArray(t.piezas));
-      const all=[];temps.forEach(t=>t.piezas.forEach(p=>{if(p&&p.keyword)all.push(p)}));
-      let n=0;
-      for(let i=0;i<all.length;i+=5){const batch=all.slice(i,i+5);setStage('Validando demanda en Google ('+Math.min(i+5,all.length)+'/'+all.length+')…');const res=await Promise.all(batch.map(p=>validateKeyword(p.keyword,rows)));batch.forEach((p,k)=>Object.assign(p,res[k]));n+=batch.length}
-      const prevT=(getRadar()||{}).temporadas||[];const seen=new Set(temps.map(t=>t.autor.toLowerCase()));const merged=[...temps,...prevT.filter(t=>!seen.has(t.autor.toLowerCase()))].slice(0,30);
-      const out={ts:Date.now(),focus,temporadas:merged,lastBatch:temps.length};saveRadar(out);setData(out);setSt('done');setStage('');
-    }catch(e){setErr(e.message);setSt('error');setStage('')}
-  }
-  function discard(autor){addRadarDiscard(autor);const r={...data,temporadas:data.temporadas.filter(t=>t.autor!==autor)};saveRadar(r);setData(r)}
-  const temps=data&&data.temporadas?data.temporadas:[];
-  const live=temps.map(t=>({...t,vivas:t.piezas.filter(p=>p.demand>0)})).filter(t=>showOff||t.vivas.length>0);
-  const nKw=temps.reduce((a,t)=>a+t.piezas.filter(p=>p.demand>0).length,0);const nOff=temps.reduce((a,t)=>a+t.piezas.filter(p=>!p.demand).length,0);
-  return(<div className="radar">
-    <div className="card radar-run">
-      <label htmlFor="radar-focus" className="field-label">Enfoque opcional</label>
-      <div className="radar-run-row">
-        <input id="radar-focus" className="disc-input" placeholder="Ej. poesía mexicana del siglo XX, terror clásico, autoras latinoamericanas…" value={focus} onChange={e=>setFocus(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&st!=='loading')run()}}/>
-        <button className="cta-primary" disabled={st==='loading'} onClick={run}>{st==='loading'?'Buscando…':temps.length?'Buscar más ideas':'Buscar ideas nuevas'}</button>
-      </div>
-      <div className="muted-s">Claude propone temas que no cubres, Google confirma si se buscan y tu GSC descarta lo que canibaliza. Unos centavos por búsqueda.</div>
-    </div>
-    {stage&&<div className="loading" style={{padding:'10px 0'}}><div className="spinner"/>{stage}</div>}
-    {st==='error'&&<div className="error-msg">Error: {err}</div>}
-    {temps.length>0&&<div className="radar-summary"><span>{data&&data.lastBatch?<><b>{data.lastBatch}</b> nuevas · </>:null}<b>{live.filter(t=>t.vivas.length).length}</b> temporadas · <b>{nKw}</b> keywords con demanda{nOff>0?' · '+nOff+' sin demanda':''}{data&&data.ts?' · '+formatRelTime(data.ts):''}</span>{nOff>0&&<button className="link-btn" onClick={()=>setShowOff(v=>!v)}>{showOff?'Ocultar sin demanda':'Ver sin demanda'}</button>}</div>}
-    {!temps.length&&st!=='loading'&&<div className="empty">Todavía no hay ideas. Dale a “Buscar ideas nuevas”; si quieres, primero escribe un enfoque.</div>}
-    <div className="radar-grid">{live.map((t,i)=>{const ink=i===0;const pz=showOff?t.piezas:t.vivas;return(<article key={t.autor+i} className={'idea'+(ink?' idea-ink':'')}>
-      <div className="prio-tags"><span className={'tag '+(ink?'tag-mint':'tag-green')}>Vecino</span>{t.muerte?<span className="mono-meta">† {t.muerte}</span>:null}</div>
-      <div><div className="mono-meta">{t.autor}</div><h3 className="idea-title">{t.titulo||('Temporada '+t.autor)}</h3></div>
-      {t.por_que&&<p className="idea-why">{t.por_que}</p>}
-      <div className="pieces">{pz.map((p,k)=><div className="piece" key={k}>
-        <div className="piece-top"><span className="piece-kw">{p.keyword}</span><span className="piece-type">{TIPO_CORTO[p.tipo]||p.tipo}</span></div>
-        <div className="piece-meta">
-          {p.demand>0?<span className={'sig '+(p.demand>=5?'sig-hi':'sig-md')}>Demanda {p.demand>=8?'alta':p.demand>=5?'media':'baja'}</span>:<span className="sig sig-off">Sin demanda</span>}
-          {p.conflict?<span className="sig sig-warn" title={'Ya recibe impresiones: '+p.conflict.page}>Revisar: {shortPath(p.conflict.page)}</span>:p.demand>0?<span className="sig sig-ok">Libre en GSC</span>:null}
-        </div>
-        {p.variants&&p.variants.length>0&&<div className="piece-var">{p.variants.join(' · ')}</div>}
-        <div className="piece-actions">{p.demand>0&&<button className={ink?'cta-light sm':'cta-outline sm'} onClick={()=>onCheck(p.keyword)}>Producir</button>}<button className={'save-btn'+(isSaved(p.keyword)?' on':'')} aria-pressed={isSaved(p.keyword)} onClick={()=>setSaved(toggleSavedIdea(p,t))}><svg width="15" height="15" viewBox="0 0 24 24" fill={isSaved(p.keyword)?'currentColor':'none'} stroke="currentColor" strokeWidth="2" strokeLinejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg>{isSaved(p.keyword)?'Guardada':'Guardar'}</button></div>
-      </div>)}</div>
-      <button className="link-btn discard" onClick={()=>discard(t.autor)}>Descartar temporada</button>
-    </article>)})}</div>
-  </div>);
-}
-
-function RadarGuardadas({onCheck}){
-  const[saved,setSaved]=useState(getSavedIdeas);
-  useEffect(()=>{const f=()=>setSaved(getSavedIdeas());window.addEventListener('sp-saved',f);return()=>window.removeEventListener('sp-saved',f)},[]);
-  const can=getCanibalAll();
-  if(!saved.length)return<div className="empty">Aún no guardas ideas. En “Vecinos”, usa “Guardar” en cualquier keyword y aparecerá aquí aunque busques ideas nuevas.</div>;
-  const groups={};saved.slice().reverse().forEach(x=>{(groups[x.autor||'Sin autor']=groups[x.autor||'Sin autor']||[]).push(x)});
-  return(<div className="radar-grid">{Object.entries(groups).map(([autor,items])=><article key={autor} className="idea">
-    <div className="prio-tags"><span className="tag tag-blue">Guardada</span>{items[0].muerte?<span className="mono-meta">† {items[0].muerte}</span>:null}</div>
-    <div><div className="mono-meta">{autor}</div>{items[0].temporada&&<h3 className="idea-title">{items[0].temporada}</h3>}</div>
-    <div className="pieces">{items.map(p=>{const c=can[p.keyword.toLowerCase()];return(<div className="piece" key={p.keyword}>
-      <div className="piece-top"><span className="piece-kw">{p.keyword}</span><span className="piece-type">{TIPO_CORTO[p.tipo]||p.tipo}</span></div>
-      <div className="piece-meta">{p.demand>0&&<span className={'sig '+(p.demand>=5?'sig-hi':'sig-md')}>Demanda {p.demand>=8?'alta':p.demand>=5?'media':'baja'}</span>}{c&&c.res?<span className="sig sig-ok">Chequeo: {c.res.veredicto}</span>:p.conflict?<span className="sig sig-warn">Revisar: {shortPath(p.conflict.page)}</span>:null}<span className="mono-meta">{formatRelTime(p.ts)}</span></div>
-      <div className="piece-actions"><button className="cta-outline sm" onClick={()=>onCheck(p.keyword)}>{c?'Abrir en producción':'Producir'}</button><button className="save-btn on" onClick={()=>{const a=getSavedIdeas().filter(x=>x.keyword!==p.keyword);setSavedIdeas(a);setSaved(a)}}>Quitar</button></div>
-    </div>)})}</div>
-  </article>)}</div>);
-}
-
-function RadarTab({d,loading,onCheck,gscFn,config}){
-  const[view,setView]=useState(()=>{try{return localStorage.getItem('sp2_radar_view')||'vecinos'}catch{return'vecinos'}});
-  const pick=v=>{setView(v);try{localStorage.setItem('sp2_radar_view',v)}catch{}};
-  const can=getCanibalAll();const rows=d&&d.escribir?d.escribir:[];
-  return(<div className="radar">
-    <div className="radar-filters" role="group" aria-label="Fuentes">
-      <button className={'filter'+(view==='vecinos'?' on':'')} aria-pressed={view==='vecinos'} onClick={()=>pick('vecinos')}>Vecinos de lo que tienes</button>
-      <button className={'filter'+(view==='guardadas'?' on':'')} aria-pressed={view==='guardadas'} onClick={()=>pick('guardadas')}>Guardadas{getSavedIdeas().length?' · '+getSavedIdeas().length:''}</button>
-      <button className={'filter'+(view==='gsc'?' on':'')} aria-pressed={view==='gsc'} onClick={()=>pick('gsc')}>Ya asoman en GSC{rows.length?' · '+rows.length:''}</button>
-    </div>
-    {view==='vecinos'&&<RadarVecinos gscFn={gscFn} config={config} onCheck={onCheck}/>}
-    {view==='guardadas'&&<RadarGuardadas onCheck={onCheck}/>}
-    {view==='gsc'&&<>
-      {loading&&!d&&<div className="loading"><div className="spinner"/>Cargando datos…</div>}
-      {d&&rows.length===0&&<div className="empty">No hay queries sin página dedicada que cumplan el umbral en este periodo.</div>}
-      <div className="radar-grid">{rows.slice(0,12).map((r,i)=>{const c=can[r.keys[0].toLowerCase()];return(<article key={i} className={'idea'+(i===0?' idea-ink':'')}>
-        <div className="prio-tags"><span className={'tag '+(i===0?'tag-mint':'tag-green')}>Ya asoma en GSC</span></div>
-        <div className="mono-meta">{fmt(r.impressions)} impr · pos {r.position.toFixed(1)} · {fmt(r.clicks)} clics</div>
-        <h3 className="idea-title">{r.keys[0]}</h3>
-        <div className="idea-facts"><div><span>Canibalización</span><span className="mono-meta">{c&&c.res?c.res.veredicto:'sin chequear'}</span></div></div>
-        <button className={i===0?'cta-light':'cta-primary'} onClick={()=>onCheck(r.keys[0])}>{c?'Abrir en producción':'Chequear y producir'}</button>
-      </article>)})}</div>
-    </>}
-  </div>);
-}
-
-// ====== PLAN: mes, semana y prioridades del día (v4.3) ======
-function weekKey(dt){const d=dt?new Date(dt):new Date();const day=(d.getDay()+6)%7;const m=new Date(d.getFullYear(),d.getMonth(),d.getDate()-day);return m.toISOString().slice(0,10)}
-function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function lsGet(k,def){try{const v=JSON.parse(localStorage.getItem(k)||'null');return v==null?def:v}catch{return def}}
-function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}window.dispatchEvent(new Event('sp-plan'))}
-const getPlan=()=>lsGet('sp2_plan',null),getPlanHoy=()=>lsGet('sp2_plan_hoy',null);
-async function buildPlanInput(d,gscFn){
-  const st=lsGet('sp2_audit',null)||auditDefaults();const sig=deriveSignals(st);const{perPhase,stageFormal}=etAudit(sig);
-  const requisitos=[];AUDIT_GROUPS.forEach(g=>g.items.forEach(it=>{const s=st[it.id]||{};requisitos.push({grupo:g.label,requisito:it.t,estado:s.estado||'na',nota:(s.nota||'').slice(0,300)||undefined})}));
-  const roadmap={fase_sellada:stageFormal,fases:perPhase.map(f=>({n:f.n,nombre:f.nombre,avance_pct:f.pct,faltan:f.failing.map(g=>g[1])})),requisitos};
-  const datos={periodo_dias:28};
-  if(d){datos.resumen_periodo=d.summary;
-    datos.quick_wins=(d.quickWins||[]).slice(0,8).map(r=>({q:r.keys[0],pos:+r.position.toFixed(1),impr:r.impressions,clics:r.clicks}));
-    datos.ctr_bajo=(d.optimizar||[]).slice(0,6).map(r=>({q:r.keys[0],pagina:r.page?shortPath(r.page):undefined,impr:r.impressions,ctr_pct:+(r.ctr*100).toFixed(2),pos:+r.position.toFixed(1)}));
-    datos.cayendo=(d.dropping||[]).slice(0,5).map(r=>({pagina:shortPath(r.page),pos_antes:+r.prevPos.toFixed(1),pos_ahora:+r.curPos.toFixed(1),clics_perdidos:r.lostClicks}));
-    datos.sin_pagina_propia=(d.escribir||[]).slice(0,6).map(r=>({q:r.keys[0],impr:r.impressions,pos:+r.position.toFixed(1)}));
-    if(d.ga4Pages)datos.ga4_top=d.ga4Pages.slice(0,8)}
-  try{const rows=await loadQueryPageRows(gscFn);const pg={},qs={};rows.forEach(r=>{const p=r.keys[1];pg[p]=pg[p]||{i:0,c:0};pg[p].i+=r.impressions;pg[p].c+=r.clicks;qs[r.keys[0]]=Math.min(qs[r.keys[0]]||999,r.position)});
-    const b={'1-3':0,'4-10':0,'11-20':0,'21+':0};Object.values(qs).forEach(p=>{if(p<=3)b['1-3']++;else if(p<=10)b['4-10']++;else if(p<=20)b['11-20']++;else b['21+']++});
-    datos.cobertura_90d={paginas_con_impresiones:Object.keys(pg).length,paginas_con_clics:Object.values(pg).filter(x=>x.c>0).length,queries_distintas:Object.keys(qs).length,queries_por_mejor_posicion:b,top_paginas:Object.entries(pg).sort((a,c)=>c[1].i-a[1].i).slice(0,10).map(([p,x])=>({pagina:shortPath(p),impr:x.i,clics:x.c}))}}catch{}
-  const briefs=getBriefs();const can=getCanibalAll();const radar=getRadar();
-  const produccion={briefs:Object.entries(briefs).map(([k,b])=>{const v=verifyStatus(k,b.text);return{keyword:k,plantilla:b.tipo,verificados:v.done+'/'+v.total,dias:Math.round((Date.now()-b.ts)/864e5)}}).slice(0,10),
-    chequeos_sin_brief:Object.keys(can).filter(k=>!briefs[k]).slice(0,10),ideas_guardadas:getSavedIdeas().slice(-10).map(x=>x.keyword),
-    publicadas:Object.entries(getPub()).filter(([,p])=>p.url).map(([k,p])=>({keyword:k,url:shortPath(p.url),dias:Math.floor((Date.now()-new Date(p.fecha).getTime())/864e5),medicion:p.medicion&&!p.medicion.pendiente?{clics:p.medicion.clics,impr:p.medicion.impr,pos:p.medicion.pos}:null})).slice(0,15),
-    redactadas_sin_publicar:Object.entries(getPub()).filter(([,p])=>p.redactado&&!p.url).map(([k])=>k),
-    radar_keywords_con_demanda:radar&&radar.temporadas?radar.temporadas.reduce((a,t)=>a+t.piezas.filter(p=>p.demand>0).length,0):0};
-  const plan=getPlan(),hoy=getPlanHoy();
-  const avance={tareas_semana_hechas:plan&&plan.data&&plan.data.semana?(plan.done||[]).map(i=>(plan.data.semana.tareas[i]||{}).tarea).filter(Boolean):[],hoy_anterior:hoy?{fecha:hoy.date,hechas:(hoy.done||[]).map(i=>(hoy.items[i]||{}).tarea).filter(Boolean),pendientes:hoy.items.filter((_,i)=>!(hoy.done||[]).includes(i)).map(x=>x.tarea)}:null};
-  const n=new Date();
-  return{fecha:DIAS[n.getDay()]+' '+n.getDate()+' de '+MESES_L[n.getMonth()]+' de '+n.getFullYear(),contexto:lsGet('sp2_plan_ctx',''),roadmap,datos,produccion,plan_anterior:plan?plan.data:null,avance}}
-async function generatePlan(d,gscFn,onStage){onStage&&onStage('Reuniendo roadmap, datos y producción…');const input=await buildPlanInput(d,gscFn);onStage&&onStage('Claude está razonando el plan…');const data=parseJsonLoose(await callClaude('plan',input));lsSet('sp2_plan',{ts:Date.now(),week:weekKey(),data,done:[]});return data}
-async function generateHoy(d,gscFn,onStage){onStage&&onStage('Eligiendo las prioridades de hoy…');const input=await buildPlanInput(d,gscFn);const r=parseJsonLoose(await callClaude('plan_hoy',input));lsSet('sp2_plan_hoy',{date:todayKey(),ts:Date.now(),items:r.hoy||[],nota:r.nota||'',done:[]});return r}
-function usePlanStore(){const[v,setV]=useState(0);useEffect(()=>{const f=()=>setV(x=>x+1);window.addEventListener('sp-plan',f);return()=>window.removeEventListener('sp-plan',f)},[]);return{plan:getPlan(),hoy:getPlanHoy(),v}}
-const MODO_LABEL={producir:'Modo: producir',optimizar:'Modo: optimizar',tecnico:'Modo: técnico',autoridad:'Modo: autoridad',medir:'Modo: medir'};
-function ActionBtn({accion,onAct,ink}){if(!accion||!accion.tipo||accion.tipo==='ninguna')return null;const L={produccion:accion.valor?'Producir':'Ir a producción',radar:'Abrir radar',etapa:'Ver en Etapa',pagina:'Ver página'};return<button className={ink?'cta-light sm':'cta-outline sm'} onClick={()=>onAct(accion)}>{L[accion.tipo]||'Abrir'}</button>}
-let autoHoyRan=false;
-function PlanHoy({d,gscFn,onAct,onGo}){
-  const{plan,hoy}=usePlanStore();const[stage,setStage]=useState('');const[err,setErr]=useState(null);
-  const stale=plan&&plan.week!==weekKey();const hoyOk=hoy&&hoy.date===todayKey();
-  async function doPlan(){setErr(null);try{await generatePlan(d,gscFn,setStage);await generateHoy(d,gscFn,setStage)}catch(e){setErr(e.message)}setStage('')}
-  async function doHoy(){setErr(null);try{await generateHoy(d,gscFn,setStage)}catch(e){setErr(e.message)}setStage('')}
-  useEffect(()=>{if(plan&&!stale&&!hoyOk&&d&&!autoHoyRan){autoHoyRan=true;doHoy()}},[!!d,!!plan,stale,hoyOk]);
-  function toggle(i){const h=getPlanHoy();const s=new Set(h.done||[]);s.has(i)?s.delete(i):s.add(i);lsSet('sp2_plan_hoy',{...h,done:[...s]})}
-  if(!plan)return(<section className="plan-cta"><div><div className="side-label" style={{padding:0}}>Plan con razonamiento</div><h2 className="ink-title">Arma tu plan del mes y de la semana</h2><p>Claude cruza tu roadmap de Etapa, tus notas, Search Console y tu producción para decirte cuál es el cuello de botella y qué hacer.</p></div>{stage?<div className="loading" style={{color:'#D6D3CC'}}><div className="spinner"/>{stage}</div>:<button className="cta-light" onClick={doPlan}>Generar plan</button>}{err&&<div className="error-msg">{err}</div>}</section>);
-  const c=plan.data.cuello||{};
-  return(<section className="plan-hoy" aria-labelledby="ph-h">
-    <div className="plan-neck">
-      <div className="prio-tags"><span className="tag tag-mint">{MODO_LABEL[plan.data.modo]||'Plan'}</span><span className="mono-meta" style={{color:'#A8A49C'}}>plan de la semana · {formatRelTime(plan.ts)}</span></div>
-      <h2 className="ink-title">{c.titulo}</h2>
-      {c.dato&&<div className="neck-dato">{c.dato}</div>}
-      <div className="plan-links"><button className="link-btn light" onClick={()=>onGo('etapa')}>Ver plan completo</button>{stale&&<button className="cta-light sm" onClick={doPlan}>Nueva semana: regenerar plan</button>}</div>
-    </div>
-    <div className="plan-today">
-      <div className="sec-head"><h2 id="ph-h">Prioridades de hoy</h2>{hoyOk&&!stage&&<button className="link-btn" onClick={doHoy}>Regenerar</button>}</div>
-      {stage&&<div className="loading"><div className="spinner"/>{stage}</div>}
-      {err&&<div className="error-msg">{err}</div>}
-      {hoyOk&&hoy.nota&&<p className="today-note">{hoy.nota}</p>}
-      {hoyOk&&hoy.items.map((t,i)=>{const done=(hoy.done||[]).includes(i);return(<div key={i} className={'today-item'+(done?' done':'')}>
-        <input type="checkbox" checked={done} onChange={()=>toggle(i)} aria-label={'Marcar hecha: '+t.tarea}/>
-        <div className="today-body"><div className="today-t">{t.tarea}</div><div className="today-why">{t.por_que}{t.esfuerzo?<span className="mono-meta"> · {t.esfuerzo}</span>:null}</div></div>
-        {!done&&<ActionBtn accion={t.accion} onAct={onAct}/>}
-      </div>)})}
-      {!hoyOk&&!stage&&<button className="cta-outline" onClick={doHoy}>Generar prioridades de hoy</button>}
-    </div>
-  </section>);
-}
-function PlanPanel({d,gscFn,onAct}){
-  const{plan}=usePlanStore();const[ctx,setCtx]=useState(()=>lsGet('sp2_plan_ctx',''));const[stage,setStage]=useState('');const[err,setErr]=useState(null);
-  async function doPlan(){lsSet('sp2_plan_ctx',ctx);setErr(null);try{await generatePlan(d,gscFn,setStage);await generateHoy(d,gscFn,setStage)}catch(e){setErr(e.message)}setStage('')}
-  function toggle(i){const p=getPlan();const s=new Set(p.done||[]);s.has(i)?s.delete(i):s.add(i);lsSet('sp2_plan',{...p,done:[...s]})}
-  const P=plan&&plan.data;const done=plan?plan.done||[]:[];
-  return(<div className="plan-panel">
-    {P&&<>
-      <div className="plan-neck big">
-        <div className="prio-tags"><span className="tag tag-mint">{MODO_LABEL[P.modo]||'Plan'}</span><span className="mono-meta" style={{color:'#A8A49C'}}>generado {formatRelTime(plan.ts)}{plan.week!==weekKey()?' · de la semana pasada':''}</span></div>
-        <div className="side-label" style={{padding:0}}>Cuello de botella</div>
-        <h2 className="ink-title">{P.cuello&&P.cuello.titulo}</h2>
-        {P.cuello&&P.cuello.dato&&<div className="neck-dato">{P.cuello.dato}</div>}
-        {P.cuello&&P.cuello.explicacion&&<p>{P.cuello.explicacion}</p>}
-      </div>
-      <div className="plan-cols">
-        <section className="card" aria-labelledby="pm-h">
-          <div className="card-head"><h2 id="pm-h">Este mes</h2>{P.mes&&P.mes.fase_foco?<span className="tag tag-blue">Fase {P.mes.fase_foco}</span>:null}</div>
-          {P.mes&&<p className="plan-obj">{P.mes.objetivo}</p>}
-          {P.mes&&(P.mes.metas||[]).map((m,i)=><div key={i} className="meta-row"><div className="meta-n">{i+1}</div><div><div className="today-t">{m.meta}</div><div className="today-why">{m.por_que}</div>{m.indicador&&<div className="mono-meta">Se mide: {m.indicador}</div>}</div></div>)}
-        </section>
-        <section className="card" aria-labelledby="ps-h">
-          <div className="card-head"><h2 id="ps-h">Esta semana</h2><span className="mono-meta">{done.length}/{P.semana?(P.semana.tareas||[]).length:0}</span></div>
-          {P.semana&&<p className="plan-obj">{P.semana.foco}</p>}
-          {P.semana&&(P.semana.tareas||[]).map((t,i)=>{const ok=done.includes(i);return(<div key={i} className={'today-item'+(ok?' done':'')}>
-            <input type="checkbox" checked={ok} onChange={()=>toggle(i)} aria-label={'Marcar hecha: '+t.tarea}/>
-            <div className="today-body"><div className="today-t">{t.tarea}</div><div className="today-why">{t.por_que}{t.esfuerzo?<span className="mono-meta"> · {t.esfuerzo}</span>:null}</div></div>
-            {!ok&&<ActionBtn accion={t.accion} onAct={onAct}/>}
-          </div>)})}
-        </section>
-      </div>
-      {(P.esperar&&P.esperar.length>0)&&<section className="card"><h2 className="card-title">Puede esperar</h2>{P.esperar.map((x,i)=><div key={i} className="md-li"><span className="md-bul">–</span><span>{x}</span></div>)}{P.notas_usadas&&P.notas_usadas.length>0&&<div className="muted-s" style={{marginTop:6}}>Notas tomadas en cuenta: {P.notas_usadas.join(' · ')}</div>}</section>}
-    </>}
-    <section className="card">
-      <label htmlFor="plan-ctx" className="field-label">Contexto para el plan</label>
-      <textarea id="plan-ctx" className="kw-textarea" style={{minHeight:64}} placeholder="Ej. esta semana tengo 6 horas; quiero lanzar la temporada Wilde; prioridad: suscriptores al newsletter…" value={ctx} onChange={e=>setCtx(e.target.value)}/>
-      <div style={{display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}><button className="cta-primary" disabled={!!stage} onClick={doPlan}>{P?'Regenerar plan':'Generar plan'}</button>{stage&&<div className="loading" style={{padding:0}}><div className="spinner"/>{stage}</div>}</div>
-      {err&&<div className="error-msg">{err}</div>}
-      <div className="muted-s">El plan lee tus fases, el estado y las notas de cada requisito de abajo, los datos de Search Console y tu producción. Unos centavos por plan.</div>
-    </section>
-  </div>);
-}
-
-// ====== v4.4: cierre de producción, verificador y Optimizar ======
-function getPub(){return lsGet('sp2_pub',{})}
-function setPubKw(kw,patch){const h=getPub();h[kw]={...(h[kw]||{}),...patch};lsSet('sp2_pub',h)}
-function copyText(t,cb){navigator.clipboard.writeText(t).then(()=>cb&&cb(true)).catch(()=>cb&&cb(false))}
-function buildWritePrompt(kw){const b=getBriefs()[kw];if(!b)return'';const items=verifyItems(b.text);const chk=getVerify(kw);const vr=lsGet('sp2_verify_res',{})[kw];
-  const ok=items.filter((_,i)=>chk.includes(i));const pend=items.filter((_,i)=>!chk.includes(i));
-  const fixes=vr&&vr.items?vr.items.filter(x=>x.estado==='corregir'&&x.dato_correcto).map(x=>'- '+(items[x.i]||'')+' → '+x.dato_correcto+(x.fuente?' ('+x.fuente+')':'')):[];
-  return['Escribe el artículo para País Lector a partir de este brief y entrégamelo en Word (.docx).','Keyword: '+kw+' · Plantilla: '+(TIPO_LABEL[b.tipo]||b.tipo),
-    ok.length?'Datos ya verificados:\n'+ok.map(x=>'- '+x).join('\n'):'',
-    fixes.length?'Correcciones de la verificación (usa el dato correcto):\n'+fixes.join('\n'):'',
-    pend.length?'Datos aún sin verificar (déjalos marcados con [VERIFICAR] en el texto):\n'+pend.map(x=>'- '+x).join('\n'):'',
-    b.comp&&b.comp.angulo?'Ángulo según la competencia: '+b.comp.angulo:'','--- BRIEF ---',b.text].filter(Boolean).join('\n\n')}
-
-function CierrePanel({kw,ver}){
-  const b=kw?getBriefs()[kw]:null;const[pub,setPub]=useState(()=>getPub()[kw]||{});const[url,setUrl]=useState('');const[date,setDate]=useState(todayKey());const[copied,setCopied]=useState(false);
-  useEffect(()=>{const p=getPub()[kw]||{};setPub(p);setUrl(p.url||'');setDate(p.fecha||todayKey())},[kw,ver]);
-  if(!b)return null;
-  const save=patch=>{setPubKw(kw,patch);setPub(getPub()[kw]||{})};
-  const v=verifyStatus(kw,b.text);
-  return(<section className="card cierre" aria-labelledby="cierre-h">
-    <div className="card-head"><h2 id="cierre-h">Redacción y publicación</h2>{pub.url?<span className="tag tag-green">Publicado</span>:pub.redactado?<span className="tag tag-blue">Redactado</span>:null}</div>
-    <div className="cierre-step"><div className="cierre-n">1</div><div className="cierre-body"><div className="today-t">Redacta conmigo en Claude</div><div className="today-why">Copia el brief con los datos verificados, las correcciones y el ángulo de la competencia, y pégalo en un chat.{v.total&&v.done<v.total?' Ojo: '+(v.total-v.done)+' datos siguen sin verificar.':''}</div></div><button className="cta-primary sm" onClick={()=>copyText(buildWritePrompt(kw),ok=>{setCopied(ok);setTimeout(()=>setCopied(false),1800)})}>{copied?'Copiado ✓':'Copiar para redactar'}</button></div>
-    <label className="cierre-step check"><div className="cierre-n">2</div><div className="cierre-body"><div className="today-t">Redacción lista</div><div className="today-why">Márcalo cuando el artículo esté escrito y revisado.</div></div><input type="checkbox" checked={!!pub.redactado} onChange={e=>save({redactado:e.target.checked?Date.now():null})}/></label>
-    <div className="cierre-step"><div className="cierre-n">3</div><div className="cierre-body"><div className="today-t">Publicado</div><div className="today-why">Con la URL, SEO Pulse mide la pieza a 30, 60 y 90 días y la usa en tu plan.</div>
-      <div className="pub-row"><input className="disc-input" aria-label="URL publicada" placeholder="https://paislector.com/…" value={url} onChange={e=>setUrl(e.target.value)}/><input className="disc-input" type="date" aria-label="Fecha de publicación" value={date} onChange={e=>setDate(e.target.value)} style={{flex:'0 0 160px'}}/><button className="cta-outline sm" disabled={!/^https?:\/\//.test(url.trim())} onClick={()=>save({url:url.trim(),fecha:date,redactado:pub.redactado||Date.now()})}>{pub.url?'Actualizar':'Marcar publicado'}</button></div>
-    </div></div>
-  </section>);
-}
-
-function PublicadasPanel({gscFn}){
-  const{v}=usePlanStore();const pubs=Object.entries(getPub()).filter(([,p])=>p.url).sort((a,b)=>(b[1].fecha||'').localeCompare(a[1].fecha||''));
-  const[busy,setBusy]=useState('');
-  async function medir(kw,p){setBusy(kw);try{const end=daysAgo(2);if(p.fecha>end){setPubKw(kw,{medicion:{ts:Date.now(),pendiente:true}});setBusy('');return}
-    const r=await gscFn({startDate:p.fecha,endDate:end,dimensions:['date'],type:'web',rowLimit:500,dimensionFilterGroups:[{filters:[{dimension:'page',operator:'equals',expression:p.url}]}]});
-    const rows=(r&&r.rows)||[];let c=0,im=0,pw=0;const hitos={};const t0=new Date(p.fecha).getTime();
-    rows.forEach(x=>{c+=x.clicks;im+=x.impressions;pw+=x.position*x.impressions;const dd=Math.floor((new Date(x.keys[0]).getTime()-t0)/864e5);[30,60,90].forEach(h=>{if(dd<h){hitos[h]=hitos[h]||{c:0,i:0};hitos[h].c+=x.clicks;hitos[h].i+=x.impressions}})});
-    setPubKw(kw,{medicion:{ts:Date.now(),clics:c,impr:im,pos:im?+(pw/im).toFixed(1):null,hitos}})}catch(e){alert('No se pudo medir: '+e.message)}setBusy('')}
-  if(!pubs.length)return null;
-  return(<section className="card" aria-labelledby="pubs-h">
-    <div className="card-head"><h2 id="pubs-h">Publicadas</h2><span className="mono-meta">{pubs.length}</span></div>
-    {pubs.map(([kw,p])=>{const dias=Math.floor((Date.now()-new Date(p.fecha).getTime())/864e5);const m=p.medicion;return(<div key={kw} className="pub-item">
-      <div className="today-body"><div className="today-t">{kw}</div><a className="mono-meta" href={p.url} target="_blank" rel="noopener">{shortPath(p.url)}</a>
-        <div className="pub-hitos">{[30,60,90].map(h=><span key={h} className={'sig '+(dias>=h?'sig-ok':'sig-off')}>{h}d{m&&m.hitos&&m.hitos[h]&&dias>=h?': '+fmt(m.hitos[h].c)+' clics':''}</span>)}<span className="mono-meta">día {dias}</span></div>
-        {m&&!m.pendiente&&<div className="today-why">Desde que se publicó: <b>{fmt(m.clics)}</b> clics · <b>{fmt(m.impr)}</b> impresiones{m.pos?<> · pos <b>{m.pos}</b></>:null} <span className="mono-meta">· medido {formatRelTime(m.ts)}</span></div>}
-        {m&&m.pendiente&&<div className="today-why">GSC tarda unos 2 días en tener datos.</div>}
-      </div>
-      <button className="cta-outline sm" disabled={busy===kw} onClick={()=>medir(kw,p)}>{busy===kw?'Midiendo…':'Medir'}</button>
-    </div>)})}
-  </section>);
-}
-
-const DEC_TAG={fusionar:'tag-coral',diferenciar:'tag-amber',reforzar:'tag-blue',ignorar:'tag-green'};
-const PRI_SIG={alta:'sig-warn',media:'sig-md',baja:'sig-ok'};
-function OptCanibal({rows}){
-  const[res,setRes]=useState(()=>lsGet('sp2_opt_canibal',null));const[st,setSt]=useState('');const[err,setErr]=useState(null);const[all,setAll]=useState(false);
-  const casos=useMemo(()=>{if(!rows)return[];const by={};rows.forEach(r=>{(by[r.keys[0]]=by[r.keys[0]]||[]).push(r)});return Object.entries(by).map(([q,rs])=>{const ps=rs.filter(r=>r.impressions>=10);if(ps.length<2)return null;const tot=ps.reduce((a,r)=>a+r.impressions,0);if(tot<40)return null;return{query:q,total_impr:tot,paginas:ps.sort((a,b)=>b.impressions-a.impressions).slice(0,4).map(r=>({url:r.keys[1],impr:r.impressions,clics:r.clicks,pos:+r.position.toFixed(1)}))}}).filter(Boolean).sort((a,b)=>b.total_impr-a.total_impr).slice(0,25)},[rows]);
-  async function run(){setSt('Claude está analizando los 10 casos principales…');setErr(null);try{const j=parseJsonLoose(await callClaude('canibal_sitio',{casos:casos.slice(0,10)}));const out={ts:Date.now(),casos:j.casos||[]};lsSet('sp2_opt_canibal',out);setRes(out)}catch(e){setErr(e.message)}setSt('')}
-  const find=q=>res&&res.casos?res.casos.find(c=>(c.query||'').toLowerCase()===q.toLowerCase()):null;
-  const list=all?casos:casos.slice(0,10);
-  return(<section className="card opt" aria-labelledby="oc-h">
-    <div className="card-head"><h2 id="oc-h">Canibalización en el sitio</h2><span className="mono-meta">{rows?casos.length+' queries':'…'}</span></div>
-    <p className="today-why">Queries por las que dos o más de tus páginas reciben impresiones a la vez (90 días, mínimo 10 impresiones por página).</p>
-    {casos.length>0&&<div style={{display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}><button className="cta-primary sm" disabled={!!st} onClick={run}>{res?'Volver a analizar':'Analizar los 10 principales'}</button>{res&&<span className="mono-meta">análisis {formatRelTime(res.ts)}</span>}</div>}
-    {st&&<div className="loading"><div className="spinner"/>{st}</div>}{err&&<div className="error-msg">{err}</div>}
-    {rows&&casos.length===0&&<div className="empty">Sin canibalización relevante en los últimos 90 días.</div>}
-    {list.map(c=>{const a=find(c.query);return(<div key={c.query} className="opt-item">
-      <div className="opt-top"><span className="today-t">“{c.query}”</span><span className="mono-meta">{fmt(c.total_impr)} impr</span></div>
-      {c.paginas.map(p=><div key={p.url} className="share-row"><span className={'mono-meta'+(a&&a.principal&&a.principal.indexOf(shortPath(p.url))>=0?' strong':'')}>{shortPath(p.url)}</span><div className="share-bar"><i style={{width:Math.round(p.impr/c.total_impr*100)+'%'}}/></div><span className="mono-meta">pos {p.pos}</span></div>)}
-      {a&&<div className="opt-rec"><div className="prio-tags"><span className={'tag '+(DEC_TAG[a.decision]||'tag-blue')}>{a.decision}</span>{a.prioridad&&<span className={'sig '+(PRI_SIG[a.prioridad]||'')}>prioridad {a.prioridad}</span>}</div><div className="today-t">{a.accion}</div><div className="today-why">{a.detalle}</div></div>}
-    </div>)})}
-    {casos.length>10&&<button className="link-btn" onClick={()=>setAll(x=>!x)}>{all?'Ver menos':'Ver los '+casos.length}</button>}
-  </section>);
-}
-function pageQueries(rows,url){return(rows||[]).filter(r=>r.keys[1]===url).sort((a,b)=>b.impressions-a.impressions).slice(0,20).map(r=>({q:r.keys[0],impr:r.impressions,pos:+r.position.toFixed(1)}))}
-function OptRefresh({d,rows}){
-  const[res,setRes]=useState(()=>lsGet('sp2_opt_refresh',{}));const[busy,setBusy]=useState('');const[err,setErr]=useState(null);const[open,setOpen]=useState('');
-  const items=(d&&d.dropping)||[];
-  async function run(r){setBusy(r.page);setErr(null);try{const j=parseJsonLoose(await callClaude('refresh',{url:r.page,stats:{pos_antes:+r.prevPos.toFixed(1),pos_ahora:+r.curPos.toFixed(1),clics_perdidos:r.lostClicks},queries:pageQueries(rows,r.page)}));const h=lsGet('sp2_opt_refresh',{});h[r.page]={ts:Date.now(),...j};lsSet('sp2_opt_refresh',h);setRes(h);setOpen(r.page)}catch(e){setErr(e.message)}setBusy('')}
-  return(<section className="card opt" aria-labelledby="or-h">
-    <div className="card-head"><h2 id="or-h">Páginas que caen</h2><span className="mono-meta">{items.length}</span></div>
-    <p className="today-why">Claude lee la página en tu sitio, la cruza con sus queries y te da un plan de refresh.</p>
-    {err&&<div className="error-msg">{err}</div>}
-    {d&&!items.length&&<div className="empty">Ninguna página cae en este periodo.</div>}
-    {items.map(r=>{const x=res[r.page];const isOpen=open===r.page;return(<div key={r.page} className="opt-item">
-      <div className="opt-top"><a className="today-t" href={r.page} target="_blank" rel="noopener">{shortPath(r.page)}</a><span className="mono-meta">pos {r.prevPos.toFixed(1)} → {r.curPos.toFixed(1)}{r.lostClicks>0?' · −'+fmt(r.lostClicks)+' clics':''}</span></div>
-      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}><button className="cta-outline sm" disabled={busy===r.page} onClick={()=>run(r)}>{busy===r.page?'Leyendo la página…':x?'Regenerar plan':'Plan de refresh'}</button>{x&&<button className="link-btn" onClick={()=>setOpen(isOpen?'':r.page)}>{isOpen?'Ocultar':'Ver plan · '+formatRelTime(x.ts)}</button>}</div>
-      {x&&isOpen&&<div className="opt-rec">
-        <div className="today-t">{x.diagnostico}</div>
-        {x.causas&&x.causas.length>0&&<div>{x.causas.map((c,i)=><div key={i} className="md-li"><span className="md-bul">•</span><span>{c}</span></div>)}</div>}
-        {(x.acciones||[]).map((a,i)=><div key={i} className="act-row"><span className={'sig '+(PRI_SIG[a.prioridad]||'')}>{a.prioridad||'—'}</span><div><div className="today-t">{a.accion}</div><div className="today-why">{a.detalle}</div></div></div>)}
-        {x.secciones_nuevas&&x.secciones_nuevas.length>0&&<div><div className="comp-sub">Secciones nuevas</div>{x.secciones_nuevas.map((s,i)=><div key={i} className="md-li"><span className="md-bul">+</span><span><b>{s.h2}</b> — {s.por_que}</span></div>)}</div>}
-        {(x.title_nuevo||x.meta_nueva)&&<div className="variant">{x.title_nuevo&&<div className="var-t">{x.title_nuevo} <span className="mono-meta">{x.title_nuevo.length}</span></div>}{x.meta_nueva&&<div className="var-m">{x.meta_nueva} <span className="mono-meta">{x.meta_nueva.length}</span></div>}<button className="link-btn" onClick={()=>copyText((x.title_nuevo||'')+'\n'+(x.meta_nueva||''))}>Copiar</button></div>}
-      </div>}
-    </div>)})}
-  </section>);
-}
-function OptCtr({d,rows}){
-  const[res,setRes]=useState(()=>lsGet('sp2_opt_ctr',{}));const[busy,setBusy]=useState('');const[err,setErr]=useState(null);const[open,setOpen]=useState('');
-  const items=(d&&d.optimizar)||[];
-  const pageOf=r=>{if(r.page)return r.page;const c=(rows||[]).filter(x=>x.keys[0]===r.keys[0]).sort((a,b)=>b.impressions-a.impressions)[0];return c?c.keys[1]:null};
-  async function run(r){const url=pageOf(r);const q=r.keys[0];if(!url){setErr('No encontré la página de “'+q+'” en GSC.');return}setBusy(q);setErr(null);try{const j=parseJsonLoose(await callClaude('ctr',{url,query:q,stats:{impresiones:r.impressions,ctr_pct:+(r.ctr*100).toFixed(2),ctr_esperado_pct:+r.expected,posicion:+r.position.toFixed(1)},queries:pageQueries(rows,url)}));const h=lsGet('sp2_opt_ctr',{});h[q]={ts:Date.now(),url,...j};lsSet('sp2_opt_ctr',h);setRes(h);setOpen(q)}catch(e){setErr(e.message)}setBusy('')}
-  return(<section className="card opt" aria-labelledby="ot-h">
-    <div className="card-head"><h2 id="ot-h">CTR bajo</h2><span className="mono-meta">{items.length}</span></div>
-    <p className="today-why">Muchas impresiones y pocos clics. Claude lee tu title y meta actuales y te propone 3 variantes.</p>
-    {err&&<div className="error-msg">{err}</div>}
-    {d&&!items.length&&<div className="empty">Sin queries con CTR por debajo de lo esperado en este periodo.</div>}
-    {items.map(r=>{const q=r.keys[0];const x=res[q];const isOpen=open===q;return(<div key={q} className="opt-item">
-      <div className="opt-top"><span className="today-t">“{q}”</span><span className="mono-meta">{fmt(r.impressions)} impr · CTR {(r.ctr*100).toFixed(1)}% (esperado {r.expected}%) · pos {r.position.toFixed(1)}</span></div>
-      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}><button className="cta-outline sm" disabled={busy===q} onClick={()=>run(r)}>{busy===q?'Leyendo la página…':x?'Regenerar':'3 variantes'}</button>{x&&<button className="link-btn" onClick={()=>setOpen(isOpen?'':q)}>{isOpen?'Ocultar':'Ver variantes · '+formatRelTime(x.ts)}</button>}</div>
-      {x&&isOpen&&<div className="opt-rec">
-        <div className="variant now"><div className="comp-sub" style={{color:'var(--muted)'}}>Actual · {shortPath(x.url)}</div><div className="var-t">{x.title_actual||'—'}</div><div className="var-m">{x.meta_actual||'Sin meta description'}</div></div>
-        {x.diagnostico&&<div className="today-why">{x.diagnostico}</div>}
-        {(x.variantes||[]).map((vv,i)=><div key={i} className="variant"><div className="comp-sub">{vv.enfoque||'Variante '+(i+1)}</div><div className="var-t">{vv.title} <span className={'mono-meta'+((vv.title||'').length>60?' over':'')}>{(vv.title||'').length}</span></div><div className="var-m">{vv.meta} <span className={'mono-meta'+((vv.meta||'').length>155?' over':'')}>{(vv.meta||'').length}</span></div>{vv.por_que&&<div className="today-why">{vv.por_que}</div>}<button className="link-btn" onClick={()=>copyText(vv.title+'\n'+vv.meta)}>Copiar</button></div>)}
-      </div>}
-    </div>)})}
-  </section>);
-}
-function OptimizarTab({d,gscFn,loading}){
-  const[rows,setRows]=useState(gscQPCache);
-  useEffect(()=>{if(!rows)loadQueryPageRows(gscFn).then(setRows).catch(()=>setRows([]))},[]);
-  return(<div className="opt-wrap">
-    {loading&&!d&&<div className="loading"><div className="spinner"/>Cargando datos…</div>}
-    <OptCanibal rows={rows}/>
-    <div className="plan-cols"><OptRefresh d={d} rows={rows}/><OptCtr d={d} rows={rows}/></div>
-  </div>);
-}
-
-// ====== UTM BUILDER ======
-function UtmBuilder({onCreated,existingUtms}){
-  const[dest,setDest]=useState('https://paislector.com/');
-  const[source,setSource]=useState('');const[medium,setMedium]=useState('');const[campaign,setCampaign]=useState('');
-  const[term,setTerm]=useState('');const[content,setContent]=useState('');const[tags,setTags]=useState('');const[notes,setNotes]=useState('');
-  const[showAdvanced,setShowAdvanced]=useState(false);const[copied,setCopied]=useState(false);
-  const[errors,setErrors]=useState([]);const[dupWarn,setDupWarn]=useState(null);
-
-  const prevSources=uniqValues(existingUtms||[],'source');
-  const prevMediums=uniqValues(existingUtms||[],'medium');
-  const prevCampaigns=uniqValues(existingUtms||[],'campaign');
-  const previewUrl=(source||medium||campaign)?buildUtmUrl({destination:dest,source,medium,campaign,term,content}):dest;
-
-  useEffect(()=>{
-    if(source&&medium&&campaign&&dest){
-      const dup=findUtmDuplicate(existingUtms||[],{destination:dest,source,medium,campaign});
-      setDupWarn(dup);
-    }else{setDupWarn(null)}
-  },[dest,source,medium,campaign,existingUtms]);
-
-  function handleSave(){
-    const u={destination:dest.trim(),source:source.trim(),medium:medium.trim(),campaign:campaign.trim(),term:term.trim(),content:content.trim()};
-    const errs=validateUtm(u);if(errs.length>0){setErrors(errs);return}
-    setErrors([]);
-    const full={id:uid(),...u,tags:tags.split(',').map(t=>t.trim()).filter(Boolean),notes:notes.trim(),full_url:buildUtmUrl(u),created_at:Date.now(),archived:false};
-    onCreated(full);
-    setSource('');setCampaign('');setTerm('');setContent('');setTags('');setNotes('');setDupWarn(null);
-  }
-
-  function handleCopy(){navigator.clipboard.writeText(previewUrl).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),1500)})}
-
-  return(<div className="panel"><div className="panel-head"><h3>UTM Builder</h3><span className="pill pill-blue">Link tracking</span></div><div className="panel-body">
-    <div className="utm-form-grid">
-      <div className="utm-field"><label>Destination URL <span style={{color:'var(--coral)'}}>*</span></label>
-        <input className="utm-input" value={dest} onChange={e=>setDest(e.target.value)} placeholder="https://paislector.com/..."/></div>
-    </div>
-    <div className="utm-form-grid utm-grid-2">
-      <div className="utm-field"><label>Source <span style={{color:'var(--coral)'}}>*</span></label>
-        <input className="utm-input" value={source} onChange={e=>setSource(e.target.value)} placeholder="newsletter, linkedin..."/>
-        {prevSources.length>0&&<div className="utm-hint">Usados: {prevSources.join(', ')}</div>}</div>
-      <div className="utm-field"><label>Medium <span style={{color:'var(--coral)'}}>*</span></label>
-        <input className="utm-input" value={medium} onChange={e=>setMedium(e.target.value)} placeholder="email, social, cpc..."/>
-        {prevMediums.length>0&&<div className="utm-hint">Usados: {prevMediums.join(', ')}</div>}</div>
-    </div>
-    <div className="utm-form-grid">
-      <div className="utm-field"><label>Campaign <span style={{color:'var(--coral)'}}>*</span></label>
-        <input className="utm-input" value={campaign} onChange={e=>setCampaign(e.target.value)} placeholder="sor-juana-lanzamiento"/>
-        {prevCampaigns.length>0&&<div className="utm-hint">Recientes: {prevCampaigns.join(', ')}</div>}</div>
-    </div>
-    <div className="utm-advanced-toggle" onClick={()=>setShowAdvanced(!showAdvanced)}>
-      {showAdvanced?'- Ocultar':'+ Mostrar'} opcionales (term, content, tags, notas)
-    </div>
-    {showAdvanced&&<>
-      <div className="utm-form-grid utm-grid-2">
-        <div className="utm-field"><label>Term</label><input className="utm-input" value={term} onChange={e=>setTerm(e.target.value)} placeholder="keyword asociado"/></div>
-        <div className="utm-field"><label>Content</label><input className="utm-input" value={content} onChange={e=>setContent(e.target.value)} placeholder="variante-a, cta-footer"/></div>
-      </div>
-      <div className="utm-form-grid">
-        <div className="utm-field"><label>Tags (separadas por coma)</label><input className="utm-input" value={tags} onChange={e=>setTags(e.target.value)} placeholder="sor-juana, hub-launch, q2-2026"/></div>
-      </div>
-      <div className="utm-form-grid">
-        <div className="utm-field"><label>Notas internas</label><input className="utm-input" value={notes} onChange={e=>setNotes(e.target.value)} placeholder="Para post de LinkedIn del miercoles"/></div>
-      </div>
-    </>}
-    {dupWarn&&<div className="utm-warn">Ya existe una UTM identica creada {formatRelTime(dupWarn.created_at)}. Al guardar se creara un duplicado.</div>}
-    {errors.length>0&&<div className="utm-err">{errors.join(' / ')}</div>}
-    <div className="utm-preview">
-      <div className="utm-preview-head"><span>Preview</span><button className="utm-copy-btn" onClick={handleCopy}>{copied?'Copiado!':'Copiar'}</button></div>
-      <code className="utm-preview-url">{previewUrl}</code>
-    </div>
-    <div className="utm-actions">
-      <button className="btn-primary" style={{padding:'8px 20px',fontSize:'12px'}} onClick={handleSave}>Guardar UTM</button>
-    </div>
-    <div className="explain">Los parametros se sluggean automaticamente (ej. "Sor Juana" - "sor-juana"). Click en Guardar para que aparezca en el dashboard y empiece a medirse.</div>
-  </div></div>);
-}
-
-// ====== UTM DASHBOARD ======
-function UtmDashboard({utms,metricsMap,onOpenDetail,onRefresh,loading}){
-  const[search,setSearch]=useState('');const[filterMedium,setFilterMedium]=useState('all');
-  const[showArchived,setShowArchived]=useState(false);const[copiedId,setCopiedId]=useState(null);
-
-  const mediums=Array.from(new Set(utms.map(u=>u.medium))).filter(Boolean);
-  const filtered=utms
-    .filter(u=>showArchived?u.archived:!u.archived)
-    .filter(u=>filterMedium==='all'||u.medium===filterMedium)
-    .filter(u=>{if(!search)return true;const s=search.toLowerCase();return(u.campaign||'').toLowerCase().includes(s)||(u.source||'').toLowerCase().includes(s)||(u.destination||'').toLowerCase().includes(s)||(u.tags||[]).some(t=>t.toLowerCase().includes(s))})
-    .sort((a,b)=>b.created_at-a.created_at);
-
-  const totals=filtered.reduce((acc,u)=>{const m=metricsMap[u.id];if(m){acc.sessions+=m.sessions||0;acc.engaged+=m.engaged||0;acc.matched++}return acc},{sessions:0,engaged:0,matched:0});
-  const avgEng=totals.sessions>0?(totals.engaged/totals.sessions*100).toFixed(0):null;
-
-  function handleCopy(u){navigator.clipboard.writeText(u.full_url).then(()=>{setCopiedId(u.id);setTimeout(()=>setCopiedId(null),1500)})}
-
-  return(<div className="panel"><div className="panel-head"><h3>UTM Dashboard</h3><span className="pill pill-purple">{filtered.length} UTM{filtered.length===1?'':'s'}</span></div><div className="panel-body">
-    <div className="utm-totals">
-      <div className="utm-total-card"><div className="utm-total-label">UTMs activas</div><div className="utm-total-val">{utms.filter(u=>!u.archived).length}</div></div>
-      <div className="utm-total-card"><div className="utm-total-label">Sessions</div><div className="utm-total-val">{fmt(totals.sessions)}</div></div>
-      <div className="utm-total-card"><div className="utm-total-label">Engagement</div><div className="utm-total-val">{avgEng?avgEng+'%':'-'}</div></div>
-      <div className="utm-total-card"><div className="utm-total-label">Con data GA4</div><div className="utm-total-val">{totals.matched}/{filtered.length}</div></div>
-    </div>
-    <div className="utm-filters">
-      <input className="utm-input" style={{flex:1,minWidth:140}} placeholder="Buscar campaign, source, tag..." value={search} onChange={e=>setSearch(e.target.value)}/>
-      {mediums.length>0&&<select className="utm-select" value={filterMedium} onChange={e=>setFilterMedium(e.target.value)}>
-        <option value="all">Todos los medium</option>{mediums.map(m=><option key={m} value={m}>{m}</option>)}
-      </select>}
-      <button className="btn-secondary" onClick={()=>setShowArchived(!showArchived)}>{showArchived?'Activas':'Archivadas'}</button>
-      <button className="btn-secondary" onClick={onRefresh} disabled={loading}>{loading?'...':'Refrescar'}</button>
-    </div>
-    {filtered.length===0?(
-      <div style={{fontSize:12,color:'var(--hint)',padding:'16px 0',textAlign:'center'}}>
-        {search||filterMedium!=='all'?'Sin UTMs que coincidan con el filtro.':showArchived?'Sin UTMs archivadas.':'Aun no tienes UTMs. Crea la primera arriba.'}
-      </div>
-    ):(
-      <div className="utm-list">
-        {filtered.map(u=>{
-          const m=metricsMap[u.id];const sessions=m?m.sessions:null;
-          const engRate=m&&m.sessions>0?(m.engaged/m.sessions*100):null;
-          return(<div className="utm-row" key={u.id} onClick={()=>onOpenDetail(u)}>
-            <div className="utm-row-main">
-              <div className="utm-row-campaign">{u.campaign}</div>
-              <div className="utm-row-meta">
-                <span className="utm-badge-src">{u.source}</span>
-                <span className="utm-badge-med">{u.medium}</span>
-                <span className="utm-row-time">{formatRelTime(u.created_at)}</span>
-              </div>
-              {u.tags&&u.tags.length>0&&<div className="utm-row-tags">{u.tags.slice(0,3).map((t,i)=><span key={i} className="utm-tag">{t}</span>)}</div>}
-            </div>
-            <div className="utm-row-metrics">
-              {sessions!==null?<>
-                <div className="utm-metric-val">{fmt(sessions)}</div>
-                <div className="utm-metric-sub">sessions</div>
-                {engRate!==null&&<div className={"utm-metric-eng "+(engRate>=60?'up':engRate>=40?'':'down')}>{engRate.toFixed(0)}% eng</div>}
-              </>:<><div className="utm-metric-val" style={{color:'var(--hint)'}}>-</div><div className="utm-metric-sub">sin data</div></>}
-            </div>
-            <div className="utm-row-actions" onClick={e=>e.stopPropagation()}>
-              <button className="row-btn" onClick={()=>handleCopy(u)}>{copiedId===u.id?'OK':'Copy'}</button>
-            </div>
-          </div>);
-        })}
-      </div>
-    )}
-    <div className="explain">Click en una fila para ver detalle. Las metricas GA4 se actualizan al refrescar.</div>
-  </div></div>);
-}
-
-// ====== UTM DETAIL CHART ======
-function UtmDetailChart({daily}){
-  const canvasRef=useRef(null);const chartRef=useRef(null);
-  useEffect(()=>{
-    if(!daily||!canvasRef.current)return;
-    if(chartRef.current)chartRef.current.destroy();
-    const ctx=canvasRef.current.getContext('2d');
-    chartRef.current=new Chart(ctx,{type:'line',data:{
-      labels:daily.map(d=>d.date.slice(5)),
-      datasets:[{label:'Sessions',data:daily.map(d=>d.sessions),borderColor:'#185FA5',backgroundColor:'rgba(24,95,165,0.08)',fill:true,tension:0.3,borderWidth:1.5,pointRadius:1,pointHitRadius:10}]
-    },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1A1A18',titleFont:{size:11,family:'DM Sans'},bodyFont:{size:11,family:'DM Sans'},padding:8,cornerRadius:8}},scales:{x:{grid:{display:false},ticks:{font:{size:10,family:'DM Sans'},color:'#9C9A92',maxTicksLimit:6}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10,family:'DM Sans'},color:'#9C9A92'},beginAtZero:true}}}});
-    return()=>{if(chartRef.current)chartRef.current.destroy()};
-  },[daily]);
-  return <div className="chart-wrap" style={{height:160}}><canvas ref={canvasRef}/></div>;
-}
-
-// ====== UTM DETAIL DRAWER ======
-function UtmDetailDrawer({utm,onClose,ga4Fetch,period,onDelete,onArchive}){
-  const[loading,setLoading]=useState(true);const[metrics,setMetrics]=useState(null);
-  const[daily,setDaily]=useState(null);const[topPages,setTopPages]=useState(null);const[devices,setDevices]=useState(null);
-  const[showQr,setShowQr]=useState(false);const[copied,setCopied]=useState(false);const[confirmDel,setConfirmDel]=useState(false);
-
-  useEffect(()=>{
-    if(!ga4Fetch||!utm)return;
-    (async()=>{
-      setLoading(true);const sd=daysAgo(period),ed=daysAgo(1);
-      const dimFilter={andGroup:{expressions:[
-        {filter:{fieldName:'sessionCampaignName',stringFilter:{value:slugify(utm.campaign)}}},
-        {filter:{fieldName:'sessionSource',stringFilter:{value:slugify(utm.source)}}},
-        {filter:{fieldName:'sessionMedium',stringFilter:{value:slugify(utm.medium)}}}
-      ]}};
-      try{
-        const[totals,dailyResp,pagesResp,devResp]=await Promise.all([
-          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],metrics:[{name:'sessions'},{name:'engagedSessions'},{name:'averageSessionDuration'},{name:'conversions'}],dimensionFilter:dimFilter}),
-          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'date'}],metrics:[{name:'sessions'}],dimensionFilter:dimFilter,orderBys:[{dimension:{dimensionName:'date'}}]}),
-          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'landingPage'}],metrics:[{name:'sessions'}],dimensionFilter:dimFilter,orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:5}),
-          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'deviceCategory'}],metrics:[{name:'sessions'}],dimensionFilter:dimFilter})
-        ]);
-        if(totals&&totals.rows&&totals.rows[0]){
-          const mv=totals.rows[0].metricValues;
-          setMetrics({sessions:parseInt(mv[0].value),engaged:parseInt(mv[1].value),avgDur:parseFloat(mv[2].value),conversions:parseInt(mv[3].value)});
-        }else{setMetrics({sessions:0,engaged:0,avgDur:0,conversions:0})}
-        if(dailyResp&&dailyResp.rows){
-          setDaily(dailyResp.rows.map(r=>{const d=r.dimensionValues[0].value;return{date:d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8),sessions:parseInt(r.metricValues[0].value)}}));
-        }
-        if(pagesResp&&pagesResp.rows){
-          const total=pagesResp.rows.reduce((s,r)=>s+parseInt(r.metricValues[0].value),0);
-          setTopPages(pagesResp.rows.map(r=>({page:r.dimensionValues[0].value,sessions:parseInt(r.metricValues[0].value),pct:total>0?(parseInt(r.metricValues[0].value)/total*100):0})));
-        }
-        if(devResp&&devResp.rows){
-          const total=devResp.rows.reduce((s,r)=>s+parseInt(r.metricValues[0].value),0);
-          setDevices(devResp.rows.map(r=>({device:r.dimensionValues[0].value,sessions:parseInt(r.metricValues[0].value),pct:total>0?(parseInt(r.metricValues[0].value)/total*100):0})));
-        }
-      }catch(e){console.warn('UTM detail error:',e.message)}
-      setLoading(false);
-    })();
-  },[utm,ga4Fetch,period]);
-
-  function handleCopy(){navigator.clipboard.writeText(utm.full_url).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),1500)})}
-  function handleArchive(){if(onArchive)onArchive(utm.id);onClose()}
-  function handleDelete(){if(!confirmDel){setConfirmDel(true);setTimeout(()=>setConfirmDel(false),3000);return}if(onDelete)onDelete(utm.id);onClose()}
-
-  const convRate=metrics&&metrics.sessions>0?(metrics.conversions/metrics.sessions*100).toFixed(1):'0';
-  const engRate=metrics&&metrics.sessions>0?(metrics.engaged/metrics.sessions*100).toFixed(0):null;
-  const durMin=metrics?Math.floor(metrics.avgDur/60):0;
-  const durSec=metrics?Math.floor(metrics.avgDur%60):0;
-
-  return ReactDOM.createPortal(
-    <div className="drawer-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
-      <div className="drawer">
-        <div className="drawer-handle" onClick={onClose}><span/></div>
-        <div className="drawer-header">
-          <h2>{utm.campaign}</h2>
-          <div style={{fontSize:11,color:'var(--hint)',marginTop:4}}>{utm.source} / {utm.medium} / creada {formatRelTime(utm.created_at)}</div>
-        </div>
-        <div className="drawer-body">
-          {utm.tags&&utm.tags.length>0&&<div style={{marginBottom:10,display:'flex',gap:4,flexWrap:'wrap'}}>
-            {utm.tags.map((t,i)=><span key={i} className="utm-tag">{t}</span>)}
-          </div>}
-          <div className="utm-url-box">
-            <div className="utm-url-label">URL completa</div>
-            <code className="utm-preview-url" style={{fontSize:11}}>{utm.full_url}</code>
-            <div style={{display:'flex',gap:6,marginTop:8}}>
-              <button className="btn-primary" style={{padding:'6px 14px',fontSize:11}} onClick={handleCopy}>{copied?'Copiado!':'Copiar URL'}</button>
-              <button className="btn-secondary" onClick={()=>setShowQr(!showQr)}>{showQr?'Ocultar QR':'Ver QR'}</button>
-            </div>
-            {showQr&&<div style={{marginTop:10,textAlign:'center',padding:10,background:'var(--surface)',borderRadius:8}}>
-              <img src={genQrUrl(utm.full_url,140)} alt="QR code" style={{width:140,height:140}}/>
-              <div style={{fontSize:10,color:'var(--hint)',marginTop:6}}>Click derecho / Guardar imagen</div>
-            </div>}
-          </div>
-          {utm.notes&&<div style={{margin:'10px 0',padding:'8px 12px',background:'var(--surface-alt)',borderRadius:8,fontSize:12,color:'var(--muted)',lineHeight:1.5}}>
-            <div style={{fontSize:10,fontWeight:600,color:'var(--hint)',marginBottom:4,textTransform:'uppercase',letterSpacing:0.5}}>Notas</div>
-            {utm.notes}
-          </div>}
-          {loading?<div className="loading"><div className="spinner"/>Cargando metricas GA4...</div>:<>
-            <div className="drawer-stats">
-              <div className="stat"><div className="stat-label">Sessions</div><div className="stat-val">{metrics?fmt(metrics.sessions):'-'}</div></div>
-              <div className="stat"><div className="stat-label">Engagement</div><div className="stat-val">{engRate?engRate+'%':'-'}</div></div>
-              <div className="stat"><div className="stat-label">Duracion</div><div className="stat-val">{metrics&&metrics.avgDur>0?durMin+':'+(durSec<10?'0'+durSec:durSec):'-'}</div></div>
-              <div className="stat"><div className="stat-label">Conversions</div><div className="stat-val">{metrics?fmt(metrics.conversions):'-'}</div><div className="stat-chg">{convRate}% rate</div></div>
-            </div>
-            {daily&&daily.length>0&&<div style={{marginTop:14}}>
-              <div className="diag-title">Sessions por dia</div>
-              <UtmDetailChart daily={daily}/>
-            </div>}
-            {metrics&&metrics.sessions===0&&!loading&&<div className="utm-warn" style={{marginTop:12}}>
-              Sin data en GA4 para este periodo. La UTM puede ser muy nueva, el trafico aun no ha llegado, o los parametros tienen un typo que GA4 no esta matcheando. GA4 necesita 24-48h para procesar sessions con parametros UTM.
-            </div>}
-            {topPages&&topPages.length>0&&<div className="diag-section">
-              <div className="diag-title">Top landing pages</div>
-              {topPages.map((p,i)=><div key={i} style={{marginBottom:8}}>
-                <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
-                  <code style={{fontSize:11,color:'var(--text)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'70%'}}>{p.page}</code>
-                  <span style={{fontSize:11,fontWeight:500}}>{p.sessions}</span>
-                </div>
-                <div style={{height:4,background:'var(--surface-alt)',borderRadius:2,overflow:'hidden'}}>
-                  <div style={{height:'100%',width:p.pct+'%',background:'var(--blue)'}}/>
-                </div>
-              </div>)}
-            </div>}
-            {devices&&devices.length>0&&<div className="diag-section">
-              <div className="diag-title">Dispositivo</div>
-              {devices.map((dv,i)=><div key={i} style={{marginBottom:8}}>
-                <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
-                  <span style={{fontSize:12,textTransform:'capitalize'}}>{dv.device}</span>
-                  <span style={{fontSize:11,fontWeight:500}}>{dv.pct.toFixed(0)}%</span>
-                </div>
-                <div style={{height:4,background:'var(--surface-alt)',borderRadius:2,overflow:'hidden'}}>
-                  <div style={{height:'100%',width:dv.pct+'%',background:'var(--green)'}}/>
-                </div>
-              </div>)}
-            </div>}
-            <div style={{marginTop:16,display:'flex',gap:8,flexWrap:'wrap'}}>
-              <button className="btn-secondary" onClick={handleArchive}>{utm.archived?'Desarchivar':'Archivar'}</button>
-              <button className="btn-secondary" style={{color:'var(--coral)',borderColor:confirmDel?'var(--coral)':'var(--border)'}} onClick={handleDelete}>{confirmDel?'Seguro? Click de nuevo':'Eliminar'}</button>
-              <button className="btn-secondary" style={{marginLeft:'auto'}} onClick={onClose}>Cerrar</button>
-            </div>
-          </>}
-        </div>
-      </div>
-    </div>,document.body);
-}
-
-// ====== OUTBOUND CLICKS ======
-// Mide clicks salientes desde tu site (GA4 Enhanced Measurement captura esto auto)
-function OutboundClicks({ga4Fetch,period}){
-  const[loading,setLoading]=useState(true);
-  const[domains,setDomains]=useState(null);
-  const[error,setError]=useState(null);
-  const[selectedDomain,setSelectedDomain]=useState(null);
-  const[domainDetail,setDomainDetail]=useState(null);
-  const[detailLoading,setDetailLoading]=useState(false);
-
-  const fetchDomains=useCallback(async()=>{
-    if(!ga4Fetch)return;
-    setLoading(true);setError(null);
-    const sd=daysAgo(period),ed=daysAgo(1);
-    try{
-      const resp=await ga4Fetch({
-        dateRanges:[{startDate:sd,endDate:ed}],
-        dimensions:[{name:'linkDomain'}],
-        metrics:[{name:'eventCount'}],
-        dimensionFilter:{filter:{fieldName:'eventName',stringFilter:{value:'click'}}},
-        orderBys:[{metric:{metricName:'eventCount'},desc:true}],
-        limit:50
-      });
-      if(resp&&resp.rows){
-        const rows=resp.rows.map(r=>({domain:r.dimensionValues[0].value||'(not set)',clicks:parseInt(r.metricValues[0].value)})).filter(r=>r.domain&&r.domain!=='(not set)');
-        setDomains(rows);
-      }else{setDomains([])}
-    }catch(e){setError(e.message);console.warn('Outbound error:',e.message)}
-    setLoading(false);
-  },[ga4Fetch,period]);
-
-  useEffect(()=>{fetchDomains()},[fetchDomains]);
-
-  const openDomainDetail=async(domain)=>{
-    setSelectedDomain(domain);setDetailLoading(true);setDomainDetail(null);
-    const sd=daysAgo(period),ed=daysAgo(1);
-    try{
-      const[pagesResp,urlsResp,dailyResp]=await Promise.all([
-        ga4Fetch({
-          dateRanges:[{startDate:sd,endDate:ed}],
-          dimensions:[{name:'pagePath'}],
-          metrics:[{name:'eventCount'}],
-          dimensionFilter:{andGroup:{expressions:[
-            {filter:{fieldName:'eventName',stringFilter:{value:'click'}}},
-            {filter:{fieldName:'linkDomain',stringFilter:{value:domain}}}
-          ]}},
-          orderBys:[{metric:{metricName:'eventCount'},desc:true}],
-          limit:10
-        }),
-        ga4Fetch({
-          dateRanges:[{startDate:sd,endDate:ed}],
-          dimensions:[{name:'linkUrl'}],
-          metrics:[{name:'eventCount'}],
-          dimensionFilter:{andGroup:{expressions:[
-            {filter:{fieldName:'eventName',stringFilter:{value:'click'}}},
-            {filter:{fieldName:'linkDomain',stringFilter:{value:domain}}}
-          ]}},
-          orderBys:[{metric:{metricName:'eventCount'},desc:true}],
-          limit:10
-        }),
-        ga4Fetch({
-          dateRanges:[{startDate:sd,endDate:ed}],
-          dimensions:[{name:'date'}],
-          metrics:[{name:'eventCount'}],
-          dimensionFilter:{andGroup:{expressions:[
-            {filter:{fieldName:'eventName',stringFilter:{value:'click'}}},
-            {filter:{fieldName:'linkDomain',stringFilter:{value:domain}}}
-          ]}},
-          orderBys:[{dimension:{dimensionName:'date'}}]
-        })
-      ]);
-      const detail={pages:[],urls:[],daily:[]};
-      if(pagesResp&&pagesResp.rows){detail.pages=pagesResp.rows.map(r=>({page:r.dimensionValues[0].value,clicks:parseInt(r.metricValues[0].value)}))}
-      if(urlsResp&&urlsResp.rows){detail.urls=urlsResp.rows.map(r=>({url:r.dimensionValues[0].value,clicks:parseInt(r.metricValues[0].value)}))}
-      if(dailyResp&&dailyResp.rows){detail.daily=dailyResp.rows.map(r=>{const d=r.dimensionValues[0].value;return{date:d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8),clicks:parseInt(r.metricValues[0].value)}})}
-      setDomainDetail(detail);
-    }catch(e){console.warn('Domain detail error:',e.message)}
-    setDetailLoading(false);
-  };
-
-  const closeDomainDetail=()=>{setSelectedDomain(null);setDomainDetail(null)};
-
-  // Iconos/colores por tipo de dominio conocido
-  const domainType=(d)=>{
-    if(/substack\.com/.test(d))return{label:'newsletter',color:'coral'};
-    if(/linkedin\.com/.test(d))return{label:'social',color:'blue'};
-    if(/twitter\.com|x\.com/.test(d))return{label:'social',color:'blue'};
-    if(/facebook\.com|instagram\.com|tiktok\.com/.test(d))return{label:'social',color:'purple'};
-    if(/amazon\.|mercadolibre\./.test(d))return{label:'afiliado',color:'amber'};
-    if(/youtube\.com|vimeo\.com/.test(d))return{label:'video',color:'red'};
-    if(/spotify\.com|apple\.com/.test(d))return{label:'media',color:'green'};
-    return{label:'externo',color:'blue'};
-  };
-
-  const totalClicks=domains?domains.reduce((s,d)=>s+d.clicks,0):0;
-  const maxClicks=domains&&domains[0]?domains[0].clicks:1;
-
-  return(<div className="panel"><div className="panel-head">
-    <h3>Clicks salientes</h3>
-    <span className="pill pill-amber">GA4 outbound</span>
-  </div><div className="panel-body">
-
-    {error&&<div className="utm-err">{error} — Verifica que Enhanced Measurement esté activo en GA4 (Admin - Data Streams - tu stream).</div>}
-
-    {loading?<div className="loading"><div className="spinner"/>Cargando clicks salientes...</div>:<>
-
-      {domains&&domains.length===0&&<div style={{fontSize:12,color:'var(--hint)',padding:'12px 0',textAlign:'center'}}>
-        Sin clicks salientes registrados en este período. GA4 necesita Enhanced Measurement activo (default) para capturar esto.
-      </div>}
-
-      {domains&&domains.length>0&&<>
-        <div style={{display:'flex',alignItems:'baseline',gap:8,marginBottom:10}}>
-          <span style={{fontFamily:'var(--serif)',fontSize:22,color:'var(--text)'}}>{fmt(totalClicks)}</span>
-          <span style={{fontSize:11,color:'var(--hint)'}}>clicks hacia {domains.length} dominios externos en {period}d</span>
-        </div>
-
-        {domains.map((d,i)=>{
-          const t=domainType(d.domain);
-          const pct=Math.round(d.clicks/maxClicks*100);
-          return(<div className="utm-row" key={i} onClick={()=>openDomainDetail(d.domain)}>
-            <div className="utm-row-main">
-              <div className="utm-row-campaign">{d.domain}</div>
-              <div className="utm-row-meta">
-                <span className={"pill pill-"+t.color} style={{fontSize:9,padding:'2px 7px'}}>{t.label}</span>
-                <div style={{flex:1,height:4,background:'var(--surface-alt)',borderRadius:2,overflow:'hidden',marginLeft:4}}>
-                  <div style={{height:'100%',width:pct+'%',background:'var(--amber)'}}/>
-                </div>
-              </div>
-            </div>
-            <div className="utm-row-metrics">
-              <div className="utm-metric-val">{fmt(d.clicks)}</div>
-              <div className="utm-metric-sub">clicks</div>
-            </div>
-          </div>);
-        })}
-
-        <div className="explain">GA4 Enhanced Measurement captura cada click hacia dominios externos automáticamente. Click en un dominio para ver desde qué páginas salen más clicks.</div>
-      </>}
-
-    </>}
-
-    {selectedDomain&&ReactDOM.createPortal(
-      <div className="drawer-overlay" onClick={e=>{if(e.target===e.currentTarget)closeDomainDetail()}}>
-        <div className="drawer">
-          <div className="drawer-handle" onClick={closeDomainDetail}><span/></div>
-          <div className="drawer-header">
-            <h2>{selectedDomain}</h2>
-            <div style={{fontSize:11,color:'var(--hint)',marginTop:4}}>Clicks salientes en últimos {period} días</div>
-          </div>
-          <div className="drawer-body">
-            {detailLoading?<div className="loading"><div className="spinner"/>Cargando detalle...</div>:domainDetail?<>
-
-              {domainDetail.daily&&domainDetail.daily.length>0&&<div style={{marginBottom:14}}>
-                <div className="diag-title">Clicks por día</div>
-                <UtmDetailChart daily={domainDetail.daily.map(d=>({date:d.date,sessions:d.clicks}))}/>
-              </div>}
-
-              {domainDetail.pages&&domainDetail.pages.length>0&&<div className="diag-section">
-                <div className="diag-title">Páginas de origen (top 10)</div>
-                <div style={{fontSize:11,color:'var(--hint)',marginBottom:8}}>Desde qué páginas de tu site salen más clicks hacia este dominio</div>
-                {domainDetail.pages.map((p,i)=>{
-                  const maxP=domainDetail.pages[0].clicks;
-                  return(<div key={i} style={{marginBottom:8}}>
-                    <div style={{display:'flex',justifyContent:'space-between',marginBottom:3,gap:8}}>
-                      <code style={{fontSize:11,color:'var(--text)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',flex:1,minWidth:0}}>{p.page}</code>
-                      <span style={{fontSize:11,fontWeight:500,flexShrink:0}}>{p.clicks}</span>
-                    </div>
-                    <div style={{height:4,background:'var(--surface-alt)',borderRadius:2,overflow:'hidden'}}>
-                      <div style={{height:'100%',width:(p.clicks/maxP*100)+'%',background:'var(--amber)'}}/>
-                    </div>
-                  </div>);
-                })}
-              </div>}
-
-              {domainDetail.urls&&domainDetail.urls.length>0&&<div className="diag-section">
-                <div className="diag-title">URLs específicas clickeadas (top 10)</div>
-                {domainDetail.urls.map((u,i)=><div key={i} className="diag-item" style={{padding:'6px 10px'}}>
-                  <div style={{display:'flex',justifyContent:'space-between',gap:8,alignItems:'center'}}>
-                    <code style={{fontSize:11,color:'var(--text)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',flex:1,minWidth:0}}>{u.url}</code>
-                    <span style={{fontSize:11,fontWeight:500,flexShrink:0}}>{u.clicks}</span>
-                  </div>
-                </div>)}
-              </div>}
-
-              <div className="utm-warn" style={{marginTop:14}}>
-                <strong>Importante:</strong> Esto mide <em>intención</em> (clicks salientes), no <em>conversión</em>. Para saber cuántos de estos clicks se convirtieron en suscripciones/ventas/etc., necesitas mirar las stats nativas del dominio destino (ej. Substack stats).
-              </div>
-
-              <div style={{marginTop:16,display:'flex',justifyContent:'flex-end'}}>
-                <button className="btn-secondary" onClick={closeDomainDetail}>Cerrar</button>
-              </div>
-            </>:<div style={{padding:20,textAlign:'center',color:'var(--hint)'}}>Sin datos para este dominio.</div>}
-          </div>
-        </div>
-      </div>,document.body)}
-
-  </div></div>);
-}
-
-// ====== URL INSPECTION (Index tab) ======
-function mapInspect(json,url){
-  const r=(json&&json.inspectionResult)||{};const i=r.indexStatusResult||{};const rr=r.richResultsResult||{};
-  return {url,verdict:i.verdict||null,coverageState:i.coverageState||'',robotsTxtState:i.robotsTxtState||'',
-    indexingState:i.indexingState||'',lastCrawlTime:i.lastCrawlTime||null,googleCanonical:i.googleCanonical||'',
-    userCanonical:i.userCanonical||'',crawledAs:i.crawledAs||'',richTypes:(rr.detectedItems||[]).map(d=>d.richResultType),
-    link:r.inspectionResultLink||'',ts:Date.now()};
-}
-function classifyInspect(p){
-  const m=p.googleCanonical&&p.userCanonical&&p.googleCanonical!==p.userCanonical;
-  if(m)return{key:'canon',label:'Canonical distinto al declarado',cls:'s-lo',tag:'CANON'};
-  if(p.verdict==='PASS')return{key:'ok',label:'Indexada',cls:'s-hi',tag:'IX'};
-  if(p.verdict==='NEUTRAL')return{key:'excl',label:p.coverageState||'Excluida',cls:'s-md',tag:'NO-IX'};
-  if(p.verdict==='FAIL')return{key:'fail',label:p.coverageState||'Error',cls:'s-lo',tag:'FAIL'};
-  return{key:'unk',label:p.coverageState||'Sin datos',cls:'s-md',tag:'?'};
-}
-function InspectDrawer({data,onClose}){
-  if(!data)return null;
-  const c=classifyInspect(data);
-  const m=data.googleCanonical&&data.userCanonical&&data.googleCanonical!==data.userCanonical;
-  return ReactDOM.createPortal(
-    <div onClick={onClose} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.4)',display:'flex',alignItems:'flex-end',justifyContent:'center',zIndex:200}}>
-      <div className="drawer" onClick={e=>e.stopPropagation()}>
-        <div className="drawer-handle" onClick={onClose}><span/></div>
-        <div className="drawer-header"><h2>{c.label}</h2><div className="drawer-url">{data.url}</div></div>
-        <div style={{padding:'12px 18px 24px'}}>
-          <div className={"diag-item "+(c.key==='ok'?'diag-ok':c.key==='canon'?'diag-urgent':'diag-warn')} style={{marginBottom:10}}>{data.coverageState||'Sin estado de cobertura'}</div>
-          <div style={{fontSize:12,color:'var(--muted)',lineHeight:2}}>
-            <div>robots.txt: <strong style={{color:'var(--text)'}}>{data.robotsTxtState||'—'}</strong></div>
-            <div>Indexación: <strong style={{color:'var(--text)'}}>{data.indexingState||'—'}</strong></div>
-            <div>Último rastreo: <strong style={{color:'var(--text)'}}>{data.lastCrawlTime?new Date(data.lastCrawlTime).toLocaleString():'—'}</strong>{data.crawledAs?' ('+data.crawledAs+')':''}</div>
-          </div>
-          <div className="setup-note" style={{marginTop:12}}>
-            <h3>Canonical</h3>
-            <div style={{fontSize:12,lineHeight:1.9,wordBreak:'break-all'}}>
-              <div>Tú declaras: <code>{data.userCanonical||'—'}</code></div>
-              <div>Google eligió: <code>{data.googleCanonical||'(igual al declarado)'}</code></div>
-            </div>
-          </div>
-          <div className={"diag-item "+(m?'diag-urgent':'diag-ok')} style={{marginTop:8}}>{m?'Google eligió otra URL como canónica — esta página pierde su señal.':'Google respeta tu canonical.'}</div>
-          <div style={{marginTop:14,fontSize:11,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--muted)',marginBottom:7}}>Rich results detectados por Google</div>
-          {data.richTypes.length?data.richTypes.map((t,i)=><span key={i} className="pill pill-green" style={{marginRight:6,marginBottom:6,display:'inline-block'}}>{t}</span>):<span style={{fontSize:12,color:'var(--hint)'}}>Ninguno detectado (no implica markup roto: Google restringió FAQ desde 2023).</span>}
-          {data.link&&<div style={{marginTop:16}}><a href={data.link} target="_blank" rel="noopener" className="btn-secondary" style={{textDecoration:'none',display:'inline-block'}}>Abrir en Search Console &rarr;</a></div>}
-        </div>
-      </div>
-    </div>,document.body);
-}
-function IndexTab({gscFn,inspectFn,config}){
-  const [watch,setWatch]=useState([]);
-  const [res,setRes]=useState(()=>{try{return JSON.parse(localStorage.getItem('sp2_inspect')||'{}')}catch{return{}}});
-  const [loading,setLoading]=useState(false);
-  const [manual,setManual]=useState('');
-  const [sel,setSel]=useState(null);
-  const [err,setErr]=useState(null);
-  const [progress,setProgress]=useState(null);
-  useEffect(()=>{let on=true;(async()=>{try{const r=await gscFn({startDate:daysAgo(28),endDate:daysAgo(1),dimensions:['page'],type:'web',rowLimit:25});if(on&&r&&r.rows)setWatch(r.rows.map(x=>x.keys[0]))}catch(e){}})();return()=>{on=false}},[]);
-  const save=(obj)=>{setRes(obj);try{localStorage.setItem('sp2_inspect',JSON.stringify(obj))}catch{}};
-  async function runBatch(){const list=watch.slice(0,20);setLoading(true);setErr(null);let out={...res};for(let k=0;k<list.length;k++){setProgress((k+1)+'/'+list.length);try{const j=await inspectFn(list[k]);out={...out,[list[k]]:mapInspect(j,list[k])};save(out)}catch(e){setErr(e.message)}await new Promise(r=>setTimeout(r,200))}setProgress(null);setLoading(false)}
-  async function runOne(){let u=manual.trim();if(!u)return;if(!/^https?:\/\//.test(u))u='https://'+u.replace(/^\/+/,'');setLoading(true);setErr(null);try{const j=await inspectFn(u);const p=mapInspect(j,u);save({...res,[u]:p});setSel(p)}catch(e){setErr(e.message)}setLoading(false)}
-  const items=watch.map(u=>res[u]).filter(Boolean);
-  const ix=items.filter(p=>classifyInspect(p).key==='ok').length;
-  const canon=items.filter(p=>p.googleCanonical&&p.userCanonical&&p.googleCanonical!==p.userCanonical).length;
-  const notIx=items.filter(p=>{const k=classifyInspect(p).key;return k==='excl'||k==='fail'}).length;
-  const probs=items.filter(p=>classifyInspect(p).key!=='ok');
-  return(<>
-    <div className="panel"><div className="panel-head"><h3>Inspeccionar URL</h3><span className="pill pill-blue">URL Inspection API</span></div><div className="panel-body">
-      <div style={{display:'flex',gap:8}}>
-        <input style={{flex:1,padding:'9px 12px',borderRadius:8,border:'1px solid var(--border)',fontSize:13,fontFamily:'var(--sans)',background:'var(--surface)',color:'var(--text)'}} placeholder="paislector.com/..." value={manual} onChange={e=>setManual(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')runOne()}}/>
-        <button className="btn-primary" onClick={runOne} disabled={loading}>{loading?'...':'Inspeccionar'}</button>
-      </div>
-      <div className="explain">Watchlist: {watch.length} páginas top de GSC. Límite de la API ~2.000 URLs/día.</div>
-      <button className="btn-secondary" style={{marginTop:8}} onClick={runBatch} disabled={loading||watch.length===0}>{loading&&progress?'Revisando '+progress:'Revisar watchlist ('+Math.min(watch.length,20)+')'}</button>
-    </div></div>
-    {err&&<div className="error-msg">{err}</div>}
-    {items.length>0&&<div className="stats">
-      <div className="stat"><div className="stat-label">Indexadas</div><div className="stat-val">{ix}/{items.length}</div></div>
-      <div className="stat"><div className="stat-label">Sin indexar</div><div className="stat-val">{notIx}</div></div>
-      <div className="stat"><div className="stat-label">Canonical conflicto</div><div className="stat-val">{canon}</div></div>
-      <div className="stat"><div className="stat-label">Revisadas</div><div className="stat-val">{items.length}</div></div>
-    </div>}
-    {probs.length>0&&<div className="panel"><div className="panel-head"><h3>Requieren atencion</h3><span className="pill pill-coral">{probs.length}</span></div><div className="panel-body">
-      {probs.map((p,i)=>{const c=classifyInspect(p);return <div className="row" key={i} onClick={()=>setSel(p)}><div className="row-left"><div className="row-kw">{shortPath(p.url)}</div><div className="row-meta">{c.label}{p.lastCrawlTime?' / rastreo '+new Date(p.lastCrawlTime).toLocaleDateString():''}</div></div><span className={"score "+c.cls}>{c.tag}</span></div>})}
-    </div></div>}
-    {items.length>0&&<div className="panel"><div className="panel-head"><h3>Watchlist</h3><span className="pill pill-blue">{items.length}</span></div><div className="panel-body">
-      {items.map((p,i)=>{const c=classifyInspect(p);return <div className="row" key={i} onClick={()=>setSel(p)}><div className="row-left"><div className="row-kw">{shortPath(p.url)}</div><div className="row-meta">{c.label}{p.richTypes.length?' / '+p.richTypes.join(', '):''}</div></div><span className={"score "+c.cls}>{c.tag}</span></div>})}
-      <div className="explain">Indexacion, canonical elegido por Google y schema detectado &mdash; verificado desde el lado de Google.</div>
-    </div></div>}
-    <InspectDrawer data={sel} onClose={()=>setSel(null)}/>
-  </>);
-}
-
-// ====== AUDITORÍA (checklist + reporte + etapa) ======
-const AUDIT_GROUPS=[
-  {label:"Técnico — higiene", items:[
-    {id:"sitemap", t:"Sitemap.xml presente y enviado a GSC", sig:null, def:"ok"},
-    {id:"ssl", t:"SSL / HTTPS activo y sin mixed content", sig:null, def:"ok"},
-    {id:"mobile", t:"Mobile-friendly / responsive", sig:null, def:"ok"},
-    {id:"speed", t:"Velocidad (Core Web Vitals) aceptable", sig:null, def:"ok"},
-    {id:"errors", t:"Sin 404s ni cadenas de redirect rotas", sig:null, def:"na"},
-  ]},
-  {label:"Acceso + fundamentos", items:[
-    {id:"acceso_crawlers_ia", t:"robots.txt permite crawlers de IA", sig:"acceso_crawlers_ia", def:"ok"},
-    {id:"render_server_side", t:"Contenido crítico server-side (no tras JS)", sig:"render_server_side", def:"ok"},
-    {id:"indexable", t:"Indexable (sin noindex accidental)", sig:"indexable", def:"ok"},
-    {id:"meta_basico_ok", t:"Meta básico: title / description / lang", sig:"meta_basico_ok", def:"ok"},
-    {id:"canonical_sin_duplicado", t:"Canonical sin duplicado ni competido", sig:"canonical_sin_duplicado", def:"no"},
-    {id:"headings_jerarquia_ok", t:"Jerarquía H1–H3 limpia (un H1)", sig:"headings_jerarquia_ok", def:"ok"},
-    {id:"taxonomia_limpia", t:"Taxonomía / URLs limpias", sig:"taxonomia_limpia", def:"ok"},
-  ]},
-  {label:"Schema (JSON-LD)", items:[
-    {id:"schema_en_pila", t:"Schema en pila (Article/ItemList/FAQPage/Person)", sig:"schema_en_pila", def:"ok"},
-    {id:"schema_sin_duplicados", t:"Sin schema duplicado (regla de oro #1)", sig:"schema_sin_duplicados", def:"ok"},
-    {id:"entidad_sameas", t:"sameAs en entidades (Wikipedia/Wikidata)", sig:"entidad_sameas", def:"ok"},
-  ]},
-  {label:"Contenido GEO", items:[
-    {id:"answer_first", t:"Aperturas answer-first (150–200 tokens)", sig:"answer_first", def:"no"},
-    {id:"densidad_factual", t:"Densidad factual: cifras + fuentes + citas", sig:"densidad_factual", def:"ok"},
-    {id:"faq_presente", t:"Bloque FAQ presente", sig:"faq_presente", def:"ok"},
-    {id:"formato_estructurado", t:"Formato estructurado / listas extraíbles", sig:"formato_estructurado", def:"ok"},
-    {id:"frescura", t:"Frescura: dateModified real + refresco", sig:"frescura", def:"ok"},
-  ]},
-  {label:"Autoridad + medición", items:[
-    {id:"autor_acreditado", t:"Autor acreditado e identificable (E-E-A-T)", sig:"autor_acreditado", def:"ok"},
-    {id:"earned_media", t:"Earned media / menciones multi-dominio", sig:"earned_media", def:"no"},
-    {id:"share_of_model", t:"Share of Model corriendo", sig:"share_of_model", def:"no"},
-    {id:"utm_tracking", t:"Tracking UTM vivo", sig:"utm_tracking", def:"ok"},
-    {id:"refresco_trimestral", t:"Calendario de refresco trimestral", sig:"refresco_trimestral", def:"no"},
-    {id:"alerting_anomalias", t:"Alerting de anomalías sobre baseline", sig:"alerting_anomalias", def:"no"},
-  ]},
-];
-function auditDefaults(){const init={};AUDIT_GROUPS.forEach(g=>g.items.forEach(it=>{init[it.id]={estado:it.def,nota:""}}));return init;}
-function deriveSignals(state){
-  const s={};
-  AUDIT_GROUPS.forEach(g=>g.items.forEach(it=>{if(it.sig)s[it.sig]=((state[it.id]&&state[it.id].estado)==="ok")}));
-  const geo=["answer_first","densidad_factual","faq_presente","formato_estructurado","frescura"];
-  s.geo_score=Math.round(100*geo.filter(k=>s[k]).length/geo.length);
-  return s;
-}
-function loadAuditSignals(){
-  try{const a=JSON.parse(localStorage.getItem('sp2_audit')||'null');if(a)return deriveSignals(a);}catch(e){}
-  return deriveSignals(auditDefaults());
-}
-const AUDIT_SAMPLE={
-  totals:{clicks:"12.4K",impr:"388K",ctr:"3.2%",pos:"18.3"},
-  bucket:{top3:9,p4_10:34,p11_20:88,total:412},
-  topKw:[{kw:"poemas de amor cortos",clicks:1840,pos:4.2},{kw:"sor juana inés de la cruz poemas",clicks:1210,pos:2.8},{kw:"sylvia plath poemas",clicks:880,pos:6.1},{kw:"jaime sabines poemas",clicks:640,pos:5.4},{kw:"alejandra pizarnik frases",clicks:520,pos:9.3}],
-  topPages:[{p:"/poemas-de-amor/",clicks:2310},{p:"/sor-juana/redondillas/",clicks:1490},{p:"/sylvia-plath/",clicks:1020},{p:"/jaime-sabines/los-amorosos/",clicks:870},{p:"/pizarnik/",clicks:610}],
-  topSites:[{d:"google.com",v:"orgánico",clicks:9800},{d:"open.substack.com",v:"newsletter",clicks:1120},{d:"facebook.com",v:"social",clicks:540},{d:"t.co",v:"social",clicks:210},{d:"bing.com",v:"orgánico",clicks:160}],
+export const config = { runtime: 'edge' };
+
+// ---------- Modelos permitidos ----------
+const MODELS = {
+  haiku: 'claude-haiku-5-5',
+  sonnet: 'claude-sonnet-5-5',
+  opus: 'claude-opus-5-5',
 };
-function AudSeg({val,onChange}){
-  const opt=[["ok","✓"],["no","✗"],["na","N/A"]];
-  return(<div className="seg">{opt.map(([k,lab])=><button key={k} className={val===k?("on-"+k):""} onClick={()=>onChange(k)}>{lab}</button>)}</div>);
+
+// ---------- Plantillas de País Lector para briefs ----------
+const BRIEF_TEMPLATES = {
+  resena: {
+    nombre: 'Reseña (cuento o novela)',
+    spec: [
+      '- URL tipo: /resena-de-[titulo]-de-[autor]/ o /[titulo]-de-[autor]/. Categoría: Reseñas (o Novelas/Cuentos según el caso).',
+      '- Antetítulo: "Reseña · Cuento|Novela · [año de publicación]".',
+      '- H1 en uno de estos moldes: "*Título* de Autor: de qué trata y por qué no lo olvidarás" o "Reseña de *Título* de Autor".',
+      '- Bajada de 2-3 oraciones bajo el H1 (promesa honesta, "sin academia").',
+      '- Intro de 2 párrafos en primera persona del editor (Andrés Rendón): gancho + a quién le sirve la reseña.',
+      '- Ficha "Datos esenciales" (cada valor marcado [VERIFICAR]): Autor, Título u Original, Publicado, Publicación/Editorial original, Libro recopilatorio (si es cuento), Género, Extensión, Idioma original, Dificultad (nivel + motivo), Traducción (si aplica), Vida autor, Tema dominante o Premios, Tiempo de lectura.',
+      '- Índice FIJO de 6 secciones, numeradas 01-06: 01 ¿De qué trata *X*? · 02 ¿Vale la pena leerlo/a? · 03 ¿Qué lo/la hace especial? · 04 ¿Por qué importa en [año en curso]? · 05 ¿Dónde leer *X* completo/a? · 06 El veredicto.',
+      '- 01: H2 "De qué trata *X* de Autor"; 3 párrafos de sinopsis sin spoilers grandes + cita destacada [PEGAR CITA — fuente].',
+      '- 02: H2 "¿Vale la pena leer *X* hoy?"; 3-4 párrafos, respuesta directa en la primera línea.',
+      '- 03: H2 con gancho ("Por qué ... sigue obsesionando lectores"); exactamente 3 razones numeradas 01-03 como H3, un párrafo cada una.',
+      '- 04: H2 "Por qué *X* sigue siendo vigente en [año]"; conexión con el presente (2-3 párrafos).',
+      '- 05: H2 "Dónde leer..." + botón. Si la obra es de dominio público: enlazar /obras/ propia o fuente pública. Si tiene derechos: SOLO compra o lectura autorizada; nunca enlaces a copias completas.',
+      '- 06 Veredicto: H2 frase-sentencia; 2 párrafos; bloques "Para ti, si" y "Sáltatelo, si" (una lista corrida cada uno).',
+      '- Bloque "Compra el libro": edición recomendada [VERIFICAR] + enlace afiliado Gandhi [PEGAR URL].',
+      '- FAQ de 8-10 preguntas reales (prioriza queries de GSC y sugerencias): de qué trata, cuándo se publicó, significado del título, género, extensión, dificultad, dónde leer, qué leer después, para qué edad.',
+      '- Fuentes: 4-6 referencias bibliográficas [VERIFICAR].',
+    ].join('\n'),
+  },
+  poemas: {
+    nombre: 'Lista "N poemas de [autor]"',
+    spec: [
+      '- URL tipo: /poemas-de-[autor]/. Va en un bloque HTML personalizado con clases pl-*.',
+      '- Intro de 3 párrafos cortos; la keyword en negritas en el primero; cerrar invitando a leer.',
+      '- Índice "Índice: N poemas de [Autor] completos con análisis" (normalmente 10).',
+      '- Por cada poema: número + título; H3 "\\"Título\\" – Autor"; texto del poema = [PEGAR POEMA COMPLETO — fuente sugerida]; línea de origen "De [Libro] ([año]) — poema completo" [VERIFICAR]; H4 "Sobre este poema" con 3 párrafos de análisis (indica el ÁNGULO de cada uno); enlace interno si existe una página propia de ese poema; nota "Texto tomado de [fuente]".',
+      '- FAQ de 5 preguntas (poema más famoso, mejores frases, significado de un poema clave, de qué libros vienen, poemas de amor/tema más buscado).',
+      '- Cierre de 2 párrafos con la keyword en negritas.',
+      '- "Fuentes consultadas": sitios de donde se toman los textos.',
+      '- Campos personalizados WP: Emoción principal (una de: Amor, Desamor, Nostalgia, Tristeza, Soledad, Rabia, Duelo, Alegría, Esperanza, Erotismo, Confusión, Identidad, Muerte, Naturaleza, Política), País de origen, Autor (nombre limpio), Es traducción propia (Sí/No), Movimiento literario (corto). Recomienda también el TAG con el nombre de la emoción.',
+    ].join('\n'),
+  },
+  cuentos: {
+    nombre: 'Lista "Los 10 mejores cuentos de [autor]"',
+    spec: [
+      '- URL tipo: /cuentos-de-[autor]/. Categoría: Cuentos › [Autor].',
+      '- H1: "Los 10 mejores cuentos de [Autor]: [subtítulo con gancho]".',
+      '- Intro de 2 párrafos; keyword en negritas; contexto del libro de donde vienen la mayoría.',
+      '- Índice "Índice: 10 cuentos de [Autor] completos con análisis".',
+      '- Por cada cuento: número; H3 "“Título” — Autor"; sinopsis de 1 párrafo; cita breve = [PEGAR CITA LITERAL — copiar de la fuente]; H4 "Sobre este cuento" con 1 párrafo de análisis (indica el ángulo); línea "Cuento completo de *[Libro]* ([Editorial], [año]). Lee **“Título” completo** en [fuente]" [VERIFICAR].',
+      '- H3 de semblanza del autor (3 párrafos).',
+      '- FAQ de 7 preguntas.',
+      '- "Sobre las fuentes" (ediciones y sitios) y "Sigue leyendo" con enlaces internos.',
+    ].join('\n'),
+  },
+  archivo: {
+    nombre: 'Archivo: carta o texto histórico',
+    spec: [
+      '- Sección Archivo › Cartas (o el tipo de texto). Antetítulo: "Carta · [Mes] de [Año]".',
+      '- H1 con gancho humano (molde: "El consejo que [Autor] escribió a los [N] años.").',
+      '- Encabezado DE / PARA con lugar.',
+      '- Ficha del remitente: fechas de vida, lugar, bio de 2-3 oraciones, edad al escribir, antología/edición, editor [VERIFICAR todo].',
+      '- 01 Preámbulo del editor: H2 "Por qué leemos hoy..."; 2-3 párrafos en primera persona + firma.',
+      '- 02 El texto íntegro = [PEGAR TRADUCCIÓN PROPIA]. Sugiere 3 notas del editor (dónde van y qué dicen).',
+      '- 03 "Lo que queda después": reflexión de 2-3 párrafos.',
+      '- Secciones de contexto: Sobre esta carta · El mensaje central · ¿Por qué la escribió? · Las frases más citadas (tomadas LITERALMENTE de la traducción, marcar [COTEJAR]) · ¿Dónde está publicada? (primera publicación [VERIFICAR]) · Otros textos del archivo.',
+      '- FAQ de 6 preguntas. Bloque "Sigue leyendo".',
+      '- La numeración de secciones debe ser consecutiva.',
+    ].join('\n'),
+  },
+  obra: {
+    nombre: 'Obra para leer gratis (/obras/)',
+    spec: [
+      '- Tipo de contenido Obras, URL /obras/[slug]/. SOLO para textos en dominio público.',
+      '- Title SEO molde: "[Título] de [Autor] — Leer gratis en español". Meta: "Lee [Título] de [Autor] completo, gratis y en español. [Género] de [año] sobre [temas]."',
+      '- Cabecera: "[Cuento|Novela|Poema] · Lectura gratuita", título, autor (enlace a /autor/), "[año] · Dominio público · [N] min".',
+      '- Texto íntegro = [PEGAR TRADUCCIÓN PROPIA].',
+      '- H2 "Sobre esta traducción": párrafo de contexto (primera publicación: medio, ciudad, fecha [VERIFICAR]; obras hermanas del autor) + párrafo de fuente (texto original usado y edición cotejada).',
+      '- H2 "Más sobre [Autor]": 2-3 fuentes externas de autoridad + enlaces internos a otras obras/poemas del autor.',
+    ].join('\n'),
+  },
+};
+
+const BRIEF_SYSTEM = [
+  'Eres el editor SEO de País Lector, revista literaria independiente mexicana: anti-académica, irreverente, latinoamericana. Voz: visceral, directa, metáforas corporales, frases cortas que golpean; nada de tono de enciclopedia ni clichés de autoayuda.',
+  'Tu trabajo: producir un BRIEF accionable en Markdown, no el artículo. El editor (Andrés Rendón) lo usará para escribir o para generar el borrador.',
+  '',
+  'REGLAS DE INTEGRIDAD (obligatorias):',
+  '1. Nunca escribas versos, citas literales ni fragmentos de obras. Usa marcadores [PEGAR ...] indicando la fuente sugerida.',
+  '2. Todo dato factual que venga de tu memoria (años, editoriales, títulos de libros, primeras publicaciones, premios, traductores, fechas de vida) va marcado [VERIFICAR]. No inventes títulos: si dudas, dilo.',
+  '3. Enlaces internos: usa SOLO URLs de la lista proporcionada. Nunca inventes URLs del sitio.',
+  '4. Respeta el veredicto de canibalización: si es "diferenciar", el brief entero debe seguir el ángulo sugerido y evitar el foco de las páginas en conflicto; si es "actualizar", empieza advirtiéndolo y explica qué cambiaría el enfoque.',
+  '5. Keywords secundarias y FAQ: prioriza queries reales de GSC y sugerencias de Google; no rellenes con preguntas inventadas si hay datos.',
+  '6. Si hay análisis de competencia, la estructura y el ángulo deben explotar sus huecos y diferenciarse de los formatos dominantes; nunca copies la estructura de un competidor.',
+  '',
+  'SELECCIÓN AUTOMÁTICA DE PLANTILLA (si se pide AUTO): "poemas de/del/sobre X" → poemas; "cuentos de X" → cuentos; "reseña", "de qué trata", "resumen", "vale la pena", "análisis" de UNA obra → resena; "carta de/a X", textos históricos, manifiestos, discursos → archivo; "leer gratis", "completo", "pdf" de una obra en dominio público → obra. Si es ambiguo, elige la más adecuada a la intención y explica por qué en una línea.',
+  '',
+  'FORMATO DE SALIDA (Markdown, en este orden, con estos títulos exactos):',
+  '# Brief: [keyword]',
+  '## 1. Resumen',
+  '- Plantilla, intención de búsqueda (una línea), veredicto de canibalización y qué implica, ángulo central del artículo (2-3 oraciones).',
+  '## 2. SEO',
+  '- Title para Rank Math (≤60 caracteres, incluye la keyword) · Meta description (≤155) · Slug · H1 · Focus keyword · Keywords secundarias (5-10, con su fuente: GSC/sugerencia).',
+  '## 3. Competencia',
+  '- Si hay análisis: quién domina el SERP y con qué formato, los huecos concretos y cómo este artículo los aprovecha para ganar. Si no hay análisis, escribe una línea diciéndolo.',
+  '## 4. Estructura',
+  '- La estructura COMPLETA de la plantilla, sección por sección, con lo que debe contener cada una y el ángulo concreto para esta keyword. Incluye los ítems propuestos (poemas/cuentos/razones) marcados [VERIFICAR].',
+  '## 5. FAQ propuestas',
+  '- Lista de preguntas, marcando cuáles vienen de GSC o sugerencias.',
+  '## 6. Enlaces internos',
+  '- URL → anchor sugerido → dónde va. Solo de la lista.',
+  '## 7. Campos de WordPress',
+  '- Categoría, tags y campos personalizados que apliquen a la plantilla.',
+  '## 8. Secciones nuevas recomendadas (solo si se piden)',
+  '- Por cada una: H2 propuesto · por qué (el dato concreto de GSC/sugerencias o la brecha de intención que la justifica) · dónde va dentro de la estructura · qué cubre (2-3 líneas). Si no hay datos que justifiquen alguna, dilo en vez de forzarla.',
+  '## 9. Datos a verificar antes de publicar',
+  '- Checklist con "- [ ]" de cada dato marcado [VERIFICAR] o [PEGAR] en el brief.',
+].join('\n');
+
+// ---------- Plan (Etapa con razonamiento) ----------
+const PLAN_SYSTEM = [
+  'Eres el director de SEO de País Lector (revista literaria independiente mexicana; formatos: reseñas, listas de poemas y cuentos, archivo de cartas, obras para leer gratis). Lo opera una sola persona, Andrés, con tiempo limitado.',
+  'Recibes: el roadmap de 7 fases del sitio con el estado de cada requisito y las notas del editor; los datos de Search Console y GA4; el estado de producción (briefs, chequeos, ideas guardadas) y el contexto que el editor escribió.',
+  'Tu trabajo: RAZONAR cuál es el cuello de botella real y qué hacer, no repetir la checklist en orden.',
+  'Criterios:',
+  '- El roadmap es el marco, pero los datos mandan: si el sitio tiene pocas páginas con impresiones, producir pesa más que pulir schema; si muchas keywords están en posiciones 4-20, optimizar rinde más que producir; si hay caídas, atenderlas primero.',
+  '- Lee y respeta las notas del editor: si una nota explica por qué algo está pendiente o en N/A, no lo contradigas sin un dato.',
+  '- Toda afirmación sobre el sitio debe apoyarse en un número de los datos recibidos. Nunca inventes cifras; si falta un dato, dilo.',
+  '- Sé concreto: "Escribe la reseña de X" o "Reescribe el title de /url/", no "mejora el contenido".',
+  '- Las acciones apuntan a herramientas de SEO Pulse: produccion (con keyword), radar, etapa, pagina (con URL), o ninguna.',
+  '- Español de México, directo, sin relleno.',
+].join('\n');
+
+function planContext(data) {
+  const clip = (s, n) => String(s == null ? '' : s).slice(0, n);
+  const j = (x, n) => clip(JSON.stringify(x == null ? null : x), n);
+  return [
+    'Fecha: ' + clip(data.fecha, 40),
+    'Contexto del editor: ' + (clip(data.contexto, 1500) || '(ninguno)'),
+    '',
+    '## Roadmap (fases, requisitos y notas)', j(data.roadmap, 9000),
+    '',
+    '## Datos de búsqueda', j(data.datos, 9000),
+    '',
+    '## Producción', j(data.produccion, 4000),
+    '',
+    '## Plan vigente (si existe)', j(data.plan_anterior, 5000),
+    '',
+    '## Avance registrado', j(data.avance, 2000),
+  ].join('\n');
 }
-function AudCheck({item,state,onState,onNote}){
-  return(<div className="ck">
-    <div className="ck-top">
-      <span className="ck-label">{item.t}{item.sig?<span className="ck-auto">auto*</span>:null}</span>
-      <AudSeg val={state.estado} onChange={v=>onState(item.id,v)}/>
-    </div>
-    <div className="ck-note"><input placeholder="Nota / evidencia (opcional)…" value={state.nota} onChange={e=>onNote(item.id,e.target.value)}/></div>
-  </div>);
-}
-function AudKwReport({data}){
-  const [tab,setTab]=useState("kw");
-  const live=!!(data&&data.allRows&&data.summary);
-  let totals,bucket,topKw,topPages,topSites,siteLabel;
-  if(live){
-    const rows=[...data.allRows].sort((a,b)=>b.clicks-a.clicks);
-    totals={clicks:fmt(data.summary.clicks),impr:fmt(data.summary.impressions),ctr:data.summary.ctr.toFixed(1)+"%",pos:data.summary.pos.toFixed(1)};
-    const inb=(lo,hi)=>data.allRows.filter(r=>r.position>=lo&&r.position<=hi).length;
-    bucket={top3:inb(1,3),p4_10:inb(4,10),p11_20:inb(11,20),total:data.allRows.length};
-    topKw=rows.slice(0,5).map(r=>({kw:r.keys[0],clicks:r.clicks,pos:r.position}));
-    topPages=(data.ga4Pages||[]).slice(0,5).map(r=>({p:r.page,clicks:r.sessions}));
-    topSites=(data.countries||[]).slice(0,5).map(r=>({d:(COUNTRY_NAMES[r.code]||r.code),v:"país",clicks:r.clicks}));
-    siteLabel="Top países";
-  }else{
-    const s=AUDIT_SAMPLE;totals=s.totals;bucket=s.bucket;topKw=s.topKw;topPages=s.topPages;topSites=s.topSites;siteLabel="Top sites";
+
+// ---------- Lectura de páginas propias (solo tu dominio) ----------
+async function fetchOwnPage(url) {
+  const host = (process.env.SITE_HOST || 'paislector.com').toLowerCase();
+  let u;
+  try { u = new URL(String(url)); } catch { return { error: 'URL inválida' }; }
+  const h = u.hostname.toLowerCase();
+  if (!(h === host || h.endsWith('.' + host)) || !/^https?:$/.test(u.protocol)) return { error: 'Solo se leen páginas de ' + host };
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 8000);
+    const r = await fetch(u.toString(), { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SEOPulse/1.0)' }, signal: ctrl.signal });
+    clearTimeout(t);
+    if (!r.ok) return { error: 'HTTP ' + r.status };
+    const html = (await r.text()).slice(0, 600000);
+    const pick = (re) => { const m = html.match(re); return m ? m[1].replace(/\s+/g, ' ').trim() : ''; };
+    const dec = (s) => s.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ');
+    const title = dec(pick(/<title[^>]*>([\s\S]*?)<\/title>/i));
+    const meta = dec(pick(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["']/i) || pick(/<meta[^>]+content=["']([^"']*)["'][^>]+name=["']description["']/i));
+    const heads = [...html.matchAll(/<(h[1-3])[^>]*>([\s\S]*?)<\/\1>/gi)].slice(0, 40).map((m) => m[1].toUpperCase() + ': ' + dec(m[2].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim())).filter((x) => x.length > 4);
+    const body = (html.match(/<article[\s\S]*?<\/article>/i) || html.match(/<main[\s\S]*?<\/main>/i) || [html])[0];
+    const text = dec(body.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()).slice(0, 12000);
+    return { title, meta, encabezados: heads, palabras_aprox: text.split(' ').length, texto: text };
+  } catch (e) {
+    return { error: 'No se pudo leer: ' + (e.name === 'AbortError' ? 'tiempo agotado' : e.message) };
   }
-  return(<div className="panel"><div className="panel-head"><h3>Keywords y tráfico</h3><span className={"pill "+(live?"pill-green":"pill-amber")}>{live?"en vivo":"datos de muestra"}</span></div><div className="panel-body">
-    <div className="stats">
-      <div className="stat"><div className="stat-label">Clicks</div><div className="stat-val tnum">{totals.clicks}</div></div>
-      <div className="stat"><div className="stat-label">Impresiones</div><div className="stat-val tnum">{totals.impr}</div></div>
-      <div className="stat"><div className="stat-label">CTR</div><div className="stat-val tnum">{totals.ctr}</div></div>
-      <div className="stat"><div className="stat-label">Pos. media</div><div className="stat-val tnum">{totals.pos}</div></div>
-    </div>
-    <div style={{display:"flex",gap:8,margin:"6px 0 12px",flexWrap:"wrap"}}>
-      <span className="chip s-hi tnum">{bucket.top3} en top 3</span>
-      <span className="chip s-md tnum">{bucket.p4_10} en 4–10</span>
-      <span className="chip s-lo tnum">{bucket.p11_20} en 11–20</span>
-      <span className="chip" style={{marginLeft:"auto",color:"var(--hint)"}}>{bucket.total} KWs</span>
-    </div>
-    <div className="tabsmall">
-      <button className={tab==="kw"?"active":""} onClick={()=>setTab("kw")}>Top KWs</button>
-      <button className={tab==="pg"?"active":""} onClick={()=>setTab("pg")}>Top páginas</button>
-      <button className={tab==="st"?"active":""} onClick={()=>setTab("st")}>{siteLabel}</button>
-    </div>
-    {tab==="kw"&&topKw.map((r,i)=><div className="row" key={i} style={{cursor:"default"}}><span className="row-rank">{i+1}</span><div className="row-left"><div className="row-kw">{r.kw}</div></div><span className="row-val tnum">{(r.clicks||0).toLocaleString()}</span><span className={"score "+(r.pos<=3?"s-hi":r.pos<=10?"s-md":"s-lo")}>P{Math.round(r.pos)}</span></div>)}
-    {tab==="pg"&&topPages.map((r,i)=><div className="row" key={i} style={{cursor:"default"}}><span className="row-rank">{i+1}</span><div className="row-left"><div className="row-kw">{r.p}</div></div><span className="row-val tnum">{(r.clicks||0).toLocaleString()}</span></div>)}
-    {tab==="st"&&topSites.map((r,i)=><div className="row" key={i} style={{cursor:"default"}}><span className="row-rank">{i+1}</span><div className="row-left"><div className="row-kw">{r.d}</div>{r.v?<div className="row-sub">{r.v}</div>:null}</div><span className="row-val tnum">{(r.clicks||0).toLocaleString()}</span></div>)}
-    <div className="explain">{live?"De tu Search Console + Analytics, según el periodo seleccionado.":"Conecta y carga datos para ver tus números reales aquí."}</div>
-  </div></div>);
 }
-// ====== ETAPA (home / roadmap maestro) ======
-const ET_PHASES=[
-  {n:1,nombre:"Acceso",se_hace:"Que el sitio sea rastreable, indexable y visible para los crawlers de IA.",entregable:"Checklist de acceso + fix de robots.txt/CDN si bloquea.",gates:[["acceso_crawlers_ia","Permitir crawlers de IA en robots.txt / CDN"],["render_server_side","Servir el contenido crítico server-side"],["indexable","Quitar noindex y lograr indexación"]]},
-  {n:2,nombre:"Fundamentos on-page",se_hace:"Dejar impecables los fundamentos técnicos de cada página.",entregable:"Checklist de publicacion on-page (junior ejecuta, sale senior).",gates:[["meta_basico_ok","Corregir title / description / canonical / lang"],["canonical_sin_duplicado","Eliminar el canonical duplicado o competido"],["headings_jerarquia_ok","Ordenar la jerarquía H1–H3"],["taxonomia_limpia","Limpiar la taxonomía de categorías y slugs"]]},
-  {n:3,nombre:"Schema de entidades",se_hace:"Emitir JSON-LD en pila, sin duplicados, según el tipo de contenido.",entregable:"Motor de schema instalado y validado (0 errores, 0 duplicados).",gates:[["schema_en_pila","Emitir schema en pila (Article / ItemList / FAQPage / Person)"],["schema_sin_duplicados","Eliminar schema duplicado (regla de oro #1)"],["entidad_sameas","Añadir sameAs a las entidades (Wikipedia / Wikidata)"]]},
-  {n:4,nombre:"Contenido GEO",se_hace:"Estructurar el contenido para que los motores generativos lo citen.",entregable:"Brief de artículo GEO + calendario de refresco.",gates:[["answer_first","Reescribir las aperturas a answer-first (150-200 tokens)"],["densidad_factual","Añadir cifras, fuentes y citas"],["faq_presente","Incluir bloque FAQ"],["formato_estructurado","Estructurar en listas / formato extraíble"],["frescura","Activar dateModified real + refresco"],["geo_score","Subir el score GEO",70]]},
-  {n:5,nombre:"Autoridad",se_hace:"Construir autoridad de entidad y de autor, dentro y fuera del sitio.",entregable:"Ficha de autor acreditado + plan de menciones / PR.",gates:[["autor_acreditado","Acreditar un autor identificable (E-E-A-T)"],["earned_media","Conseguir menciones multi-dominio / plan de PR"]]},
-  {n:6,nombre:"Medición",se_hace:"Medir visibilidad en IA y distribución, no solo rankings de Google.",entregable:"Panel Share of Model + tracking UTM conectado.",gates:[["share_of_model","Poner a correr Share of Model (N corridas por motor)"],["utm_tracking","Activar el tracking UTM"]]},
-  {n:7,nombre:"Optimización continua",se_hace:"Cerrar el loop: refresco, monitoreo de anomalías e iteración por datos.",entregable:"Ciclo vivo de refresco trimestral + alerting de anomalías.",gates:[["refresco_trimestral","Ejecutar el calendario de refresco trimestral"],["alerting_anomalias","Montar alerting de caídas sobre el baseline"]]},
-];
-function gatePasses(g,s){const[k,,min]=g;const v=s[k];if(min!==undefined)return typeof v==="number"&&v>=min;return !!v;}
-function etAudit(signals){
-  const perPhase=ET_PHASES.map(ph=>{const failing=ph.gates.filter(g=>!gatePasses(g,signals));return {...ph,complete:failing.length===0,pct:Math.round(100*(ph.gates.length-failing.length)/ph.gates.length),failing};});
-  let stageFormal=0;for(const f of perPhase){if(f.complete)stageFormal=f.n;else break;}
-  const current=perPhase.find(f=>!f.complete)||null;
-  perPhase.forEach(f=>{if(f.n<=stageFormal)f.state="sealed";else if(current&&f.n===current.n)f.state="current";else if(f.complete)f.state="ahead";else f.state="pending";});
-  return {perPhase,stageFormal,current};
+const WEB_SEARCH_MX = (n) => [{ type: 'web_search_20250305', name: 'web_search', max_uses: n, user_location: { type: 'approximate', country: 'MX', timezone: 'America/Mexico_City' } }];
+
+// ---------- Sitemap y enlaces de una página ----------
+async function fetchText(url, ms) {
+  const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), ms || 6000);
+  try { const r = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SEOPulse/1.0)' }, signal: ctrl.signal }); clearTimeout(t); return r.ok ? await r.text() : null; }
+  catch { clearTimeout(t); return null; }
 }
-// País Lector: evaluación manual (signals del build log). Editar aquí para recalcular la etapa.
-const PL_SIGNALS={acceso_crawlers_ia:true,render_server_side:true,indexable:true,meta_basico_ok:true,canonical_sin_duplicado:false,og_twitter_ok:true,headings_jerarquia_ok:true,taxonomia_limpia:true,schema_en_pila:true,schema_sin_duplicados:true,entidad_sameas:true,answer_first:false,densidad_factual:true,faq_presente:true,formato_estructurado:true,frescura:true,autor_acreditado:true,earned_media:false,share_of_model:false,utm_tracking:true,refresco_trimestral:false,alerting_anomalias:false,geo_score:72};
-const ET_STAT={sealed:["Completa","s-sealed"],current:["En curso","s-current"],ahead:["Lista · bloqueada","s-ahead"],pending:["Pendiente",""]};
-const ET_ICON={sealed:"✓",current:"●",ahead:"🔒"};
-function Etapa({data}){
-  const [st,setSt]=useState(()=>{try{const s=JSON.parse(localStorage.getItem('sp2_audit')||'null');if(s)return s;}catch(e){}return auditDefaults();});
-  const [sel,setSel]=useState(null);
-  const [site,setSite]=useState("paislector.com");
-  const save=(next)=>{setSt(next);try{localStorage.setItem('sp2_audit',JSON.stringify(next))}catch(e){}};
-  const setState=(id,v)=>save({...st,[id]:{...(st[id]||{nota:""}),estado:v}});
-  const setNote=(id,v)=>save({...st,[id]:{...(st[id]||{estado:"na"}),nota:v}});
-  const [auditing,setAuditing]=useState(false);
-  const [report,setReport]=useState(null);
-  const [auditErr,setAuditErr]=useState(null);
-  async function runAudit(){
-    setAuditing(true);setAuditErr(null);
-    try{
-      const dom=site.replace(/^https?:\/\//,'').replace(/\/$/,'');
-      const urls=(data&&data.ga4Pages)?data.ga4Pages.slice(0,10).map(p=>'https://'+dom+p.page):[];
-      const r=await fetch(REDIRECT_URI+'/api/audit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({site,urls})});
-      if(!r.ok)throw new Error('audit '+r.status+': '+(await r.text()).slice(0,160));
-      const rep=await r.json();
-      setReport(rep);
-      const next={...st};
-      Object.entries(rep.signals||{}).forEach(([k,v])=>{if(next[k])next[k]={...next[k],estado:v?'ok':'no'}});
-      const ev=rep.evidence&&rep.evidence.answer_first&&rep.evidence.answer_first[0];
-      if(ev&&next.answer_first)next.answer_first={...next.answer_first,nota:'Apertura ('+ev.words+' palabras): \"'+(ev.opening||'').slice(0,130)+'\u2026\" \u2014 requiere lectura'};
-      save(next);
-    }catch(e){setAuditErr(e.message)}
-    setAuditing(false);
-  }
-  const sig=deriveSignals(st);
-  const {perPhase,stageFormal,current}=etAudit(sig);
-  const active=sel?perPhase.find(f=>f.n===sel):(current||perPhase[perPhase.length-1]);
-  const hasAhead=perPhase.some(f=>f.state==="ahead");
-  const hygiene=(AUDIT_GROUPS.find(g=>g.label.indexOf("higiene")>=0)||{items:[]}).items;
-  let ok=0,no=0,na=0;Object.values(st).forEach(s=>{if(s.estado==="ok")ok++;else if(s.estado==="no")no++;else na++;});
-  return (<>
-    <div className="site-row">
-      <input className="site-input" value={site} onChange={e=>setSite(e.target.value)} placeholder="dominio…"/>
-      <button className="btn-primary" onClick={runAudit} disabled={auditing}>{auditing?"Auditando\u2026":"Auditar sitio"}</button>
-    </div>
-    <div className="hero">
-      <div className="proj">{site} · dominio</div>
-      <div className="phase">Fase <b>{stageFormal}</b> · {stageFormal?ET_PHASES[stageFormal-1].nombre:"Sin acceso"}</div>
-      <div className="meta tnum">{stageFormal} de 7 fases selladas{current?" · siguiente: "+current.nombre:""}</div>
-      <div className="segbar">{perPhase.map(f=><i key={f.n} className={f.state}></i>)}</div>
-      {current?(<div className="next">
-        <div className="lbl">Siguiente paso</div>
-        <div className="act">{current.failing[0][1]}</div>
-        <div className="why">Sella la Fase {current.n} ({current.nombre}).{hasAhead?" Desbloquea además el trabajo que ya tienes hecho más adelante.":""}</div>
-        <button className="btn" onClick={()=>setSel(current.n)}>Ver qué falta en la Fase {current.n} →</button>
-      </div>):(<div className="next done"><div className="lbl">Estado</div><div className="act">Roadmap completo</div><div className="why">Las 7 fases están selladas. Mantén vivo el loop de la Fase 7.</div></div>)}
-      <div className="summary-chips">
-        <span className="chip s-hi tnum">{ok} cumple</span>
-        <span className="chip s-lo tnum">{no} no</span>
-        <span className="chip" style={{background:"var(--surface-alt)",color:"var(--muted)"}}>{na} N/A</span>
-      </div>
-    </div>
-    <AudKwReport data={data}/>
-    {auditErr&&<div className="error-msg">{auditErr}</div>}
-    {report&&<div className="panel"><div className="panel-head"><h3>Informe automático</h3><span className="pill pill-green">{report.sampled} págs</span></div><div className="panel-body">
-      <div style={{fontSize:13,lineHeight:2,marginBottom:4}}>
-        <div>robots.txt — {report.domainChecks.aiBlocked.length?<b style={{color:"var(--coral)"}}>bloquea {report.domainChecks.aiBlocked.join(", ")}</b>:<b style={{color:"var(--green)"}}>permite crawlers de IA</b>}</div>
-        <div>sitemap — {report.domainChecks.sitemapCount?<b>{report.domainChecks.sitemapCount} URLs</b>:<span style={{color:"var(--coral)"}}>no encontrado</span>}</div>
-      </div>
-      {Object.entries(report.counts||{}).map(([k,v])=>{const p=String(v).split("/");const full=p[0]===p[1];return <div className="row" key={k} style={{cursor:"default"}}><div className="row-left"><div className="row-kw">{k}</div></div><span className={"score "+(full?"s-hi":(+p[0]>0?"s-md":"s-lo"))}>{v}</span></div>;})}
-      <div className="explain">Señales duras llenadas automáticamente y reflejadas en las fases de arriba. La apertura de cada página quedó como evidencia en la nota de "answer-first" — eso lo lees tú.</div>
-    </div></div>}
-    <div className="seclabel">El roadmap</div>
-    <div className="list">
-      {perPhase.map(f=>{const [txt,cls]=ET_STAT[f.state];return (
-        <button key={f.n} className={"prow"+(active&&active.n===f.n?" active":"")} onClick={()=>setSel(f.n)}>
-          <div className={"ic "+f.state}>{ET_ICON[f.state]||f.n}</div>
-          <div className="pn"><div className="pname">{f.nombre}</div><div className={"pstat "+cls}>{txt}</div></div>
-          <div className="pct tnum">{f.pct}%</div>
-          <div className="chev">›</div>
-        </button>);})}
-    </div>
-    {active&&<div className="detail" key={"d"+active.n}>
-      <div className="dh"><div className="dname">{active.nombre}</div><div className="dtag tnum">Fase {active.n} · {active.pct}%</div></div>
-      <div className="ddesc">{active.se_hace}</div>
-      {active.gates.map((g,i)=>{
-        if(g[0]==="geo_score"){const pass=sig.geo_score>=g[2];return (
-          <div key={i} className="ck"><div className="ck-top"><span className="ck-label">{g[1]} <span className="ck-auto">auto</span></span><span className={"score "+(pass?"s-hi":"s-lo")}>{sig.geo_score}/100</span></div></div>);}
-        return <AudCheck key={i} item={{id:g[0],t:g[1],sig:g[0]}} state={st[g[0]]||{estado:"na",nota:""}} onState={setState} onNote={setNote}/>;
-      })}
-      <div className="deliver"><b>Entregable</b>{active.entregable}</div>
-    </div>}
-    <div className="seclabel">Higiene técnica</div>
-    <div className="panel"><div className="panel-body">
-      {hygiene.map(it=><AudCheck key={it.id} item={it} state={st[it.id]||{estado:"na",nota:""}} onState={setState} onNote={setNote}/>)}
-      <div className="explain">No mueven la fase, pero importan para la salud del sitio. Los ítems con "auto*" se llenarán solos cuando conectemos el auditor server-side.</div>
-    </div></div>
-  </>);
+async function fetchSitemapUrls() {
+  const host = (process.env.SITE_HOST || 'paislector.com').toLowerCase();
+  const base = 'https://' + host;
+  let root = null;
+  for (const p of ['/sitemap_index.xml', '/sitemap.xml', '/wp-sitemap.xml']) { root = await fetchText(base + p); if (root && /<(sitemapindex|urlset)/i.test(root)) break; root = null; }
+  if (!root) return { error: 'No encontré el sitemap', urls: [] };
+  const locs = (xml) => [...xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => m[1].replace(/&amp;/g, '&'));
+  const own = (u) => { try { const h = new URL(u).hostname.toLowerCase(); return h === host || h.endsWith('.' + host); } catch { return false; } };
+  let urls = [];
+  if (/<sitemapindex/i.test(root)) {
+    const subs = locs(root).filter(own).filter((u) => !/(author|category|tag|attachment|local)-sitemap/i.test(u)).slice(0, 12);
+    const parts = await Promise.all(subs.map((u) => fetchText(u, 7000)));
+    parts.forEach((x) => { if (x) urls.push(...locs(x)); });
+  } else urls = locs(root);
+  urls = [...new Set(urls.filter(own).filter((u) => !/\.(jpg|jpeg|png|webp|gif|pdf)$/i.test(u)))];
+  return { urls: urls.slice(0, 3000), total: urls.length };
+}
+const LINK_STOP = new Set('de la el los las en y a para por con del que un una al lo se su sus es o como sobre sin le les mas'.split(' '));
+function linkTokens(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').split(' ').filter((w) => w.length > 2 && !LINK_STOP.has(w)).map((w) => (w.length > 4 ? w.replace(/(es|s)$/, '') : w)); }
+async function pageLinks(url) {
+  const html = await fetchText(url, 8000);
+  if (!html) return [];
+  const body = (html.match(/<article[\s\S]*?<\/article>/i) || html.match(/<main[\s\S]*?<\/main>/i) || [html])[0];
+  return [...new Set([...body.matchAll(/<a\s[^>]*href=["']([^"'#]+)["']/gi)].map((m) => m[1]))].slice(0, 200);
 }
 
-// ====== TAB NAV ======
-const TABS=[
-  {id:'hoy',label:'Hoy',group:'main',primary:true,icon:'M12 8a4 4 0 100 8 4 4 0 000-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4'},
-  {id:'produccion',label:'Producción',group:'main',primary:true,icon:'M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z'},
-  {id:'optimizar',label:'Optimizar',group:'main',primary:true,icon:'M3 17l6-6 4 4 8-8M14 7h7v7'},
-  {id:'radar',label:'Radar',group:'main',primary:true,icon:'M12 3a9 9 0 100 18 9 9 0 000-18zM12 7a5 5 0 100 10 5 5 0 000-10zM12 12l6-6'},
-  {id:'etapa',label:'Etapa',group:'analisis'},
-  {id:'overview',label:'Overview',group:'analisis'},
-  {id:'index',label:'Index',group:'analisis'},
-  {id:'content',label:'Content',group:'analisis'},
-  {id:'tracking',label:'Tracking',group:'analisis'},
-  {id:'revenue',label:'Revenue',group:'analisis'},
-  {id:'config',label:'Config',group:'foot'}
-];
+// ---------- Tareas permitidas ----------
+// El cliente solo elige la tarea y manda datos.
+// Modelo, tope de salida y prompt se definen aquí, en el servidor.
+const TASKS = {
+  test: {
+    model: MODELS.haiku,
+    max_tokens: 100,
+    system: 'Responde exactamente con el texto que se te pide, sin agregar nada.',
+    build: () => 'Responde solo: Conexión con SEO Pulse OK.',
+  },
 
-function TabNav({activeTab,onTabChange,badges}){
-  return(<>
-    <nav className="tab-nav" role="tablist">
-      {TABS.map(t=><button key={t.id} role="tab" aria-selected={activeTab===t.id} className={"tab-item "+(activeTab===t.id?'active':'')} onClick={()=>onTabChange(t.id)}>
-        {t.label}{badges&&badges[t.id]>0&&<span className="tab-badge">{badges[t.id]}</span>}
-      </button>)}
-    </nav>
-    <nav className="mobile-tab-bar" role="tablist">
-      {TABS.map(t=><button key={t.id} role="tab" aria-selected={activeTab===t.id} aria-label={t.label} className={"mobile-tab-item "+(activeTab===t.id?'active':'')} onClick={()=>onTabChange(t.id)}>
-        <svg className="mobile-tab-icon" viewBox="0 0 24 24"><path d={t.icon}/></svg>
-        <span className="mobile-tab-label">{t.label}</span>
-      </button>)}
-    </nav>
-  </>);
+  // Chequeo de canibalización antes de crear contenido nuevo.
+  anticanibal: {
+    model: MODELS.sonnet,
+    max_tokens: 1200,
+    system: [
+      'Eres un estratega SEO senior. Evalúas riesgo de canibalización de keywords para un sitio en español.',
+      'Recibes una keyword candidata para un artículo NUEVO y las páginas del sitio que ya reciben impresiones en Google por queries relacionadas (datos de Search Console, últimos 90 días).',
+      'Juzga por INTENCIÓN DE BÚSQUEDA, no por coincidencia de palabras: dos queries con palabras distintas pueden competir, y dos con palabras parecidas pueden tener intenciones distintas.',
+      'Veredictos posibles:',
+      '- "crear": ninguna página existente cubre esa intención; el artículo nuevo es seguro.',
+      '- "actualizar": ya existe una página que cubre esa intención; conviene mejorarla en vez de crear otra.',
+      '- "diferenciar": hay páginas cercanas; el artículo nuevo es viable solo con un ángulo o intención distintos, que debes proponer.',
+      'Responde SOLO con un objeto JSON válido, sin texto antes ni después y sin bloques de código, con esta forma:',
+      '{"veredicto":"crear|actualizar|diferenciar","url_principal":"URL o null","resumen":"1-2 oraciones","conflictos":[{"url":"...","riesgo":"alto|medio|bajo","motivo":"una oración"}],"angulo_sugerido":"texto o null"}',
+      'Incluye en conflictos solo páginas con riesgo real, máximo 5. Usa url_principal solo si el veredicto es "actualizar".',
+    ].join('\n'),
+    build: (data) => {
+      const keyword = String(data.keyword || '').trim().slice(0, 200);
+      if (!keyword) throw new Error('keyword vacía');
+      const site = String(data.site || '').slice(0, 100);
+      const pages = (Array.isArray(data.pages) ? data.pages : []).slice(0, 15).map((pg) => ({
+        url: String(pg.url || '').slice(0, 300),
+        impresiones: Math.round(Number(pg.impressions) || 0),
+        clics: Math.round(Number(pg.clicks) || 0),
+        mejor_posicion: Number(Number(pg.position || 0).toFixed(1)),
+        queries: (Array.isArray(pg.queries) ? pg.queries : []).slice(0, 8).map((q) => ({
+          q: String(q.q || '').slice(0, 150),
+          impresiones: Math.round(Number(q.impressions) || 0),
+          posicion: Number(Number(q.position || 0).toFixed(1)),
+        })),
+      }));
+      return 'Sitio: ' + site + '\nKeyword candidata: "' + keyword + '"\n\nPáginas existentes con queries relacionadas:\n' + JSON.stringify(pages, null, 1);
+    },
+  },
+
+  // Generador de briefs por plantilla de País Lector.
+  brief: {
+    model: MODELS.sonnet,
+    max_tokens: 6000,
+    system: () => BRIEF_SYSTEM,
+    build: (data) => {
+      const keyword = String(data.keyword || '').trim().slice(0, 200);
+      if (!keyword) throw new Error('keyword vacía');
+      const tipo = BRIEF_TEMPLATES[data.tipo] ? data.tipo : 'auto';
+      const extra = Math.max(0, Math.min(3, parseInt(data.extra, 10) || 0));
+      const year = parseInt(data.year, 10) || new Date().getFullYear();
+      const clip = (s, n) => String(s == null ? '' : s).slice(0, n);
+      const queries = (Array.isArray(data.queries) ? data.queries : []).slice(0, 40)
+        .map((q) => '- ' + clip(q.q, 150) + ' | ' + Math.round(+q.impressions || 0) + ' impr | pos ' + (+q.position || 0).toFixed(1));
+      const sugg = (Array.isArray(data.suggestions) ? data.suggestions : []).slice(0, 30).map((s) => '- ' + clip(s, 150));
+      const pages = (Array.isArray(data.pages) ? data.pages : []).slice(0, 50)
+        .map((p) => '- ' + clip(p.url, 300) + ' (' + Math.round(+p.impressions || 0) + ' impr)');
+      const c = data.canibal && typeof data.canibal === 'object' ? data.canibal : null;
+      const canibal = c
+        ? 'Veredicto: ' + clip(c.veredicto, 20) + '\nResumen: ' + clip(c.resumen, 600) +
+          (c.angulo_sugerido ? '\nÁngulo sugerido: ' + clip(c.angulo_sugerido, 800) : '') +
+          (c.url_principal ? '\nURL principal existente: ' + clip(c.url_principal, 300) : '') +
+          (Array.isArray(c.conflictos) && c.conflictos.length
+            ? '\nConflictos:\n' + c.conflictos.slice(0, 5).map((x) => '- ' + clip(x.url, 300) + ' [' + clip(x.riesgo, 10) + '] ' + clip(x.motivo, 300)).join('\n')
+            : '')
+        : 'Sin chequeo disponible.';
+      const comp = data.competencia && typeof data.competencia === 'object' && !data.competencia.error ? data.competencia : null;
+      const compTxt = comp ? JSON.stringify({ resultados: (comp.resultados || []).slice(0, 8).map((r) => ({ dominio: clip(r.dominio, 80), titulo: clip(r.titulo, 160), tipo: clip(r.tipo, 30), formato: clip(r.formato, 60), cubre: (r.cubre || []).slice(0, 5).map((x) => clip(x, 160)), fuerza: clip(r.fuerza, 10) })), patrones: (comp.patrones || []).slice(0, 6).map((x) => clip(x, 200)), huecos: (comp.huecos || []).slice(0, 6).map((x) => clip(x, 200)), angulo: clip(comp.angulo, 600), dificultad: clip(comp.dificultad, 10) }, null, 1) : '(sin análisis de competencia)';
+      const plantilla = tipo === 'auto'
+        ? 'AUTO: elige tú la plantilla según la keyword y la intención (reglas abajo). Plantillas disponibles:\n\n' +
+          Object.entries(BRIEF_TEMPLATES).map(([k, t]) => '### ' + k + ' — ' + t.nombre + '\n' + t.spec).join('\n\n')
+        : 'Plantilla elegida por el editor: ' + tipo + ' — ' + BRIEF_TEMPLATES[tipo].nombre + '\n' + BRIEF_TEMPLATES[tipo].spec;
+      return [
+        'Keyword objetivo: "' + keyword + '"',
+        'Sitio: ' + clip(data.site, 100) + ' | Año en curso: ' + year,
+        '',
+        '## Chequeo de canibalización',
+        canibal,
+        '',
+        '## Queries reales de Search Console relacionadas (90 días)',
+        queries.length ? queries.join('\n') : '(ninguna)',
+        '',
+        '## Sugerencias de autocompletado de Google',
+        sugg.length ? sugg.join('\n') : '(ninguna)',
+        '',
+        '## URLs existentes del sitio (ÚNICAS válidas para enlaces internos)',
+        pages.length ? pages.join('\n') : '(ninguna)',
+        '',
+        '## Competencia en Google México (análisis previo del SERP)',
+        compTxt,
+        '',
+        '## Plantilla',
+        plantilla,
+        '',
+        '## Secciones nuevas',
+        extra > 0
+          ? 'Recomienda ' + extra + ' sección(es) NUEVA(S) que no estén en la plantilla (formato abajo).'
+          : 'No recomiendes secciones nuevas; omite ese apartado.',
+        '',
+        '## Notas del editor',
+        clip(data.notes, 2000) || '(ninguna)',
+      ].join('\n');
+    },
+  },
+
+  // Radar · Vecinos: propone temporadas nuevas a partir de la cobertura actual.
+  radar: {
+    model: MODELS.sonnet,
+    max_tokens: 5000,
+    system: [
+      'Eres el estratega editorial y SEO de País Lector, revista literaria independiente mexicana (anti-académica, latinoamericana, irreverente). Formatos que produce: reseña (de una obra), poemas (lista "N poemas de [autor]"), cuentos (lista "10 cuentos de [autor]"), archivo (cartas o textos históricos), obra (texto íntegro para leer gratis).',
+      'Recibes el mapa de cobertura del sitio (sus URLs y las queries por las que Google ya lo muestra). Tu trabajo: proponer TEMPORADAS nuevas, es decir paquetes de 2-4 piezas sobre un mismo autor u obra que el sitio NO cubre todavía, cercanos a lo que ya cubre (mismo canon, misma época, misma sensibilidad, autores que sus lectores probablemente buscan después).',
+      'Reglas:',
+      '1. Nada que ya esté cubierto: revisa las URLs y queries; si un autor u obra ya tiene página, no lo propongas (salvo una pieza claramente distinta que no exista, y dilo).',
+      '2. Las keywords van como las teclea la gente en Google en español: minúsculas, sin comillas, 2-6 palabras ("poemas de alejandra pizarnik", "el retrato de dorian gray resumen"). Una sola keyword por pieza.',
+      '3. Mezcla: autores consagrados con alta demanda probable y apuestas de nicho con poca competencia. Prioriza Latinoamérica sin excluir clásicos universales.',
+      '4. Para cada autor indica su año de muerte si lo sabes (null si vive o no estás seguro). No opines sobre derechos de autor.',
+      '5. "por_que": una oración concreta que conecte con la cobertura existente (ej. "Tus lectores de Sabines buscan después a Rosario Castellanos").',
+      'Responde SOLO con JSON válido, sin texto antes ni después y sin bloques de código:',
+      '{"temporadas":[{"autor":"...","muerte":1900,"titulo":"Temporada ...","por_que":"...","piezas":[{"tipo":"resena|poemas|cuentos|archivo|obra","keyword":"...","pieza":"título corto de la pieza"}]}]}',
+      'Entre 7 y 9 temporadas, 2-4 piezas cada una.',
+    ].join('\n'),
+    build: (data) => {
+      const clip = (s, n) => String(s == null ? '' : s).slice(0, n);
+      const urls = (Array.isArray(data.urls) ? data.urls : []).slice(0, 200).map((u) => '- ' + clip(u, 200));
+      const queries = (Array.isArray(data.queries) ? data.queries : []).slice(0, 120).map((q) => '- ' + clip(q, 120));
+      const exclude = (Array.isArray(data.exclude) ? data.exclude : []).slice(0, 80).map((x) => '- ' + clip(x, 120));
+      return [
+        'Sitio: ' + clip(data.site, 100),
+        'Enfoque pedido por el editor: ' + (clip(data.focus, 300) || '(libre)'),
+        '',
+        '## URLs del sitio (cobertura actual)',
+        urls.join('\n') || '(ninguna)',
+        '',
+        '## Queries con impresiones en Google (90 días)',
+        queries.join('\n') || '(ninguna)',
+        '',
+        '## Ya propuestas o descartadas antes (no repetir)',
+        exclude.join('\n') || '(ninguna)',
+      ].join('\n');
+    },
+  },
+
+  // Competencia: lee el SERP real con búsqueda web y lo resume.
+  competencia: {
+    model: MODELS.sonnet,
+    max_tokens: 3500,
+    tools: WEB_SEARCH_MX(3),
+    system: [
+      'Eres analista SEO de País Lector (revista literaria mexicana). Analizas la competencia en Google México para una keyword.',
+      'Proceso: busca la keyword tal cual (y, si hace falta, una variante) con la herramienta de búsqueda. Identifica los 5-8 resultados orgánicos principales.',
+      'Para cada resultado: dominio, título, url, tipo (wikipedia | medio | blog | academico | tienda | foro | video | otro), formato (lista, reseña, resumen, texto completo, análisis, ficha…), qué cubre (3-5 puntos cortos, PARAFRASEADOS, nunca citas textuales) y fuerza (alta | media | baja) con una razón breve.',
+      'Luego: patrones (qué premia este SERP: formato, extensión, intención), huecos (qué no cubre bien nadie y País Lector puede ganar), ángulo recomendado (2-3 oraciones, voz de País Lector) y dificultad (alta | media | baja, con motivo).',
+      'No escribas texto antes ni entre búsquedas. Al terminar, responde SOLO con JSON válido, sin bloques de código:',
+      '{"resultados":[{"dominio":"","titulo":"","url":"","tipo":"","formato":"","cubre":["",""],"fuerza":"","razon":""}],"patrones":["",""],"huecos":["",""],"angulo":"","dificultad":"","dificultad_motivo":""}',
+      'Si la búsqueda falla o no devuelve resultados, responde {"error":"motivo"}.',
+    ].join('\n'),
+    build: (data) => {
+      const keyword = String(data.keyword || '').trim().slice(0, 200);
+      if (!keyword) throw new Error('keyword vacía');
+      return 'Keyword: "' + keyword + '"\nMercado: México, español.';
+    },
+  },
+
+  // Plan estratégico: cuello de botella + mes + semana.
+  plan: {
+    model: MODELS.sonnet,
+    max_tokens: 5000,
+    system: () => PLAN_SYSTEM + '\n\n' + [
+      'TAREA: genera el plan del MES y de la SEMANA.',
+      'Responde SOLO con JSON válido, sin bloques de código:',
+      '{"modo":"producir|optimizar|tecnico|autoridad|medir","cuello":{"titulo":"frase corta","dato":"el número exacto de los datos que lo prueba","explicacion":"2-3 oraciones"},',
+      '"mes":{"objetivo":"una frase","fase_foco":4,"metas":[{"meta":"","indicador":"cómo se mide con los datos de SEO Pulse","por_que":""}]},',
+      '"semana":{"foco":"una frase","tareas":[{"tarea":"concreta y accionable","por_que":"con dato","esfuerzo":"30 min | 2 h | medio día","accion":{"tipo":"produccion|radar|etapa|pagina|ninguna","valor":"keyword o URL si aplica"}}]},',
+      '"esperar":["lo que NO conviene hacer ahora y por qué"],"notas_usadas":["qué notas del editor tomaste en cuenta"]}',
+      '3-4 metas al mes, 4-7 tareas a la semana.',
+    ].join('\n'),
+    build: (data) => planContext(data),
+  },
+
+  // Prioridades del día a partir del plan vigente.
+  plan_hoy: {
+    model: MODELS.sonnet,
+    max_tokens: 2000,
+    system: () => PLAN_SYSTEM + '\n\n' + [
+      'TAREA: elige las PRIORIDADES DE HOY (1 a 3) a partir del plan semanal vigente, de lo que ya se hizo y de los datos frescos.',
+      'Si algo urgente apareció en los datos (una caída, una oportunidad nueva), puede desplazar al plan; dilo.',
+      'Cada prioridad debe caber en el día y tener un primer paso obvio.',
+      'Responde SOLO con JSON válido, sin bloques de código:',
+      '{"hoy":[{"tarea":"","por_que":"con dato","esfuerzo":"30 min | 1 h | 2 h","accion":{"tipo":"produccion|radar|etapa|pagina|ninguna","valor":""}}],"nota":"una frase de contexto para el día"}',
+    ].join('\n'),
+    build: (data) => planContext(data),
+  },
+
+  // Verificador de datos del brief con búsqueda web.
+  verificar: {
+    model: MODELS.sonnet,
+    max_tokens: 3500,
+    tools: WEB_SEARCH_MX(5),
+    system: [
+      'Eres verificador de datos de País Lector (revista literaria). Recibes una lista numerada de datos de un brief que deben confirmarse antes de publicar.',
+      'Usa la búsqueda web para comprobar los datos factuales (años, editoriales, primeras publicaciones, títulos, fechas de vida, premios, traductores, adaptaciones). Agrupa varios datos por búsqueda cuando puedas.',
+      'Estados: "confirmado" (una fuente fiable lo respalda), "corregir" (las fuentes dicen otra cosa: da el dato correcto), "no_encontrado" (no hay evidencia suficiente), "manual" (no es verificable en web: pegar una cita, elegir una edición, un enlace de afiliado).',
+      'Prefiere fuentes fiables: editoriales, bibliotecas, universidades, enciclopedias, medios culturales serios. Solo da URLs que aparecieron en tus resultados; nunca inventes una. Parafrasea, no copies texto.',
+      'No escribas nada antes ni entre búsquedas. Al terminar responde SOLO con JSON válido, sin bloques de código:',
+      '{"items":[{"i":0,"estado":"confirmado|corregir|no_encontrado|manual","dato_correcto":"solo si corregir","fuente":"url o vacío","nota":"una frase"}]}',
+      'Incluye un objeto por cada dato recibido, con su número i.',
+    ].join('\n'),
+    build: (data) => {
+      const clip = (s, n) => String(s == null ? '' : s).slice(0, n);
+      const items = (Array.isArray(data.items) ? data.items : []).slice(0, 15).map((x, i) => i + '. ' + clip(x, 300));
+      if (!items.length) throw new Error('sin datos');
+      return 'Artículo sobre: "' + clip(data.keyword, 200) + '"\n\nDatos a verificar:\n' + items.join('\n');
+    },
+  },
+
+  // Canibalización existente en todo el sitio.
+  canibal_sitio: {
+    model: MODELS.sonnet,
+    max_tokens: 3500,
+    system: [
+      'Eres estratega SEO de País Lector. Recibes queries de Search Console por las que DOS O MÁS páginas del sitio reciben impresiones a la vez.',
+      'Para cada caso decide: "fusionar" (misma intención: unir en la principal y redirigir 301 la otra), "diferenciar" (intenciones cercanas pero distintas: ajustar títulos y enfoques para separarlas), "reforzar" (una página debe ser la principal: enlaces internos con anchor exacto desde las demás y ajustar sus títulos), o "ignorar" (es normal que coexistan, p. ej. una lista y una reseña).',
+      'Elige la principal por intención y datos (posición, clics), no por antigüedad. Sé concreto en la acción.',
+      'Responde SOLO con JSON válido, sin bloques de código:',
+      '{"casos":[{"query":"","decision":"fusionar|diferenciar|reforzar|ignorar","principal":"url","accion":"una frase imperativa","detalle":"2-3 oraciones","prioridad":"alta|media|baja"}]}',
+    ].join('\n'),
+    build: (data) => {
+      const casos = (Array.isArray(data.casos) ? data.casos : []).slice(0, 10);
+      if (!casos.length) throw new Error('sin casos');
+      return 'Casos (90 días):\n' + JSON.stringify(casos, null, 1).slice(0, 20000);
+    },
+  },
+
+  // Plan de refresh para una página que cae.
+  refresh: {
+    model: MODELS.sonnet,
+    max_tokens: 3000,
+    system: [
+      'Eres editor SEO de País Lector. Una página del sitio está perdiendo posiciones. Recibes sus datos de Search Console y su contenido actual (leído del sitio).',
+      'Diagnostica las causas probables con base en los datos y el contenido (intención que no cubre, secciones débiles o ausentes, title/meta que no corresponden a las queries, contenido desactualizado, falta de respuesta directa al inicio). No inventes cifras.',
+      'Propón acciones concretas, ordenadas por impacto. Si sugieres secciones nuevas, di qué queries las justifican.',
+      'Responde SOLO con JSON válido, sin bloques de código:',
+      '{"diagnostico":"2-3 oraciones","causas":["",""],"acciones":[{"accion":"","detalle":"","prioridad":"alta|media|baja"}],"secciones_nuevas":[{"h2":"","por_que":""}],"title_nuevo":"≤60 caracteres o vacío","meta_nueva":"≤155 caracteres o vacío"}',
+    ].join('\n'),
+    build: async (data) => {
+      const page = await fetchOwnPage(data.url);
+      return 'URL: ' + String(data.url).slice(0, 300) + '\nDatos de caída: ' + JSON.stringify(data.stats || {}).slice(0, 500) +
+        '\nQueries de la página (90 días): ' + JSON.stringify((data.queries || []).slice(0, 20)).slice(0, 4000) +
+        '\n\nContenido actual:\n' + JSON.stringify(page).slice(0, 16000);
+    },
+  },
+
+  // Variantes de title y meta para CTR bajo.
+  ctr: {
+    model: MODELS.sonnet,
+    max_tokens: 1800,
+    system: [
+      'Eres editor SEO de País Lector (voz: directa, irreverente, literaria, sin clickbait barato). Una página recibe muchas impresiones y pocos clics.',
+      'Lee el title y la meta actuales (del sitio) y las queries reales. Diagnostica por qué no convence en el resultado de Google y escribe 3 variantes distintas de title (≤60 caracteres, con la query principal al inicio cuando se pueda) y meta description (≤155 caracteres, con una promesa concreta).',
+      'Cada variante con un enfoque distinto (p. ej. promesa clara, curiosidad, especificidad). Nada de mayúsculas sostenidas ni emojis.',
+      'Responde SOLO con JSON válido, sin bloques de código:',
+      '{"title_actual":"","meta_actual":"","diagnostico":"2 oraciones","variantes":[{"enfoque":"","title":"","meta":"","por_que":""}]}',
+    ].join('\n'),
+    build: async (data) => {
+      const page = await fetchOwnPage(data.url);
+      const lite = page.error ? page : { title: page.title, meta: page.meta, encabezados: (page.encabezados || []).slice(0, 12), inicio: (page.texto || '').slice(0, 1200) };
+      return 'URL: ' + String(data.url).slice(0, 300) + '\nQuery principal: ' + String(data.query || '').slice(0, 200) +
+        '\nDatos: ' + JSON.stringify(data.stats || {}).slice(0, 400) + '\nOtras queries de la página: ' + JSON.stringify((data.queries || []).slice(0, 12)).slice(0, 2500) +
+        '\n\nPágina actual: ' + JSON.stringify(lite).slice(0, 5000);
+    },
+  },
+  // Enlaces internos (desde el sitemap) y fuentes externas (búsqueda web).
+  enlaces: {
+    model: MODELS.sonnet,
+    max_tokens: 4000,
+    tools: WEB_SEARCH_MX(3),
+    system: [
+      'Eres editor SEO de País Lector. Recomiendas el enlazado de UN artículo: enlaces internos salientes, enlaces entrantes desde páginas existentes y fuentes externas de autoridad.',
+      'INTERNOS: elige SOLO entre las URLs candidatas recibidas (vienen del sitemap y de Search Console). Nunca inventes una URL del sitio. Prioriza relevancia temática real (mismo autor, misma obra, movimiento o tema) y páginas con impresiones. No repitas enlaces que el artículo ya tenga. 5-10 salientes, 3-6 entrantes.',
+      'Anchors: descriptivos y naturales, variados, sin "clic aquí"; para entrantes, usa anchors con la keyword del artículo o variantes.',
+      'EXTERNAS: usa la búsqueda web para encontrar 4-6 fuentes de autoridad en español cuando existan (bibliotecas y archivos digitales, universidades, Cervantes Virtual, editoriales, fundaciones del autor, medios culturales serios). Evita competidores directos de País Lector (blogs y sitios de reseñas o listas de poemas) y Wikipedia salvo que no haya alternativa. Solo URLs que aparecieron en tus resultados.',
+      'No escribas nada antes ni entre búsquedas. Al terminar responde SOLO con JSON válido, sin bloques de código:',
+      '{"salientes":[{"url":"","anchor":"","donde":"en qué sección o párrafo","por_que":""}],"entrantes":[{"url":"página existente que debe enlazar al artículo","anchor":"","donde":"","por_que":""}],"externas":[{"url":"","titulo":"","fuente":"institución o medio","por_que":"","donde":""}],"notas":"una o dos frases"}',
+    ].join('\n'),
+    build: async (data) => {
+      const clip = (s, n) => String(s == null ? '' : s).slice(0, n);
+      const keyword = clip(data.keyword, 200);
+      const ctx = clip(data.contexto, 8000);
+      const sm = await fetchSitemapUrls();
+      const kwT = new Set(linkTokens(keyword));
+      const freq = {}; linkTokens(ctx).forEach((t) => { freq[t] = (freq[t] || 0) + 1; });
+      const gsc = {}; (Array.isArray(data.gsc_pages) ? data.gsc_pages : []).slice(0, 300).forEach((p) => { if (p && p.url) gsc[p.url] = +p.impr || 0; });
+      const self = clip(data.url, 400);
+      const pool = [...new Set([...sm.urls, ...Object.keys(gsc)])];
+      const scored = pool.filter((u) => u !== self).map((u) => {
+        let path = u; try { path = decodeURIComponent(new URL(u).pathname); } catch {}
+        const toks = linkTokens(path); let sc = 0;
+        toks.forEach((t) => { if (kwT.has(t)) sc += 5; if (freq[t]) sc += Math.min(3, freq[t]); });
+        if (gsc[u]) sc += Math.min(4, Math.log10(gsc[u] + 1));
+        return { u, sc, impr: gsc[u] || 0 };
+      }).filter((x) => x.sc > 0).sort((a, b) => b.sc - a.sc).slice(0, 70);
+      const topGsc = Object.entries(gsc).sort((a, b) => b[1] - a[1]).slice(0, 15).map(([u, i]) => ({ u, impr: i }));
+      const cand = [...new Map([...scored, ...topGsc].map((x) => [x.u, x])).values()].map((x) => x.u + (x.impr ? ' (' + Math.round(x.impr) + ' impr)' : ''));
+      const existing = self ? await pageLinks(self) : [];
+      return [
+        'Artículo: "' + keyword + '"' + (self ? ' — publicado en ' + self : ' — todavía no publicado'),
+        'Sitemap: ' + (sm.error ? sm.error + ' (se usan las páginas de Search Console)' : (sm.total || 0) + ' URLs leídas'),
+        '',
+        '## Resumen del artículo o brief', ctx || '(sin contexto)',
+        '',
+        '## URLs candidatas del sitio', cand.join('\n') || '(ninguna)',
+        '',
+        '## Enlaces que el artículo ya tiene', existing.slice(0, 120).join('\n') || '(ninguno o no publicado)',
+      ].join('\n');
+    },
+  },
+};
+
+const MAX_BODY_CHARS = 60000;
+
+// ---------- Utilidades ----------
+function allowedOrigin() {
+  return process.env.ALLOWED_ORIGIN || 'https://seo-pulse-dusky.vercel.app';
 }
 
-// Util: lee/guarda tab y periodos por tab desde URL hash + localStorage
-function getInitialTab(){
-  const h=window.location.hash.replace('#','');
-  if(TABS.find(t=>t.id===h))return h;
-  try{const s=localStorage.getItem('sp2_active_tab');if(s&&TABS.find(t=>t.id===s))return s}catch{}
-  return'hoy';
-}
-function getTabPeriods(){
-  try{const s=JSON.parse(localStorage.getItem('sp2_tab_periods')||'null');if(s&&typeof s==='object')return{overview:s.overview||28,content:s.content||28,tracking:s.tracking||28,revenue:s.revenue||28,config:28}}catch{}
-  return{overview:28,content:28,tracking:28,revenue:28,config:28};
-}
-function saveTabPeriods(obj){try{localStorage.setItem('sp2_tab_periods',JSON.stringify(obj))}catch{}}
-
-function App(){
-  const[canibalSeed,setCanibalSeed]=useState({kw:'',n:0});
-  const[briefSeed,setBriefSeed]=useState({kw:'',n:0});
-  const[prodFocus,setProdFocus]=useState('');
-  const[config,setConfig]=useState(getConfig);const[token,setToken]=useState(getToken);
-  // Tab state (v2.8)
-  const[activeTab,setActiveTab]=useState(getInitialTab);
-  const[tabPeriods,setTabPeriods]=useState(getTabPeriods);
-  const period=tabPeriods[activeTab]||28;
-  const setPeriod=(n)=>{const next={...tabPeriods,[activeTab]:n};setTabPeriods(next);saveTabPeriods(next)};
-  const changeTab=(id)=>{setActiveTab(id);try{localStorage.setItem('sp2_active_tab',id)}catch{}try{window.history.replaceState(null,'','#'+id)}catch{};window.scrollTo({top:0,behavior:'smooth'})};
-  const[loading,setLoading]=useState(false);
-  const[error,setError]=useState(null);const[ga4Warn,setGa4Warn]=useState(null);const[data,setData]=useState(null);
-  const[detailItem,setDetailItem]=useState(null);const[adsenseWarn,setAdsenseWarn]=useState(null);
-  // UTM module state
-  const[utms,setUtms]=useState(getUtms);const[utmMetrics,setUtmMetrics]=useState({});
-  const[utmLoading,setUtmLoading]=useState(false);const[utmDetail,setUtmDetail]=useState(null);
-
-  function startAuth(){if(!config?.cid)return;window.location.href='https://accounts.google.com/o/oauth2/v2/auth?client_id='+encodeURIComponent(config.cid)+'&redirect_uri='+encodeURIComponent(REDIRECT_URI)+'&response_type=token&scope='+encodeURIComponent(SCOPES)+'&include_granted_scopes=true&prompt=consent'}
-  useEffect(()=>{const h=window.location.hash;if(h.includes('access_token')){const p=new URLSearchParams(h.slice(1));const t={tk:p.get('access_token'),exp:Date.now()+parseInt(p.get('expires_in'))*1000};localStorage.setItem('sp2_token',JSON.stringify(t));setToken(t);window.history.replaceState(null,'',window.location.pathname)}},[]);
-
-  const gsc=useCallback(async(body)=>{const r=await fetch(GSC_API+'/sites/'+encodeURIComponent(config.site)+'/searchAnalytics/query',{method:'POST',headers:{'Authorization':'Bearer '+token.tk,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error('GSC '+r.status+': '+await r.text());return r.json()},[config,token]);
-  const ga4Fetch=useCallback(async(body)=>{if(!config?.ga4)return null;const r=await fetch(GA4_API+'/'+config.ga4+':runReport',{method:'POST',headers:{'Authorization':'Bearer '+token.tk,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok){if(r.status===403)setGa4Warn('GA4 403: Habilita Google Analytics Data API en Cloud Console');else setGa4Warn('GA4 error '+r.status);return null}setGa4Warn(null);return r.json()},[config,token]);
-  const inspectUrl=useCallback(async(url)=>{const r=await fetch('https://searchconsole.googleapis.com/v1/urlInspection/index:inspect',{method:'POST',headers:{'Authorization':'Bearer '+token.tk,'Content-Type':'application/json'},body:JSON.stringify({inspectionUrl:url,siteUrl:config.site,languageCode:'es'})});if(!r.ok)throw new Error('Inspect '+r.status+': '+(await r.text()).slice(0,160));return r.json()},[config,token]);
-
-  // UTM callbacks
-  const fetchUtmMetrics=useCallback(async(utmList)=>{
-    if(!config?.ga4||!token)return;
-    const list=utmList||utms.filter(u=>!u.archived);
-    if(list.length===0)return;
-    setUtmLoading(true);
-    const sd=daysAgo(period),ed=daysAgo(1);
-    try{
-      const resp=await ga4Fetch({
-        dateRanges:[{startDate:sd,endDate:ed}],
-        dimensions:[{name:'sessionCampaignName'},{name:'sessionSource'},{name:'sessionMedium'}],
-        metrics:[{name:'sessions'},{name:'engagedSessions'}],
-        limit:1000
-      });
-      if(resp&&resp.rows){
-        const idx={};
-        resp.rows.forEach(r=>{
-          const key=r.dimensionValues[0].value+'|'+r.dimensionValues[1].value+'|'+r.dimensionValues[2].value;
-          idx[key]={sessions:parseInt(r.metricValues[0].value),engaged:parseInt(r.metricValues[1].value)};
-        });
-        const newMetrics={};
-        list.forEach(u=>{
-          const key=slugify(u.campaign)+'|'+slugify(u.source)+'|'+slugify(u.medium);
-          newMetrics[u.id]=idx[key]||{sessions:0,engaged:0};
-        });
-        setUtmMetrics(prev=>({...prev,...newMetrics}));
-      }
-    }catch(e){console.warn('UTM metrics error:',e.message)}
-    setUtmLoading(false);
-  },[utms,config,token,period,ga4Fetch]);
-
-  const createUtm=useCallback((newUtm)=>{
-    const updated=[...utms,newUtm];
-    setUtms(updated);saveUtms(updated);
-    if(config?.ga4&&token){fetchUtmMetrics([newUtm])}
-  },[utms,config,token,fetchUtmMetrics]);
-
-  const deleteUtm=useCallback((id)=>{
-    const updated=utms.filter(u=>u.id!==id);
-    setUtms(updated);saveUtms(updated);
-  },[utms]);
-
-  const archiveUtm=useCallback((id)=>{
-    const updated=utms.map(u=>u.id===id?{...u,archived:!u.archived}:u);
-    setUtms(updated);saveUtms(updated);
-  },[utms]);
-
-  useEffect(()=>{if(token&&config?.ga4&&utms.length>0){fetchUtmMetrics()}},[token,config,period]);
-
-  const loadData=useCallback(async()=>{
-    if(!token||!config)return;setLoading(true);setError(null);setGa4Warn(null);
-    try{
-      const sd=daysAgo(period),ed=daysAgo(1),psd=daysAgo(period*2),ped=daysAgo(period+1);
-      const fetchTotals=async(s,e)=>{const types=['web','image','video','discover'];const res=await Promise.all(types.map(t=>gsc({startDate:s,endDate:e,type:t}).catch(()=>({rows:[]}))));let cl=0,im=0,wc=0,wp=0;res.forEach((r,i)=>{if(r.rows)r.rows.forEach(row=>{cl+=row.clicks||0;im+=row.impressions||0});if(i===0&&r.rows&&r.rows[0]){wc=r.rows[0].ctr||0;wp=r.rows[0].position||0}});return{clicks:cl,impressions:im,ctr:wc,pos:wp}};
-      const[cur,prev]=await Promise.all([fetchTotals(sd,ed),fetchTotals(psd,ped)]);
-      const dailyGsc=await gsc({startDate:sd,endDate:ed,dimensions:['date'],type:'web'});
-      const dailyMap={};(dailyGsc.rows||[]).forEach(r=>{dailyMap[r.keys[0]]={clicks:r.clicks,impressions:r.impressions}});
-      const countriesResp=await gsc({startDate:sd,endDate:ed,dimensions:['country'],type:'web',rowLimit:10});
-      const countries=(countriesResp.rows||[]).map(r=>({code:r.keys[0],clicks:r.clicks,impressions:r.impressions}));
-      const allQ=await gsc({startDate:sd,endDate:ed,dimensions:['query'],type:'web',rowLimit:5000});
-      const prevAllQ=await gsc({startDate:psd,endDate:ped,dimensions:['query'],type:'web',rowLimit:5000});
-      const rows=allQ.rows||[];const prevMap={};(prevAllQ.rows||[]).forEach(r=>{prevMap[r.keys[0]]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});
-      const queryPageResp=await gsc({startDate:sd,endDate:ed,dimensions:['query','page'],type:'web',rowLimit:5000});
-      const queryToPage={};(queryPageResp.rows||[]).forEach(r=>{const q=r.keys[0],pg=r.keys[1];if(!queryToPage[q]||r.clicks>queryToPage[q].clicks){queryToPage[q]={page:pg,clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}}});
-      const allP=await gsc({startDate:sd,endDate:ed,dimensions:['page'],type:'web',rowLimit:5000});
-      const prevAllP=await gsc({startDate:psd,endDate:ped,dimensions:['page'],type:'web',rowLimit:5000});
-      const pages=allP.rows||[];const prevPageMap={};(prevAllP.rows||[]).forEach(r=>{prevPageMap[r.keys[0]]={clicks:r.clicks,position:r.position}});
-      const candidates=rows.filter(r=>r.impressions>300&&r.position>7);
-      const escribir=[];const hasPageOpt=[];
-      candidates.forEach(r=>{const q=r.keys[0];const pi=queryToPage[q];if(pi){hasPageOpt.push({query:q,page:pi.page,impressions:r.impressions,position:r.position,clicks:r.clicks,ctr:r.ctr,action:suggestAction(r.position),type:'HAS_PAGE'})}else{escribir.push({...r,score:Math.round(r.impressions*(1/r.position)*10)})}});
-      const finalEscribir=[...escribir];const finalHasPage=[];
-      hasPageOpt.forEach(item=>{const path=shortPath(item.page);if(path==='/'||path===''||path==='/index.html'){finalEscribir.push({keys:[item.query],impressions:item.impressions,position:item.position,clicks:item.clicks,ctr:item.ctr,score:Math.round(item.impressions*(1/item.position)*10)})}else{finalHasPage.push(item)}});
-      finalEscribir.sort((a,b)=>(b.score||0)-(a.score||0));finalHasPage.sort((a,b)=>b.impressions-a.impressions);
-      const optimizar=[];rows.forEach(r=>{const exp=getExpectedCtr(r.position);if(r.impressions>200&&r.ctr<exp*0.6){const pi=queryToPage[r.keys[0]];optimizar.push({...r,type:'CTR',expected:(exp*100).toFixed(1),page:pi?pi.page:null})}});
-      const dropping=[];pages.forEach(r=>{const p=prevPageMap[r.keys[0]];if(p&&r.position-p.position>2&&r.clicks>20)dropping.push({page:r.keys[0],curPos:r.position,prevPos:p.position,clicks:r.clicks,lostClicks:p.clicks-r.clicks})});dropping.sort((a,b)=>b.lostClicks-a.lostClicks);
-      const quickWins=rows.filter(r=>r.position>=2&&r.position<=20&&r.impressions>50).sort((a,b)=>b.impressions-a.impressions).slice(0,15).map(r=>{let a='protect';if(r.position>10)a='create';else if(r.position>3)a='push';const pi=queryToPage[r.keys[0]];return{...r,action:a,page:pi?pi.page:null}});
-      const clusters={};rows.forEach(r=>{const w=r.keys[0].split(' ');let s=w.slice(0,2).join(' ');if(w.length===1)s=w[0];if(!clusters[s])clusters[s]={queries:[],clicks:0,impressions:0};clusters[s].queries.push(r);clusters[s].clicks+=r.clicks;clusters[s].impressions+=r.impressions});
-      const clusterArr=Object.entries(clusters).filter(([,v])=>v.queries.length>=3).map(([n,v])=>({name:n,count:v.queries.length,clicks:v.clicks,impressions:v.impressions})).sort((a,b)=>b.clicks-a.clicks).slice(0,8);
-      let ga4Data=null,ga4Pages=null,dailySessions=null;
-      if(config.ga4){try{
-        const[pgResp,dailyResp]=await Promise.all([
-          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'pagePath'}],metrics:[{name:'sessions'},{name:'totalUsers'},{name:'engagementRate'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:20}),
-          ga4Fetch({dateRanges:[{startDate:sd,endDate:ed}],dimensions:[{name:'date'}],metrics:[{name:'sessions'}],orderBys:[{dimension:{dimensionName:'date'}}]})]);
-        if(pgResp?.rows){ga4Data=pgResp.rows.map(r=>({page:r.dimensionValues[0].value,sessions:parseInt(r.metricValues[0].value),users:parseInt(r.metricValues[1].value),engRate:(parseFloat(r.metricValues[2].value)*100).toFixed(1)}));ga4Pages=ga4Data}
-        if(dailyResp?.rows){const sm={};dailyResp.rows.forEach(r=>{const d=r.dimensionValues[0].value;const dt=d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8);sm[dt]=parseInt(r.metricValues[0].value)});dailySessions=sm}
-      }catch(e){console.warn('GA4:',e.message)}}
-      // ========== ADSENSE ==========
-      let adsenseData=null;
-      try{
-        let accId=getAdsenseAccountId();
-        if(!accId){
-          const accResp=await fetch(ADSENSE_API+'/accounts',{headers:{'Authorization':'Bearer '+token.tk}});
-          if(accResp.ok){const accJson=await accResp.json();if(accJson.accounts&&accJson.accounts[0]){accId=accJson.accounts[0].name;setAdsenseAccountId(accId)}}
-        }
-        if(accId){
-          const adsParams=new URLSearchParams();
-          adsParams.append('metrics','ESTIMATED_EARNINGS');adsParams.append('metrics','PAGE_VIEWS');adsParams.append('metrics','IMPRESSIONS');adsParams.append('metrics','CLICKS');adsParams.append('metrics','PAGE_VIEWS_RPM');
-          adsParams.append('dimensions','PAGE_URL');
-          adsParams.append('startDate.year',sd.split('-')[0]);adsParams.append('startDate.month',parseInt(sd.split('-')[1]));adsParams.append('startDate.day',parseInt(sd.split('-')[2]));
-          adsParams.append('endDate.year',ed.split('-')[0]);adsParams.append('endDate.month',parseInt(ed.split('-')[1]));adsParams.append('endDate.day',parseInt(ed.split('-')[2]));
-          adsParams.append('orderBy','-ESTIMATED_EARNINGS');adsParams.append('limit','50');
-          const adsResp=await fetch(ADSENSE_API+'/'+accId+'/reports:generate?'+adsParams.toString(),{headers:{'Authorization':'Bearer '+token.tk}});
-          if(adsResp.ok){
-            const adsJson=await adsResp.json();
-            if(adsJson.rows&&adsJson.headers){
-              const hi={};adsJson.headers.forEach((h,i)=>{hi[h.name]=i});
-              const totalEarnings=adsJson.totals?.cells?.[hi['ESTIMATED_EARNINGS']]?.value||0;
-              adsenseData={totalEarnings:parseFloat(totalEarnings),pages:adsJson.rows.map(r=>({
-                page:r.cells[hi['PAGE_URL']]?.value||'',
-                earnings:parseFloat(r.cells[hi['ESTIMATED_EARNINGS']]?.value||0),
-                pageViews:parseInt(r.cells[hi['PAGE_VIEWS']]?.value||0),
-                impressions:parseInt(r.cells[hi['IMPRESSIONS']]?.value||0),
-                clicks:parseInt(r.cells[hi['CLICKS']]?.value||0),
-                rpm:parseFloat(r.cells[hi['PAGE_VIEWS_RPM']]?.value||0)
-              })).filter(p=>p.earnings>0)};
-            }
-          }else if(adsResp.status===403){setAdsenseWarn('AdSense 403: Verifica permisos de la API o re-autoriza.')}
-          else{setAdsenseWarn('AdSense error '+adsResp.status)}
-          // Also fetch daily earnings for trend
-          if(accId){
-            const dailyParams=new URLSearchParams();
-            dailyParams.append('metrics','ESTIMATED_EARNINGS');
-            dailyParams.append('dimensions','DATE');
-            dailyParams.append('startDate.year',sd.split('-')[0]);dailyParams.append('startDate.month',parseInt(sd.split('-')[1]));dailyParams.append('startDate.day',parseInt(sd.split('-')[2]));
-            dailyParams.append('endDate.year',ed.split('-')[0]);dailyParams.append('endDate.month',parseInt(ed.split('-')[1]));dailyParams.append('endDate.day',parseInt(ed.split('-')[2]));
-            dailyParams.append('orderBy','+DATE');
-            const dailyAdsResp=await fetch(ADSENSE_API+'/'+accId+'/reports:generate?'+dailyParams.toString(),{headers:{'Authorization':'Bearer '+token.tk}});
-            if(dailyAdsResp.ok){
-              const dJson=await dailyAdsResp.json();
-              if(dJson.rows&&dJson.headers&&adsenseData){
-                const dhi={};dJson.headers.forEach((h,i)=>{dhi[h.name]=i});
-                adsenseData.daily=dJson.rows.map(r=>{const dv=r.cells[dhi['DATE']]?.value||'';return{date:dv,earnings:parseFloat(r.cells[dhi['ESTIMATED_EARNINGS']]?.value||0)}});
-              }
-            }
-          }
-        }
-      }catch(e){console.warn('AdSense:',e.message);setAdsenseWarn('AdSense: '+e.message)}
-      const dailyData=Object.keys(dailyMap).sort().map(date=>({date,clicks:dailyMap[date].clicks,sessions:dailySessions?dailySessions[date]||0:0}));
-      let contentVsTraffic=[];if(ga4Data){const gm={};ga4Data.forEach(g=>{gm[g.page]=g});pages.slice(0,30).forEach(r=>{const path=r.keys[0].replace(/https?:\/\/[^/]+/,'');const ga=gm[path];if(ga&&r.clicks>10){const ratio=ga.sessions/Math.max(r.clicks,1);contentVsTraffic.push({page:path,gscClicks:r.clicks,gaSessions:ga.sessions,ratio,engRate:ga.engRate})}});contentVsTraffic.sort((a,b)=>b.ratio-a.ratio);contentVsTraffic=contentVsTraffic.slice(0,10)}
-      setData({summary:{clicks:cur.clicks,impressions:cur.impressions,ctr:cur.ctr*100,pos:cur.pos,clicksChg:pct(cur.clicks,prev.clicks),imprChg:pct(cur.impressions,prev.impressions)},escribir:finalEscribir.slice(0,8),hasPageOpt:finalHasPage.slice(0,8),optimizar:optimizar.sort((a,b)=>b.impressions-a.impressions).slice(0,8),dropping:dropping.slice(0,5),quickWins,clusterArr,contentVsTraffic,ga4Pages,countries,dailyData,allRows:rows,adsense:adsenseData});
-    }catch(err){console.error(err);setError(err.message);if(err.message.includes('401')){localStorage.removeItem('sp2_token');setToken(null)}}
-    setLoading(false);
-  },[token,config,period,gsc,ga4Fetch]);
-
-  useEffect(()=>{if(token&&config)loadData()},[token,config,period]);
-  if(!config)return(<div className="app"><header><h1>SEO <em>Pulse</em></h1></header><ConfigScreen onSave={setConfig}/></div>);
-  if(!token)return(<div className="app"><header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot"/></div></header><div className="auth-screen"><h2>Conecta tu cuenta</h2><p>Acceso de lectura a Search Console y Analytics.</p><button className="auth-btn" onClick={startAuth}>Conectar con Google</button><button className="btn-secondary" onClick={()=>{localStorage.removeItem('sp2_config');setConfig(null)}}>Cambiar config</button></div></div>);
-
-  const d=data;const maxCC=d&&d.countries&&d.countries[0]?d.countries[0].clicks:1;
-  function openDetail(item){setDetailItem(item)}
-
-  // Compute tab badges (counts of actionable items)
-  const tabBadges={
-    content:d?(d.escribir.length+d.hasPageOpt.length+d.optimizar.length+d.dropping.length):0,
-    tracking:utms.filter(u=>!u.archived).length
+function corsHeaders() {
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin(),
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Vary': 'Origin',
   };
-
-  const PeriodControls=()=>(
-    <div className="controls">
-      <span className="period-label">Periodo:</span>
-      {[7,14,28,90].map(n=><button key={n} className={`per-btn ${period===n?'active':''}`} onClick={()=>setPeriod(n)}>{n}d</button>)}
-      <button className="ref-btn" onClick={loadData} disabled={loading}>{loading?'...':'Actualizar'}</button>
-    </div>
-  );
-
-  const goCheck=kw=>{setCanibalSeed(x=>({kw,n:x.n+1}));setProdFocus(kw.trim().toLowerCase());changeTab('produccion')};
-  const goBrief=kw=>{setBriefSeed(x=>({kw,n:x.n+1}));setProdFocus(kw.trim().toLowerCase());changeTab('produccion')};
-  const goTab=(id,kw)=>{if(kw)setProdFocus(kw);changeTab(id)};
-  const onAct=a=>{if(!a)return;const v=(a.valor||'').trim();if(a.tipo==='produccion'){v?goCheck(v):goTab('produccion')}else if(a.tipo==='radar')goTab('radar');else if(a.tipo==='etapa')goTab('etapa');else if(a.tipo==='pagina'&&v){openDetail({query:null,page:/^https?:/.test(v)?v:('https://'+((config&&config.site)||'').replace('sc-domain:','')+(v.startsWith('/')?v:'/'+v)),position:0,clicks:0,impressions:0})}};
-  const now=new Date();
-  const HEAD={optimizar:{e:'Optimizar',t:'Lo que ya tienes, mejor.',s:'Canibalización en el sitio, páginas que caen y titles con CTR bajo.'},etapa:{e:'Etapa',t:'El plan.',s:'Cuello de botella, mes y semana, razonados con tu roadmap y tus datos.'},hoy:{e:DIAS[now.getDay()]+' '+now.getDate()+' de '+MESES_L[now.getMonth()],t:'Hoy.',s:'Lo que mueve la aguja, en orden. Empieza por arriba.'},produccion:{e:'Producción',t:'De keyword a borrador.',s:'Chequeo, brief y verificación en un solo flujo.'},radar:{e:'Radar de oportunidades',t:'Qué atacar después.',s:'Temas que no cubres, validados con Google y tu Search Console.'}};
-  const head=HEAD[activeTab]||{e:'Análisis',t:(TABS.find(t=>t.id===activeTab)||{}).label||'',s:''};
-  const allBadges={...tabBadges,produccion:Object.keys(getBriefs()).length};
-  return(<div className="shell">
-    <SideNav activeTab={activeTab} onTabChange={changeTab} badges={allBadges} site={config&&config.site}/>
-    <div className="app">
-    <div className="page-head"><div><div className="eyebrow">{head.e}</div><h1 className="page-title">{head.t}</h1>{head.s&&<p className="page-sub">{head.s}</p>}</div>{(activeTab==='hoy'||activeTab==='radar')&&<button className="cta-primary" onClick={()=>goTab('produccion')}>+ Nueva keyword</button>}</div>
-
-    {error&&<div className="error-msg">{error}</div>}
-    {ga4Warn&&activeTab!=='config'&&<div className="warn-msg">{ga4Warn}</div>}
-    {adsenseWarn&&activeTab==='revenue'&&<div className="warn-msg">{adsenseWarn}</div>}
-
-    <div className="tab-content">
-
-    {activeTab==='hoy'&&<Hoy d={d} loading={loading} onGo={goTab} onCheck={goCheck} onBrief={goBrief} openDetail={openDetail} gscFn={gsc} onAct={onAct}/>}
-    {activeTab==='produccion'&&<Produccion gscFn={gsc} config={config} canibalSeed={canibalSeed} briefSeed={briefSeed} onBriefSeed={goBrief} focusKw={prodFocus}/>}
-    {activeTab==='optimizar'&&<OptimizarTab d={d} gscFn={gsc} loading={loading}/>}
-    {activeTab==='radar'&&<RadarTab d={d} loading={loading} onCheck={goCheck} gscFn={gsc} config={config}/>}
-
-    {/* ========== ETAPA TAB ========== */}
-    {activeTab==='etapa'&&<><PlanPanel d={d} gscFn={gsc} onAct={onAct}/><Etapa data={data}/></>}
-
-    {/* ========== OVERVIEW TAB ========== */}
-    {activeTab==='overview'&&<>
-      <PeriodControls/>
-      {loading&&!d?<div className="loading"><div className="spinner"/>Cargando...</div>:d?<>
-        <div className="stats">
-          <div className="stat"><div className="stat-label">Clicks</div><div className="stat-val">{fmt(d.summary.clicks)}</div>{d.summary.clicksChg&&<div className={`stat-chg ${d.summary.clicksChg>0?'up':'down'}`}>{d.summary.clicksChg>0?'+':''}{d.summary.clicksChg}%</div>}</div>
-          <div className="stat"><div className="stat-label">Impresiones</div><div className="stat-val">{fmt(d.summary.impressions)}</div>{d.summary.imprChg&&<div className={`stat-chg ${d.summary.imprChg>0?'up':'down'}`}>{d.summary.imprChg>0?'+':''}{d.summary.imprChg}%</div>}</div>
-          <div className="stat"><div className="stat-label">CTR prom.</div><div className="stat-val">{d.summary.ctr.toFixed(1)}%</div></div>
-          <div className="stat"><div className="stat-label">Pos. prom.</div><div className="stat-val">{d.summary.pos.toFixed(1)}</div></div>
-        </div>
-        {d.dailyData&&d.dailyData.length>0&&<div className="panel"><div className="panel-head"><h3>Tendencia</h3><span className="pill pill-green">Clicks + Sessions</span></div><div className="panel-body"><TrendChart dailyData={d.dailyData}/></div></div>}
-        <div className="two-col">
-          {d.countries&&d.countries.length>0&&<div className="panel"><div className="panel-head"><h3>Top paises</h3><span className="pill pill-blue">GSC</span></div><div className="panel-body">
-            {d.countries.map((c,i)=><div className="country-bar" key={i}><span className="country-name">{COUNTRY_NAMES[c.code]||c.code}</span><div className="country-track"><div className="country-fill" style={{width:Math.round(c.clicks/maxCC*100)+'%'}}/></div><span className="country-val">{fmt(c.clicks)}</span></div>)}</div></div>}
-          {d.ga4Pages&&d.ga4Pages.length>0&&<div className="panel"><div className="panel-head"><h3>Top pages</h3><span className="pill pill-blue">GA4</span></div><div className="panel-body">
-            {d.ga4Pages.slice(0,10).map((p,i)=><div className="row" key={i} style={{padding:'5px 0'}} onClick={()=>openDetail({page:'https://paislector.com'+p.page,query:null,position:0,clicks:0,impressions:0})}><div className="row-left"><div className="row-kw">{p.page}</div><div className="row-meta">{fmt(p.sessions)} sess / {fmt(p.users)} users / {p.engRate}% eng</div></div></div>)}</div></div>}
-        </div>
-        <div className="panel"><div className="panel-head"><h3>Cluster map</h3><span className="pill pill-purple">{d.clusterArr.length} clusters</span></div><div className="panel-body">
-          {d.clusterArr.map((c,i)=><div className="row" key={i} style={{cursor:'default'}}><div className="row-left"><div className="row-kw">{c.name}</div><div className="row-meta">{c.count} queries / {fmt(c.clicks)} clicks / {fmt(c.impressions)} impr</div></div><span className={`score ${c.count>5?'s-hi':c.count>3?'s-md':'s-lo'}`}>{c.count}q</span></div>)}
-          <div className="explain">Queries por tema. Mas queries = mas oportunidad de hub.</div></div></div>
-      </>:null}
-    </>}
-
-    {/* ========== INDEX TAB ========== */}
-    {activeTab==='index'&&<IndexTab gscFn={gsc} inspectFn={inspectUrl} config={config}/>}
-
-    {/* ========== CONTENT TAB ========== */}
-    {activeTab==='content'&&<>
-      <PeriodControls/>
-      {loading&&!d?<div className="loading"><div className="spinner"/>Cargando...</div>:d?<>
-        <div className="panel"><div className="panel-head"><h3>Escribir next</h3><span className="pill pill-green">{d.escribir.length} oportunidades</span></div><div className="panel-body">
-          {d.escribir.length===0&&<div style={{fontSize:12,color:'var(--hint)',padding:'8px 0'}}>No hay queries sin pagina dedicada que cumplan el umbral.</div>}
-          {d.escribir.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({query:r.keys[0],page:null,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / score {r.score}</div></div><span className={`score ${r.score>80?'s-hi':r.score>50?'s-md':'s-lo'}`}>{r.score}</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Content brief para "'+r.keys[0]+'" para paislector.com'),'_blank')}}>Brief</button></div>)}
-          <div className="explain">Click en fila para ver tendencia y diagnostico.</div></div></div>
-        <div className="panel"><div className="panel-head"><h3>Optimizar ahora</h3><span className="pill pill-coral">{d.optimizar.length+d.dropping.length+d.hasPageOpt.length} acciones</span></div><div className="panel-body">
-          {d.hasPageOpt.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--blue)',marginBottom:6,marginTop:2}}>Ya tienen pagina ({d.hasPageOpt.length})</div>
-          {d.hasPageOpt.map((r,i)=><div className="row" key={'hp'+i} onClick={()=>openDetail(r)}><div className="row-left"><div className="row-kw">{r.query}</div><div className="row-meta"><span className="url-tag">{shortPath(r.page)}</span> pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr / {r.action}</div></div><span className="score s-md">OPT</span><button className="row-btn" onClick={e=>{e.stopPropagation();window.open('https://claude.ai/new?q='+encodeURIComponent('Optimiza '+r.page+' para "'+r.query+'". Pos: '+r.position.toFixed(1)+'. Accion: '+r.action),'_blank')}}>Brief</button></div>)}</>}
-          {d.optimizar.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6,marginTop:d.hasPageOpt.length>0?10:2}}>CTR bajo ({d.optimizar.length})</div>
-          {d.optimizar.map((r,i)=><div className="row" key={'o'+i} onClick={()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / CTR {(r.ctr*100).toFixed(1)}% vs esperado {r.expected}% / pos {r.position.toFixed(1)}</div></div><span className="score s-lo">CTR</span></div>)}</>}
-          {d.dropping.length>0&&<><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6,marginTop:10}}>Cayendo ({d.dropping.length})</div>
-          {d.dropping.map((r,i)=><div className="row" key={'d'+i} onClick={()=>openDetail({query:null,page:r.page,position:r.curPos,clicks:r.clicks,impressions:0})}><div className="row-left"><div className="row-kw">{shortPath(r.page)}</div><div className="row-meta">pos {r.prevPos.toFixed(1)} &rarr; {r.curPos.toFixed(1)} / -{Math.max(0,r.lostClicks)} clicks</div></div><span className="score s-lo">DROP</span></div>)}</>}
-          <div className="explain">Click en fila para diagnostico detallado.</div></div></div>
-        <div className="panel"><div className="panel-head"><h3>Quick wins</h3><span className="pill pill-amber">{d.quickWins.length} keywords</span></div><div className="panel-body">
-          {d.quickWins.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}><div className="row-left"><div className="row-kw">{r.keys[0]}</div><div className="row-meta">{r.page&&<><span className="url-tag">{shortPath(r.page)}</span>{' '}</>}{fmt(r.impressions)} impr / pos {r.position.toFixed(1)} / CTR {(r.ctr*100).toFixed(1)}%</div></div><span className={`score ${r.action==='protect'?'s-hi':r.action==='push'?'s-md':'s-lo'}`}>{r.action==='protect'?'TOP3':r.action==='push'?'PUSH':'NEW'}</span></div>)}
-          <div className="explain">TOP3: proteger. PUSH: internal links. NEW: articulo nuevo.</div></div></div>
-        {d.contentVsTraffic&&d.contentVsTraffic.length>0&&<div className="panel"><div className="panel-head"><h3>Contenido vs trafico</h3><span className="pill pill-blue">GSC + GA4</span></div><div className="panel-body">
-          {d.contentVsTraffic.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({page:'https://paislector.com'+r.page,query:null,position:0,clicks:r.gscClicks,impressions:0})}><div className="row-left"><div className="row-kw">{r.page.length>45?r.page.slice(0,45)+'...':r.page}</div><div className="row-meta">GSC: {fmt(r.gscClicks)} / GA4: {fmt(r.gaSessions)} / ratio {r.ratio.toFixed(1)}x{r.ratio>1.5?' \u2014 social fuerte':''}</div></div></div>)}
-          <div className="explain">Ratio +1.5 = trafico no-SEO. ~1 = depende de Google.</div></div></div>}
-        <Discovery gscRows={d.allRows} onOpenDetail={openDetail}/>
-        <KwAnalyzer gscRows={d.allRows} onCheck={goCheck} onBrief={goBrief}/>
-      </>:null}
-    </>}
-
-    {/* ========== TRACKING TAB ========== */}
-    {activeTab==='tracking'&&<>
-      <PeriodControls/>
-      <UtmBuilder onCreated={createUtm} existingUtms={utms}/>
-      <UtmDashboard utms={utms} metricsMap={utmMetrics} onOpenDetail={setUtmDetail} onRefresh={()=>fetchUtmMetrics()} loading={utmLoading}/>
-      <OutboundClicks ga4Fetch={ga4Fetch} period={period}/>
-    </>}
-
-    {/* ========== REVENUE TAB ========== */}
-    {activeTab==='revenue'&&<>
-      <PeriodControls/>
-      {loading&&!d?<div className="loading"><div className="spinner"/>Cargando...</div>:d?<>
-        {d.adsense?<div className="panel"><div className="panel-head"><h3>Revenue</h3><span className="pill pill-amber">AdSense</span></div><div className="panel-body">
-          <div className="rev-total"><span className="rev-amount">{fmtMoney(d.adsense.totalEarnings)}</span><span className="rev-sub">{period}d / {d.adsense.pages.length} paginas con revenue</span></div>
-          {d.adsense.pages.slice(0,10).map((p,i)=>{const maxE=d.adsense.pages[0]?.earnings||1;return<div className="rev-bar" key={i} style={{cursor:'pointer'}} onClick={()=>openDetail({page:p.page,query:null,position:0,clicks:p.clicks,impressions:p.impressions})}><span className="rev-page">{shortPath(p.page)}</span><div className="rev-bar-track"><div className="rev-bar-fill" style={{width:Math.round(p.earnings/maxE*100)+'%'}}/></div><span className="rev-val">{fmtMoney(p.earnings)}</span></div>})}
-          {d.adsense.pages.length>0&&<div style={{marginTop:8,display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}}>
-            {d.adsense.pages.slice(0,6).map((p,i)=><div key={i} style={{fontSize:10,color:'var(--hint)'}}><span style={{fontWeight:500,color:'var(--text)'}}>{shortPath(p.page).slice(0,30)}</span><br/>{fmt(p.pageViews)} views / RPM {fmtMoney(p.rpm)} / {p.clicks} clicks</div>)}
-          </div>}
-          <div className="explain">Revenue estimado por pagina. RPM = revenue por 1K page views. Click en fila para detalle.</div>
-        </div></div>:<div className="lazy-placeholder">Sin data de AdSense para este periodo. Verifica que tu cuenta de AdSense este conectada al mismo OAuth.</div>}
-      </>:null}
-    </>}
-
-    {/* ========== CONFIG TAB ========== */}
-    {activeTab==='config'&&<>
-      <div className="panel"><div className="panel-head"><h3>Configuracion</h3><span className="pill pill-blue">Setup</span></div><div className="panel-body">
-        <div style={{fontSize:12,color:'var(--muted)',lineHeight:1.7,marginBottom:14}}>
-          <div style={{marginBottom:8}}><strong style={{color:'var(--text)'}}>Version:</strong> {VERSION}</div>
-          <div style={{marginBottom:8}}><strong style={{color:'var(--text)'}}>Site GSC:</strong> {config?.site||'-'}</div>
-          <div style={{marginBottom:8}}><strong style={{color:'var(--text)'}}>GA4 Property:</strong> {config?.ga4||'-'}</div>
-          <div style={{marginBottom:8}}><strong style={{color:'var(--text)'}}>UTMs guardadas:</strong> {utms.length} ({utms.filter(u=>!u.archived).length} activas)</div>
-          <div style={{marginBottom:8}}><strong style={{color:'var(--text)'}}>Token OAuth:</strong> {token?'valido hasta '+new Date(token.exp).toLocaleTimeString():'expirado'}</div>
-        </div>
-        <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-          <button className="btn-secondary" onClick={()=>{localStorage.removeItem('sp2_token');setToken(null)}}>Reconectar Google</button>
-          <button className="btn-secondary" onClick={async()=>{try{const r=await callClaude('test',{});alert('Claude: '+r)}catch(e){alert('Error: '+e.message)}}}>Probar Claude</button>
-          <button className="btn-secondary" onClick={()=>{localStorage.removeItem('sp2_config');localStorage.removeItem('sp2_token');setConfig(null);setToken(null)}}>Cambiar config</button>
-          <button className="btn-secondary" style={{color:'var(--coral)'}} onClick={()=>{if(confirm('Seguro? Borrara TODO: config, UTMs, cache. No hay vuelta atras.')){localStorage.clear();setConfig(null);setToken(null);setData(null);setUtms([]);setUtmMetrics({});setGa4Warn(null);setAdsenseWarn(null)}}}>Resetear todo</button>
-        </div>
-      </div></div>
-      <div className="panel"><div className="panel-head"><h3>Info</h3><span className="pill pill-green">SEO Pulse</span></div><div className="panel-body">
-        <div style={{fontSize:12,color:'var(--muted)',lineHeight:1.7}}>
-          <p>Dashboard SEO + tracking para Pais Lector. Conecta directo con Google Search Console, Analytics 4 y AdSense via OAuth. Sin backend, sin base de datos: todo corre en tu browser.</p>
-          <p style={{marginTop:10}}><strong style={{color:'var(--text)'}}>Costo total:</strong> $0/mes. Hosted en Vercel free tier.</p>
-        </div>
-      </div></div>
-    </>}
-
-    </div>
-
-    {detailItem&&<PageDetailDrawer item={detailItem} onClose={()=>setDetailItem(null)} gscFn={gsc} period={period}/>}
-    {utmDetail&&<UtmDetailDrawer utm={utmDetail} onClose={()=>setUtmDetail(null)} ga4Fetch={ga4Fetch} period={period} onDelete={deleteUtm} onArchive={archiveUtm}/>}
-  </div></div>);
 }
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
-</script>
-</body>
-</html>
+
+function J(obj, status = 200) {
+  return new Response(JSON.stringify(obj), {
+    status,
+    headers: { ...corsHeaders(), 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+  });
+}
+
+// Valida el token de Google: que sea de tu Client ID y de tu email.
+async function verifyGoogleToken(token) {
+  try {
+    const r = await fetch('https://oauth2.googleapis.com/tokeninfo?access_token=' + encodeURIComponent(token));
+    if (!r.ok) return false;
+    const info = await r.json();
+    const cid = process.env.GOOGLE_CLIENT_ID;
+    const email = (process.env.ALLOWED_EMAIL || '').trim().toLowerCase();
+    const audOk = info.aud === cid || info.azp === cid;
+    const emailOk = !!email && (info.email || '').toLowerCase() === email && String(info.email_verified) === 'true';
+    const aliveOk = Number(info.expires_in) > 0;
+    return audOk && emailOk && aliveOk;
+  } catch {
+    return false;
+  }
+}
+
+// ---------- Handler ----------
+export default async function handler(req) {
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders() });
+  if (req.method !== 'POST') return J({ error: 'Método no permitido' }, 405);
+
+  const { ANTHROPIC_API_KEY, GOOGLE_CLIENT_ID, ALLOWED_EMAIL } = process.env;
+  if (!ANTHROPIC_API_KEY || !GOOGLE_CLIENT_ID || !ALLOWED_EMAIL) {
+    return J({ error: 'Faltan variables de entorno en Vercel' }, 500);
+  }
+
+  // 1. Origen
+  if (req.headers.get('origin') !== allowedOrigin()) return J({ error: 'Origen no permitido' }, 403);
+
+  // 2. Identidad (token de Google)
+  const auth = req.headers.get('authorization') || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+  if (!token || !(await verifyGoogleToken(token))) return J({ error: 'No autorizado' }, 401);
+
+  // 3. Tamaño y formato del input
+  const raw = await req.text();
+  if (raw.length > MAX_BODY_CHARS) return J({ error: 'Input demasiado grande' }, 413);
+  let body;
+  try { body = JSON.parse(raw); } catch { return J({ error: 'JSON inválido' }, 400); }
+
+  // 4. Tarea en lista blanca
+  const task = TASKS[body.task];
+  if (!task) return J({ error: 'Tarea no permitida' }, 400);
+
+  let prompt;
+  try { prompt = await task.build(body.data || {}); } catch { return J({ error: 'Datos inválidos para la tarea' }, 400); }
+
+  // 5. Llamada a Claude con streaming
+  const upstream = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: task.model,
+      max_tokens: task.max_tokens,
+      system: typeof task.system === 'function' ? task.system() : task.system,
+      stream: true,
+      ...(task.tools ? { tools: task.tools } : {}),
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
+
+  if (!upstream.ok) {
+    let msg = 'Error de la API de Claude';
+    try { msg = JSON.parse(await upstream.text()).error?.message || msg; } catch {}
+    return J({ error: msg }, upstream.status);
+  }
+
+  return new Response(upstream.body, {
+    status: 200,
+    headers: { ...corsHeaders(), 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-store' },
+  });
+}
