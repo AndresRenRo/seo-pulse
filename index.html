@@ -336,6 +336,17 @@ body{background:var(--bg)}
 .idea .cta-primary,.idea .cta-light{margin-top:auto}
 .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}.how-grid p{font-size:14px;color:#3F3E3A;line-height:1.5;margin-top:4px}.mono-blue{font-family:var(--mono);font-size:12px;color:#0039B8}
 #root>.app{margin:0 auto;max-width:640px}
+.piece-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.save-btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 13px var(--sans);cursor:pointer}.save-btn.on{color:var(--blue);border-color:var(--blue-tint);background:var(--blue-soft)}
+.idea-ink .save-btn{border-color:#3A3A3A;color:#D6D3CC}.idea-ink .save-btn.on{background:#1E2A4A;color:#BFD0FF;border-color:#1E2A4A}
+.comp{margin-top:12px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.comp-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.comp-title{font-family:var(--display);font-size:17px;font-weight:700}
+.comp-sub{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#0039B8;margin-bottom:4px}
+.comp-p{font-size:14px;line-height:1.55;color:#3F3E3A}
+.comp-list{display:flex;flex-direction:column;gap:10px}
+.comp-row{display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--line);padding-top:10px}
+.comp-rank{font-family:var(--mono);font-size:13px;color:var(--muted);width:18px}
+.comp-dom{font-family:var(--mono);font-size:12px;color:var(--muted);overflow-wrap:anywhere}.comp-t{font-weight:600;font-size:14px;display:block;margin-top:2px}.comp-cubre{font-size:13px;color:#3F3E3A;margin-top:3px;line-height:1.45}
 .radar-run{gap:10px}.field-label{font-size:13px;font-weight:600}
 .radar-run-row{display:flex;flex-wrap:wrap;gap:8px}.radar-run-row .disc-input{flex:1 1 280px;min-height:44px}
 .radar-summary{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;font-size:14px;color:#3F3E3A}
@@ -373,7 +384,7 @@ button.filter{cursor:pointer;font-family:var(--sans)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v4.1';
+const VERSION='v4.2';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SUGGEST_API=REDIRECT_URI+'/api/suggest';
 const CLAUDE_API=REDIRECT_URI+'/api/claude';
@@ -748,13 +759,30 @@ const BRIEF_TIPOS=[['auto','Automático (según la keyword)'],['resena','Reseña
 function getBriefs(){try{return JSON.parse(localStorage.getItem('sp2_briefs')||'{}')}catch{return{}}}
 function saveBrief(kw,obj){try{const h=getBriefs();h[kw.trim().toLowerCase()]=obj;const keys=Object.keys(h).sort((a,b)=>h[b].ts-h[a].ts);keys.slice(30).forEach(k=>delete h[k]);localStorage.setItem('sp2_briefs',JSON.stringify(h))}catch{}}
 async function fetchSuggestions(kw){const pre=['','que ','por que ','cual es '];const res=await Promise.all(pre.map(p=>fetch(SUGGEST_API+'?q='+encodeURIComponent(p+kw)+'&lang=es').then(r=>r.ok?r.json():{suggestions:[]}).then(d=>d.suggestions||[]).catch(()=>[])));return[...new Set(res.flat().map(x=>x.trim()).filter(Boolean))].slice(0,30)}
+function CompView({comp}){
+  const[open,setOpen]=useState(false);const res=comp.resultados||[];
+  const dif=(comp.dificultad||'').toLowerCase();
+  return(<div className="comp">
+    <div className="comp-head"><div><div className="side-label" style={{padding:0,color:'var(--muted)'}}>Competencia en Google México</div><div className="comp-title">{res.length} resultados analizados</div></div>{dif&&<span className={'sig '+(dif==='alta'?'sig-warn':dif==='media'?'sig-md':'sig-hi')}>Dificultad {dif}</span>}</div>
+    {comp.dificultad_motivo&&<p className="comp-p">{comp.dificultad_motivo}</p>}
+    {comp.huecos&&comp.huecos.length>0&&<div><div className="comp-sub">Huecos que puedes ganar</div>{comp.huecos.map((h,i)=><div key={i} className="md-li"><span className="md-bul">→</span><span>{h}</span></div>)}</div>}
+    {comp.angulo&&<div><div className="comp-sub">Ángulo recomendado</div><p className="comp-p">{comp.angulo}</p></div>}
+    <button className="link-btn" onClick={()=>setOpen(o=>!o)} aria-expanded={open}>{open?'Ocultar resultados':'Ver quién rankea'}</button>
+    {open&&<div className="comp-list">{res.map((r,i)=><div key={i} className="comp-row">
+      <div className="comp-rank">{i+1}</div>
+      <div style={{minWidth:0,flex:1}}><div className="comp-dom">{r.dominio} · {r.tipo}{r.formato?' · '+r.formato:''}</div>{r.url?<a href={r.url} target="_blank" rel="noopener" className="comp-t">{r.titulo}</a>:<div className="comp-t">{r.titulo}</div>}{r.cubre&&<div className="comp-cubre">{r.cubre.join(' · ')}</div>}</div>
+      {r.fuerza&&<span className={'sig '+(r.fuerza==='alta'?'sig-warn':r.fuerza==='media'?'sig-md':'sig-hi')} title={r.razon||''}>{r.fuerza}</span>}
+    </div>)}{comp.patrones&&comp.patrones.length>0&&<div style={{marginTop:6}}><div className="comp-sub">Lo que premia este SERP</div>{comp.patrones.map((x,i)=><div key={i} className="md-li"><span className="md-bul">•</span><span>{x}</span></div>)}</div>}</div>}
+  </div>);
+}
 let lastBriefNonce=0;
 function BriefGen({gscFn,config,seed,seedNonce,onDone,focusKw}){
   const[kw,setKw]=useState('');const[tipo,setTipo]=useState('auto');const[extraOn,setExtraOn]=useState(false);const[extraN,setExtraN]=useState(1);const[notes,setNotes]=useState('');
   const[st,setSt]=useState('idle');const[stage,setStage]=useState('');const[text,setText]=useState('');const[err,setErr]=useState(null);const[saved,setSaved]=useState(()=>getBriefs());const[copied,setCopied]=useState(false);
+  const[compOn,setCompOn]=useState(()=>{try{return localStorage.getItem('sp2_comp_on')!=='0'}catch{return true}});const[comp,setComp]=useState(null);const[compWarn,setCompWarn]=useState(null);
   const ref=useRef(null);
   useEffect(()=>{if(seed&&seedNonce>lastBriefNonce){lastBriefNonce=seedNonce;setKw(seed);setText('');setSt('idle');if(ref.current)ref.current.scrollIntoView({behavior:'smooth',block:'start'})}},[seedNonce]);
-  useEffect(()=>{if(!focusKw||st==='loading')return;setKw(focusKw);const b=getBriefs()[focusKw.toLowerCase()];if(b){setTipo(b.tipo||'auto');setText(b.text);setSt('done');setErr(null)}else{setText('');setSt('idle')}},[focusKw]);
+  useEffect(()=>{if(!focusKw||st==='loading')return;setKw(focusKw);const b=getBriefs()[focusKw.toLowerCase()];if(b){setTipo(b.tipo||'auto');setText(b.text);setComp(b.comp||null);setSt('done');setErr(null)}else{setText('');setComp(null);setSt('idle')}},[focusKw]);
   async function run(){
     const keyword=kw.trim();if(keyword.length<3)return;
     setSt('loading');setErr(null);setText('');
@@ -769,9 +797,11 @@ function BriefGen({gscFn,config,seed,seedNonce,onDone,focusKw}){
       const pmap={};rows.forEach(r=>{pmap[r.keys[1]]=(pmap[r.keys[1]]||0)+r.impressions});
       const pages=Object.entries(pmap).sort((a,b)=>b[1]-a[1]).slice(0,50).map(([url,impressions])=>({url,impressions}));
       const suggestions=await fetchSuggestions(keyword);
+      let compRes=null;setComp(null);setCompWarn(null);
+      if(compOn){setStage('Analizando la competencia en Google México…');try{compRes=parseJsonLoose(await callClaude('competencia',{keyword}));if(compRes.error){setCompWarn('Competencia: '+compRes.error);compRes=null}else setComp(compRes)}catch(e){setCompWarn('No se pudo analizar la competencia ('+e.message+'). El brief sigue sin ella.')}}
       setStage('Escribiendo el brief…');
-      const out=await callClaude('brief',{keyword,tipo,year:new Date().getFullYear(),site:config&&config.site,canibal:can.res,queries,suggestions,pages,extra:extraOn?extraN:0,notes},t=>{setText(t);setStage('')});
-      saveBrief(keyword,{ts:Date.now(),tipo,text:out,canibal:can.res});setSaved(getBriefs());setSt('done');setStage('');if(onDone)onDone(keyword);
+      const out=await callClaude('brief',{keyword,tipo,year:new Date().getFullYear(),site:config&&config.site,canibal:can.res,queries,suggestions,pages,extra:extraOn?extraN:0,notes,competencia:compRes},t=>{setText(t);setStage('')});
+      saveBrief(keyword,{ts:Date.now(),tipo,text:out,canibal:can.res,comp:compRes});setSaved(getBriefs());setSt('done');setStage('');if(onDone)onDone(keyword);
     }catch(e){setErr(e.message);setSt('error');setStage('')}
   }
   function download(){const blob=new Blob([text],{type:'text/markdown'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='brief-'+slugify(kw)+'.md';a.click();URL.revokeObjectURL(a.href)}
@@ -783,17 +813,20 @@ function BriefGen({gscFn,config,seed,seedNonce,onDone,focusKw}){
       <select className="disc-input" style={{flex:'0 1 260px'}} value={tipo} onChange={e=>setTipo(e.target.value)}>{BRIEF_TIPOS.map(([k,l])=><option key={k} value={k}>{l}</option>)}</select>
     </div>
     <div style={{display:'flex',gap:12,alignItems:'center',flexWrap:'wrap',marginTop:10,fontSize:13}}>
+      <label style={{display:'flex',gap:6,alignItems:'center',cursor:'pointer'}}><input type="checkbox" checked={compOn} onChange={e=>{setCompOn(e.target.checked);try{localStorage.setItem('sp2_comp_on',e.target.checked?'1':'0')}catch{}}}/>Analizar competencia en Google</label>
       <label style={{display:'flex',gap:6,alignItems:'center',cursor:'pointer'}}><input type="checkbox" checked={extraOn} onChange={e=>setExtraOn(e.target.checked)}/>Recomendar secciones nuevas</label>
       {extraOn&&<select className="disc-input" style={{width:'auto',padding:'4px 8px'}} value={extraN} onChange={e=>setExtraN(+e.target.value)}>{[1,2,3].map(n=><option key={n} value={n}>{n} {n===1?'sección':'secciones'}</option>)}</select>}
     </div>
     <textarea className="kw-textarea" style={{marginTop:10,minHeight:56}} placeholder="Notas opcionales: ángulo que quieres, obras a incluir o excluir, tono…" value={notes} onChange={e=>setNotes(e.target.value)}/>
     <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap',marginTop:8}}>
       <button className="btn-primary" style={{padding:'7px 16px',fontSize:'12px'}} disabled={st==='loading'} onClick={run}>{st==='loading'?'Generando…':'Generar brief'}</button>
-      {savedKeys.length>0&&<select className="disc-input" style={{width:'auto',padding:'5px 8px',fontSize:12}} value="" onChange={e=>{const k=e.target.value;if(!k)return;const b=saved[k];setKw(k);setTipo(b.tipo||'auto');setText(b.text);setSt('done');setErr(null);if(onDone)onDone(k)}}><option value="">Briefs guardados ({savedKeys.length})</option>{savedKeys.map(k=><option key={k} value={k}>{k}</option>)}</select>}
+      {savedKeys.length>0&&<select className="disc-input" style={{width:'auto',padding:'5px 8px',fontSize:12}} value="" onChange={e=>{const k=e.target.value;if(!k)return;const b=saved[k];setKw(k);setTipo(b.tipo||'auto');setText(b.text);setComp(b.comp||null);setSt('done');setErr(null);if(onDone)onDone(k)}}><option value="">Briefs guardados ({savedKeys.length})</option>{savedKeys.map(k=><option key={k} value={k}>{k}</option>)}</select>}
     </div>
     {canNow&&canNow.res&&st!=='loading'&&<div style={{marginTop:8,fontSize:12,color:'var(--muted)'}}>Canibalización: <strong>{(canNow.res.veredicto||'').toUpperCase()}</strong> ({formatRelTime(canNow.ts)})</div>}
     {stage&&<div className="loading" style={{padding:'14px 0'}}><div className="spinner"/>{stage}</div>}
     {st==='error'&&<div style={{marginTop:10,fontSize:12,color:'var(--coral)'}}>Error: {err}</div>}
+    {compWarn&&<div style={{marginTop:10,fontSize:12,color:'var(--amber)'}}>{compWarn}</div>}
+    {comp&&<CompView comp={comp}/>}
     {text&&<div style={{marginTop:12}}>
       {st==='done'&&<div style={{display:'flex',gap:8,marginBottom:8}}><button className="row-btn" onClick={()=>{navigator.clipboard.writeText(text).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),1500)})}}>{copied?'Copiado ✓':'Copiar'}</button><button className="row-btn" onClick={download}>Descargar .md</button></div>}
       <MdView text={text}/>
@@ -929,20 +962,25 @@ function Produccion({gscFn,config,canibalSeed,briefSeed,onBriefSeed,focusKw}){
   </div>);
 }
 
+const GENERIC_TOK=new Set(normTokens('poema poemas cuento cuentos reseña resumen libro libros novela novelas frase frases carta cartas analisis completo completa mejor mejores corto cortos amor pdf español obra obras autor autora leer gratis significado biografia vida quien fue trata historia personaje personajes texto final'));
 function getRadar(){try{return JSON.parse(localStorage.getItem('sp2_radar')||'null')}catch{return null}}
 function saveRadar(r){try{localStorage.setItem('sp2_radar',JSON.stringify(r))}catch{}}
+function getSavedIdeas(){try{return JSON.parse(localStorage.getItem('sp2_radar_saved')||'[]')}catch{return[]}}
+function setSavedIdeas(a){try{localStorage.setItem('sp2_radar_saved',JSON.stringify(a.slice(-200)))}catch{}window.dispatchEvent(new Event('sp-saved'))}
+function toggleSavedIdea(p,t){const a=getSavedIdeas();const i=a.findIndex(x=>x.keyword===p.keyword);if(i>=0)a.splice(i,1);else a.push({keyword:p.keyword,tipo:p.tipo,pieza:p.pieza,demand:p.demand,variants:p.variants,conflict:p.conflict,autor:t.autor,muerte:t.muerte,temporada:t.titulo,ts:Date.now()});setSavedIdeas(a);return a}
 function getRadarDiscard(){try{return JSON.parse(localStorage.getItem('sp2_radar_discard')||'[]')}catch{return[]}}
 function addRadarDiscard(x){try{const a=getRadarDiscard();if(!a.includes(x))a.push(x);localStorage.setItem('sp2_radar_discard',JSON.stringify(a.slice(-150)))}catch{}}
 async function validateKeyword(kw,rows){
   let sugg=[];try{const r=await fetch(SUGGEST_API+'?q='+encodeURIComponent(kw)+'&lang=es');if(r.ok){const j=await r.json();sugg=j.suggestions||[]}}catch{}
   const norm=x=>x.trim().toLowerCase();const variants=sugg.map(norm).filter(x=>x!==norm(kw)).slice(0,3);
-  let conflict=null;try{const rel=relatedRows(rows,kw).filter(x=>x.overlap>=0.66);if(rel.length){const by={};rel.forEach(x=>{by[x.page]=(by[x.page]||0)+x.impressions});const top=Object.entries(by).sort((a,b)=>b[1]-a[1])[0];conflict={page:top[0],impressions:top[1]}}}catch{}
+  let conflict=null;try{const dist=[...new Set(normTokens(kw))].filter(t=>!GENERIC_TOK.has(t));const rel=relatedRows(rows,kw).filter(x=>{if(!dist.length)return x.overlap>=0.66;const qt=new Set(normTokens(x.q));const hit=dist.filter(t=>qt.has(t)).length;return qt.has(dist[dist.length-1])&&hit/dist.length>=0.5});if(rel.length){const by={};rel.forEach(x=>{by[x.page]=(by[x.page]||0)+x.impressions});const top=Object.entries(by).sort((a,b)=>b[1]-a[1])[0];conflict={page:top[0],impressions:top[1]}}}catch{}
   return{demand:sugg.length,variants,conflict}}
 const TIPO_CORTO={resena:'reseña',poemas:'poemas',cuentos:'cuentos',archivo:'archivo',obra:'obra'};
 
 function RadarVecinos({gscFn,config,onCheck}){
   const[data,setData]=useState(getRadar);const[focus,setFocus]=useState(()=>{const r=getRadar();return r?r.focus||'':''});
   const[st,setSt]=useState('idle');const[stage,setStage]=useState('');const[err,setErr]=useState(null);const[showOff,setShowOff]=useState(false);
+  const[saved,setSaved]=useState(getSavedIdeas);const isSaved=kw=>saved.some(x=>x.keyword===kw);
   async function run(){
     setSt('loading');setErr(null);
     try{
@@ -951,14 +989,15 @@ function RadarVecinos({gscFn,config,onCheck}){
       const pmap={},qmap={};rows.forEach(r=>{pmap[r.keys[1]]=(pmap[r.keys[1]]||0)+r.impressions;qmap[r.keys[0]]=(qmap[r.keys[0]]||0)+r.impressions});
       const urls=Object.entries(pmap).sort((a,b)=>b[1]-a[1]).slice(0,200).map(([u])=>shortPath(u));
       const queries=Object.entries(qmap).sort((a,b)=>b[1]-a[1]).slice(0,120).map(([q])=>q);
-      const prev=getRadar();const exclude=[...getRadarDiscard(),...(prev&&prev.temporadas?prev.temporadas.map(t=>t.autor):[])];
+      const prev=getRadar();const exclude=[...getRadarDiscard(),...(prev&&prev.temporadas?prev.temporadas.map(t=>t.autor):[]),...getSavedIdeas().map(x=>x.keyword)];
       setStage('Claude está proponiendo temporadas…');
       const j=parseJsonLoose(await callClaude('radar',{site:config&&config.site,focus,urls,queries,exclude}));
       const temps=(j.temporadas||[]).filter(t=>t&&t.autor&&Array.isArray(t.piezas));
       const all=[];temps.forEach(t=>t.piezas.forEach(p=>{if(p&&p.keyword)all.push(p)}));
       let n=0;
       for(let i=0;i<all.length;i+=5){const batch=all.slice(i,i+5);setStage('Validando demanda en Google ('+Math.min(i+5,all.length)+'/'+all.length+')…');const res=await Promise.all(batch.map(p=>validateKeyword(p.keyword,rows)));batch.forEach((p,k)=>Object.assign(p,res[k]));n+=batch.length}
-      const out={ts:Date.now(),focus,temporadas:temps};saveRadar(out);setData(out);setSt('done');setStage('');
+      const prevT=(getRadar()||{}).temporadas||[];const seen=new Set(temps.map(t=>t.autor.toLowerCase()));const merged=[...temps,...prevT.filter(t=>!seen.has(t.autor.toLowerCase()))].slice(0,30);
+      const out={ts:Date.now(),focus,temporadas:merged,lastBatch:temps.length};saveRadar(out);setData(out);setSt('done');setStage('');
     }catch(e){setErr(e.message);setSt('error');setStage('')}
   }
   function discard(autor){addRadarDiscard(autor);const r={...data,temporadas:data.temporadas.filter(t=>t.autor!==autor)};saveRadar(r);setData(r)}
@@ -976,7 +1015,7 @@ function RadarVecinos({gscFn,config,onCheck}){
     </div>
     {stage&&<div className="loading" style={{padding:'10px 0'}}><div className="spinner"/>{stage}</div>}
     {st==='error'&&<div className="error-msg">Error: {err}</div>}
-    {temps.length>0&&<div className="radar-summary"><span><b>{live.filter(t=>t.vivas.length).length}</b> temporadas · <b>{nKw}</b> keywords con demanda{nOff>0?' · '+nOff+' sin demanda':''}{data&&data.ts?' · '+formatRelTime(data.ts):''}</span>{nOff>0&&<button className="link-btn" onClick={()=>setShowOff(v=>!v)}>{showOff?'Ocultar sin demanda':'Ver sin demanda'}</button>}</div>}
+    {temps.length>0&&<div className="radar-summary"><span>{data&&data.lastBatch?<><b>{data.lastBatch}</b> nuevas · </>:null}<b>{live.filter(t=>t.vivas.length).length}</b> temporadas · <b>{nKw}</b> keywords con demanda{nOff>0?' · '+nOff+' sin demanda':''}{data&&data.ts?' · '+formatRelTime(data.ts):''}</span>{nOff>0&&<button className="link-btn" onClick={()=>setShowOff(v=>!v)}>{showOff?'Ocultar sin demanda':'Ver sin demanda'}</button>}</div>}
     {!temps.length&&st!=='loading'&&<div className="empty">Todavía no hay ideas. Dale a “Buscar ideas nuevas”; si quieres, primero escribe un enfoque.</div>}
     <div className="radar-grid">{live.map((t,i)=>{const ink=i===0;const pz=showOff?t.piezas:t.vivas;return(<article key={t.autor+i} className={'idea'+(ink?' idea-ink':'')}>
       <div className="prio-tags"><span className={'tag '+(ink?'tag-mint':'tag-green')}>Vecino</span>{t.muerte?<span className="mono-meta">† {t.muerte}</span>:null}</div>
@@ -989,11 +1028,28 @@ function RadarVecinos({gscFn,config,onCheck}){
           {p.conflict?<span className="sig sig-warn" title={'Ya recibe impresiones: '+p.conflict.page}>Revisar: {shortPath(p.conflict.page)}</span>:p.demand>0?<span className="sig sig-ok">Libre en GSC</span>:null}
         </div>
         {p.variants&&p.variants.length>0&&<div className="piece-var">{p.variants.join(' · ')}</div>}
-        {p.demand>0&&<button className={ink?'cta-light sm':'cta-outline sm'} onClick={()=>onCheck(p.keyword)}>Producir</button>}
+        <div className="piece-actions">{p.demand>0&&<button className={ink?'cta-light sm':'cta-outline sm'} onClick={()=>onCheck(p.keyword)}>Producir</button>}<button className={'save-btn'+(isSaved(p.keyword)?' on':'')} aria-pressed={isSaved(p.keyword)} onClick={()=>setSaved(toggleSavedIdea(p,t))}><svg width="15" height="15" viewBox="0 0 24 24" fill={isSaved(p.keyword)?'currentColor':'none'} stroke="currentColor" strokeWidth="2" strokeLinejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg>{isSaved(p.keyword)?'Guardada':'Guardar'}</button></div>
       </div>)}</div>
       <button className="link-btn discard" onClick={()=>discard(t.autor)}>Descartar temporada</button>
     </article>)})}</div>
   </div>);
+}
+
+function RadarGuardadas({onCheck}){
+  const[saved,setSaved]=useState(getSavedIdeas);
+  useEffect(()=>{const f=()=>setSaved(getSavedIdeas());window.addEventListener('sp-saved',f);return()=>window.removeEventListener('sp-saved',f)},[]);
+  const can=getCanibalAll();
+  if(!saved.length)return<div className="empty">Aún no guardas ideas. En “Vecinos”, usa “Guardar” en cualquier keyword y aparecerá aquí aunque busques ideas nuevas.</div>;
+  const groups={};saved.slice().reverse().forEach(x=>{(groups[x.autor||'Sin autor']=groups[x.autor||'Sin autor']||[]).push(x)});
+  return(<div className="radar-grid">{Object.entries(groups).map(([autor,items])=><article key={autor} className="idea">
+    <div className="prio-tags"><span className="tag tag-blue">Guardada</span>{items[0].muerte?<span className="mono-meta">† {items[0].muerte}</span>:null}</div>
+    <div><div className="mono-meta">{autor}</div>{items[0].temporada&&<h3 className="idea-title">{items[0].temporada}</h3>}</div>
+    <div className="pieces">{items.map(p=>{const c=can[p.keyword.toLowerCase()];return(<div className="piece" key={p.keyword}>
+      <div className="piece-top"><span className="piece-kw">{p.keyword}</span><span className="piece-type">{TIPO_CORTO[p.tipo]||p.tipo}</span></div>
+      <div className="piece-meta">{p.demand>0&&<span className={'sig '+(p.demand>=5?'sig-hi':'sig-md')}>Demanda {p.demand>=8?'alta':p.demand>=5?'media':'baja'}</span>}{c&&c.res?<span className="sig sig-ok">Chequeo: {c.res.veredicto}</span>:p.conflict?<span className="sig sig-warn">Revisar: {shortPath(p.conflict.page)}</span>:null}<span className="mono-meta">{formatRelTime(p.ts)}</span></div>
+      <div className="piece-actions"><button className="cta-outline sm" onClick={()=>onCheck(p.keyword)}>{c?'Abrir en producción':'Producir'}</button><button className="save-btn on" onClick={()=>{const a=getSavedIdeas().filter(x=>x.keyword!==p.keyword);setSavedIdeas(a);setSaved(a)}}>Quitar</button></div>
+    </div>)})}</div>
+  </article>)}</div>);
 }
 
 function RadarTab({d,loading,onCheck,gscFn,config}){
@@ -1003,9 +1059,11 @@ function RadarTab({d,loading,onCheck,gscFn,config}){
   return(<div className="radar">
     <div className="radar-filters" role="group" aria-label="Fuentes">
       <button className={'filter'+(view==='vecinos'?' on':'')} aria-pressed={view==='vecinos'} onClick={()=>pick('vecinos')}>Vecinos de lo que tienes</button>
+      <button className={'filter'+(view==='guardadas'?' on':'')} aria-pressed={view==='guardadas'} onClick={()=>pick('guardadas')}>Guardadas{getSavedIdeas().length?' · '+getSavedIdeas().length:''}</button>
       <button className={'filter'+(view==='gsc'?' on':'')} aria-pressed={view==='gsc'} onClick={()=>pick('gsc')}>Ya asoman en GSC{rows.length?' · '+rows.length:''}</button>
     </div>
     {view==='vecinos'&&<RadarVecinos gscFn={gscFn} config={config} onCheck={onCheck}/>}
+    {view==='guardadas'&&<RadarGuardadas onCheck={onCheck}/>}
     {view==='gsc'&&<>
       {loading&&!d&&<div className="loading"><div className="spinner"/>Cargando datos…</div>}
       {d&&rows.length===0&&<div className="empty">No hay queries sin página dedicada que cumplan el umbral en este periodo.</div>}
