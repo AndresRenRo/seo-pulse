@@ -336,6 +336,24 @@ body{background:var(--bg)}
 .idea .cta-primary,.idea .cta-light{margin-top:auto}
 .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}.how-grid p{font-size:14px;color:#3F3E3A;line-height:1.5;margin-top:4px}.mono-blue{font-family:var(--mono);font-size:12px;color:#0039B8}
 #root>.app{margin:0 auto;max-width:640px}
+.cierre{margin-top:16px}
+.cierre-step{display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--line);padding-top:12px}.cierre-step.check{cursor:pointer}.cierre-step.check input{width:20px;height:20px;accent-color:#0B6B45;margin-top:2px}
+.cierre-n{font-family:var(--display);font-weight:700;font-size:18px;color:#C9C5BD;width:18px;flex:0 0 auto}
+.cierre-body{flex:1;min-width:0}
+.pub-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.pub-row .disc-input{flex:1 1 220px;min-height:38px}
+.pub-item{display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--line);padding-top:12px}
+.pub-hitos{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0 4px}
+.verify-res{display:flex;flex-direction:column;gap:2px;margin:2px 0 4px 28px;font-size:12.5px;line-height:1.45;color:#5B4300}
+.verify-res a{font-size:12px;overflow-wrap:anywhere}
+.opt-wrap{display:flex;flex-direction:column;gap:16px}
+.opt-item{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px}
+.opt-top{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:space-between;align-items:baseline}
+.share-row{display:flex;gap:10px;align-items:center}.share-row>span:first-child{flex:0 1 46%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.share-row .strong{color:var(--ink);font-weight:600}
+.share-bar{flex:1;height:6px;border-radius:99px;background:var(--line);overflow:hidden}.share-bar i{display:block;height:6px;background:var(--blue)}
+.opt-rec{background:var(--bg);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.act-row{display:flex;gap:10px;align-items:flex-start}.act-row .sig{flex:0 0 auto;margin-top:2px}
+.variant{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px}.variant.now{background:transparent;border-style:dashed}
+.var-t{color:#1A0DAB;font-size:16px;line-height:1.3}.var-m{font-size:13.5px;color:#3F3E3A;line-height:1.45}.mono-meta.over{color:#B3401A;font-weight:600}
 .plan-cta{background:#111;color:#F4F3EF;border-radius:18px;padding:22px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;margin-bottom:24px}.plan-cta>div:first-child{flex:1 1 360px;display:flex;flex-direction:column;gap:8px}.plan-cta p{font-size:14px;color:#D6D3CC;line-height:1.5}
 .plan-hoy{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:28px;align-items:stretch}
 .plan-neck{flex:1 1 300px;background:#111;color:#F4F3EF;border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:10px}.plan-neck p{font-size:14px;color:#D6D3CC;line-height:1.55}
@@ -399,8 +417,8 @@ button.filter{cursor:pointer;font-family:var(--sans)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
-const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v4.3';
+const {useState,useEffect,useCallback,useRef,useMemo}=React;
+const VERSION='v4.4';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SUGGEST_API=REDIRECT_URI+'/api/suggest';
 const CLAUDE_API=REDIRECT_URI+'/api/claude';
@@ -914,8 +932,7 @@ function Hoy({d,loading,onGo,onCheck,onBrief,openDetail,gscFn,onAct}){
         <div className="card-head"><h2 id="tab-h">Tablero</h2><button className="link-btn" onClick={()=>onGo('produccion')}>Abrir</button></div>
         <div className="board-row"><span>Chequeo</span><div className="chips">{chequeos.length?chequeos.slice(0,4).map(k=><span className="chip" key={k}>{k}</span>):<span className="muted-s">Vacío</span>}</div></div>
         <div className="board-row"><span>Brief</span><div className="chips">{Object.keys(briefs).length?Object.keys(briefs).slice(0,4).map(k=><span className="chip chip-blue" key={k}>{k}</span>):<span className="muted-s">Vacío</span>}</div></div>
-        <div className="board-row"><span>Borrador</span><span className="muted-s">Pronto</span></div>
-        <div className="board-row"><span>Publicado</span><span className="muted-s">Pronto</span></div>
+        {(()=>{const pb=getPub();const red=Object.keys(pb).filter(k=>pb[k].redactado&&!pb[k].url);const pu=Object.keys(pb).filter(k=>pb[k].url);return<><div className="board-row"><span>Redacción</span><div className="chips">{red.length?red.slice(0,4).map(k=><span className="chip" key={k}>{k}</span>):<span className="muted-s">Vacío</span>}</div></div><div className="board-row"><span>Publicado</span><div className="chips">{pu.length?pu.slice(0,4).map(k=><span className="chip" key={k}>{k}</span>):<span className="muted-s">Vacío</span>}</div></div></>})()}
       </section>
       <section className="card card-ink" aria-labelledby="rad-h">
         <div className="side-label" style={{padding:0}}>Radar</div>
@@ -936,45 +953,55 @@ function Hoy({d,loading,onGo,onCheck,onBrief,openDetail,gscFn,onAct}){
 }
 
 function Stepper({kw}){
-  const c=kw?getCanibal(kw):null;const b=kw?getBriefs()[kw.toLowerCase()]:null;
-  const steps=[{l:'Keyword',ok:!!kw},{l:'Chequeo',ok:!!c,x:c&&c.res?c.res.veredicto:''},{l:'Brief',ok:!!b},{l:'Artículo',ok:false,soon:true},{l:'WordPress',ok:false,soon:true}];
+  const c=kw?getCanibal(kw):null;const b=kw?getBriefs()[kw.toLowerCase()]:null;const p=kw?getPub()[kw.toLowerCase()]||{}:{};
+  const steps=[{l:'Keyword',ok:!!kw},{l:'Chequeo',ok:!!c,x:c&&c.res?c.res.veredicto:''},{l:'Brief',ok:!!b},{l:'Redacción',ok:!!p.redactado},{l:'Publicado',ok:!!p.url}];
   const cur=steps.findIndex(s=>!s.ok);
-  return(<ol className="stepper" aria-label="Pasos">{steps.map((s,i)=><li key={i} className={'step'+(s.ok?' done':'')+(i===cur?' current':'')+(s.soon&&i!==cur?' soon':'')} aria-current={i===cur?'step':undefined}>
+  return(<ol className="stepper" aria-label="Pasos">{steps.map((s,i)=><li key={i} className={'step'+(s.ok?' done':'')+(i===cur?' current':'')} aria-current={i===cur?'step':undefined}>
     <div className="step-top"><span className="step-dot">{s.ok?<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>:i+1}</span><span className="step-n">Paso {i+1}</span></div>
-    <div className="step-l">{s.l}{s.x?<span className={'step-x v-'+s.x}> · {s.x}</span>:null}{s.soon&&!s.ok?<span className="step-soon"> · pronto</span>:null}</div>
+    <div className="step-l">{s.l}{s.x?<span className={'step-x v-'+s.x}> · {s.x}</span>:null}</div>
   </li>)}</ol>);
 }
 
+const VRES={confirmado:['sig-hi','Confirmado'],corregir:['sig-warn','Corregir'],no_encontrado:['sig-off','Sin evidencia'],manual:['sig-md','Manual']};
 function VerifyPanel({kw,ver}){
   const b=kw?getBriefs()[kw.toLowerCase()]:null;const items=verifyItems(b&&b.text);
-  const[checked,setChecked]=useState(()=>getVerify(kw));
-  useEffect(()=>{setChecked(getVerify(kw))},[kw,ver]);
+  const[checked,setChecked]=useState(()=>getVerify(kw));const[vres,setVres]=useState(()=>lsGet('sp2_verify_res',{})[kw]||null);const[vst,setVst]=useState('');const[verr,setVerr]=useState(null);
+  useEffect(()=>{setChecked(getVerify(kw));setVres(lsGet('sp2_verify_res',{})[kw]||null);setVerr(null)},[kw,ver]);
   function toggle(i){const s=new Set(checked);s.has(i)?s.delete(i):s.add(i);const arr=[...s];setChecked(arr);setVerify(kw,arr)}
+  async function runWeb(){setVst('Verificando con búsqueda web…');setVerr(null);try{const r=parseJsonLoose(await callClaude('verificar',{keyword:kw,items}));const h=lsGet('sp2_verify_res',{});h[kw]={ts:Date.now(),items:r.items||[]};lsSet('sp2_verify_res',h);setVres(h[kw]);const conf=(r.items||[]).filter(x=>x.estado==='confirmado').map(x=>x.i);const arr=[...new Set([...getVerify(kw),...conf])];setChecked(arr);setVerify(kw,arr)}catch(e){setVerr(e.message)}setVst('')}
+  const rOf=i=>vres&&vres.items?vres.items.find(x=>x.i===i):null;
   return(<aside className="verify" aria-labelledby="ver-h">
     <div className="card-head"><h2 id="ver-h">Por verificar</h2><span className="mono-meta" style={{color:'var(--amber)'}}>{checked.filter(i=>i<items.length).length}/{items.length}</span></div>
     {!b&&<p className="verify-note">Aquí aparece la checklist del brief cuando lo generes.</p>}
     {b&&items.length===0&&<p className="verify-note">Este brief no trae datos marcados para verificar.</p>}
-    {items.length>0&&<p className="verify-note">Cada dato viene de memoria, no de una fuente. Márcalo cuando lo confirmes.</p>}
-    {items.map((t,i)=><label key={i} className="verify-item"><input type="checkbox" checked={checked.includes(i)} onChange={()=>toggle(i)}/><span>{t}</span></label>)}
-    {items.length>0&&<button className="cta-outline amber" disabled title="Próximamente">Verificar con búsqueda web · pronto</button>}
+    {items.length>0&&<p className="verify-note">La búsqueda web marca sola lo que confirma. Lo que diga “Corregir” trae el dato correcto y su fuente.</p>}
+    {items.length>0&&<button className="cta-outline amber" disabled={!!vst} onClick={runWeb}>{vst||(vres?'Volver a verificar':'Verificar con búsqueda web')}</button>}
+    {vres&&<div className="mono-meta" style={{color:'#7A5A00'}}>verificado {formatRelTime(vres.ts)}{items.length>15?' · solo los primeros 15':''}</div>}
+    {verr&&<div className="error-msg">{verr}</div>}
+    {items.map((t,i)=>{const r=rOf(i);const tag=r&&VRES[r.estado];return(<div key={i}>
+      <label className="verify-item"><input type="checkbox" checked={checked.includes(i)} onChange={()=>toggle(i)}/><span>{t}</span></label>
+      {r&&<div className="verify-res"><span>{tag&&<span className={'sig '+tag[0]}>{tag[1]}</span>} {r.estado==='corregir'&&r.dato_correcto?<b>{r.dato_correcto}</b>:null} {r.nota}</span>{r.fuente&&/^https?:/.test(r.fuente)&&<a href={r.fuente} target="_blank" rel="noopener">{r.fuente.replace(/^https?:\/\//,'').slice(0,60)}</a>}</div>}
+    </div>)})}
   </aside>);
 }
 
 function Produccion({gscFn,config,canibalSeed,briefSeed,onBriefSeed,focusKw}){
   const latest=()=>{const b=Object.entries(getBriefs()).sort((a,c)=>c[1].ts-a[1].ts)[0];const c=Object.entries(getCanibalAll()).sort((a,x)=>x[1].ts-a[1].ts)[0];if(b&&c)return b[1].ts>c[1].ts?b[0]:c[0];return(b&&b[0])||(c&&c[0])||''};
-  const[current,setCurrent]=useState(()=>focusKw||latest());const[ver,setVer]=useState(0);
+  const[current,setCurrent]=useState(()=>focusKw||latest());const[ver,setVer]=useState(0);const ps=usePlanStore();
   useEffect(()=>{if(focusKw)setCurrent(focusKw)},[focusKw]);
   const done=kw=>{setCurrent(kw.trim().toLowerCase());setVer(v=>v+1)};
   return(<div className="prod">
     <div className="prod-top"><div><div className="eyebrow">Pieza actual</div><div className="prod-kw">{current?<em>{current}</em>:'Elige una keyword'}</div></div></div>
-    <Stepper kw={current} key={'s'+ver+current}/>
+    <Stepper kw={current} key={'s'+ver+current+ps.v}/>
     <div className="prod-cols">
       <div className="prod-main">
         <CanibalCheck gscFn={gscFn} config={config} seed={canibalSeed.kw} seedNonce={canibalSeed.n} onBrief={onBriefSeed} onDone={done}/>
         <BriefGen gscFn={gscFn} config={config} seed={briefSeed.kw} seedNonce={briefSeed.n} onDone={done} focusKw={current}/>
+        <CierrePanel kw={current} ver={ver}/>
       </div>
       <VerifyPanel kw={current} ver={ver}/>
     </div>
+    <PublicadasPanel gscFn={gscFn}/>
   </div>);
 }
 
@@ -1117,6 +1144,8 @@ async function buildPlanInput(d,gscFn){
   const briefs=getBriefs();const can=getCanibalAll();const radar=getRadar();
   const produccion={briefs:Object.entries(briefs).map(([k,b])=>{const v=verifyStatus(k,b.text);return{keyword:k,plantilla:b.tipo,verificados:v.done+'/'+v.total,dias:Math.round((Date.now()-b.ts)/864e5)}}).slice(0,10),
     chequeos_sin_brief:Object.keys(can).filter(k=>!briefs[k]).slice(0,10),ideas_guardadas:getSavedIdeas().slice(-10).map(x=>x.keyword),
+    publicadas:Object.entries(getPub()).filter(([,p])=>p.url).map(([k,p])=>({keyword:k,url:shortPath(p.url),dias:Math.floor((Date.now()-new Date(p.fecha).getTime())/864e5),medicion:p.medicion&&!p.medicion.pendiente?{clics:p.medicion.clics,impr:p.medicion.impr,pos:p.medicion.pos}:null})).slice(0,15),
+    redactadas_sin_publicar:Object.entries(getPub()).filter(([,p])=>p.redactado&&!p.url).map(([k])=>k),
     radar_keywords_con_demanda:radar&&radar.temporadas?radar.temporadas.reduce((a,t)=>a+t.piezas.filter(p=>p.demand>0).length,0):0};
   const plan=getPlan(),hoy=getPlanHoy();
   const avance={tareas_semana_hechas:plan&&plan.data&&plan.data.semana?(plan.done||[]).map(i=>(plan.data.semana.tareas[i]||{}).tarea).filter(Boolean):[],hoy_anterior:hoy?{fecha:hoy.date,hechas:(hoy.done||[]).map(i=>(hoy.items[i]||{}).tarea).filter(Boolean),pendientes:hoy.items.filter((_,i)=>!(hoy.done||[]).includes(i)).map(x=>x.tarea)}:null};
@@ -1197,6 +1226,133 @@ function PlanPanel({d,gscFn,onAct}){
       {err&&<div className="error-msg">{err}</div>}
       <div className="muted-s">El plan lee tus fases, el estado y las notas de cada requisito de abajo, los datos de Search Console y tu producción. Unos centavos por plan.</div>
     </section>
+  </div>);
+}
+
+// ====== v4.4: cierre de producción, verificador y Optimizar ======
+function getPub(){return lsGet('sp2_pub',{})}
+function setPubKw(kw,patch){const h=getPub();h[kw]={...(h[kw]||{}),...patch};lsSet('sp2_pub',h)}
+function copyText(t,cb){navigator.clipboard.writeText(t).then(()=>cb&&cb(true)).catch(()=>cb&&cb(false))}
+function buildWritePrompt(kw){const b=getBriefs()[kw];if(!b)return'';const items=verifyItems(b.text);const chk=getVerify(kw);const vr=lsGet('sp2_verify_res',{})[kw];
+  const ok=items.filter((_,i)=>chk.includes(i));const pend=items.filter((_,i)=>!chk.includes(i));
+  const fixes=vr&&vr.items?vr.items.filter(x=>x.estado==='corregir'&&x.dato_correcto).map(x=>'- '+(items[x.i]||'')+' → '+x.dato_correcto+(x.fuente?' ('+x.fuente+')':'')):[];
+  return['Escribe el artículo para País Lector a partir de este brief y entrégamelo en Word (.docx).','Keyword: '+kw+' · Plantilla: '+(TIPO_LABEL[b.tipo]||b.tipo),
+    ok.length?'Datos ya verificados:\n'+ok.map(x=>'- '+x).join('\n'):'',
+    fixes.length?'Correcciones de la verificación (usa el dato correcto):\n'+fixes.join('\n'):'',
+    pend.length?'Datos aún sin verificar (déjalos marcados con [VERIFICAR] en el texto):\n'+pend.map(x=>'- '+x).join('\n'):'',
+    b.comp&&b.comp.angulo?'Ángulo según la competencia: '+b.comp.angulo:'','--- BRIEF ---',b.text].filter(Boolean).join('\n\n')}
+
+function CierrePanel({kw,ver}){
+  const b=kw?getBriefs()[kw]:null;const[pub,setPub]=useState(()=>getPub()[kw]||{});const[url,setUrl]=useState('');const[date,setDate]=useState(todayKey());const[copied,setCopied]=useState(false);
+  useEffect(()=>{const p=getPub()[kw]||{};setPub(p);setUrl(p.url||'');setDate(p.fecha||todayKey())},[kw,ver]);
+  if(!b)return null;
+  const save=patch=>{setPubKw(kw,patch);setPub(getPub()[kw]||{})};
+  const v=verifyStatus(kw,b.text);
+  return(<section className="card cierre" aria-labelledby="cierre-h">
+    <div className="card-head"><h2 id="cierre-h">Redacción y publicación</h2>{pub.url?<span className="tag tag-green">Publicado</span>:pub.redactado?<span className="tag tag-blue">Redactado</span>:null}</div>
+    <div className="cierre-step"><div className="cierre-n">1</div><div className="cierre-body"><div className="today-t">Redacta conmigo en Claude</div><div className="today-why">Copia el brief con los datos verificados, las correcciones y el ángulo de la competencia, y pégalo en un chat.{v.total&&v.done<v.total?' Ojo: '+(v.total-v.done)+' datos siguen sin verificar.':''}</div></div><button className="cta-primary sm" onClick={()=>copyText(buildWritePrompt(kw),ok=>{setCopied(ok);setTimeout(()=>setCopied(false),1800)})}>{copied?'Copiado ✓':'Copiar para redactar'}</button></div>
+    <label className="cierre-step check"><div className="cierre-n">2</div><div className="cierre-body"><div className="today-t">Redacción lista</div><div className="today-why">Márcalo cuando el artículo esté escrito y revisado.</div></div><input type="checkbox" checked={!!pub.redactado} onChange={e=>save({redactado:e.target.checked?Date.now():null})}/></label>
+    <div className="cierre-step"><div className="cierre-n">3</div><div className="cierre-body"><div className="today-t">Publicado</div><div className="today-why">Con la URL, SEO Pulse mide la pieza a 30, 60 y 90 días y la usa en tu plan.</div>
+      <div className="pub-row"><input className="disc-input" aria-label="URL publicada" placeholder="https://paislector.com/…" value={url} onChange={e=>setUrl(e.target.value)}/><input className="disc-input" type="date" aria-label="Fecha de publicación" value={date} onChange={e=>setDate(e.target.value)} style={{flex:'0 0 160px'}}/><button className="cta-outline sm" disabled={!/^https?:\/\//.test(url.trim())} onClick={()=>save({url:url.trim(),fecha:date,redactado:pub.redactado||Date.now()})}>{pub.url?'Actualizar':'Marcar publicado'}</button></div>
+    </div></div>
+  </section>);
+}
+
+function PublicadasPanel({gscFn}){
+  const{v}=usePlanStore();const pubs=Object.entries(getPub()).filter(([,p])=>p.url).sort((a,b)=>(b[1].fecha||'').localeCompare(a[1].fecha||''));
+  const[busy,setBusy]=useState('');
+  async function medir(kw,p){setBusy(kw);try{const end=daysAgo(2);if(p.fecha>end){setPubKw(kw,{medicion:{ts:Date.now(),pendiente:true}});setBusy('');return}
+    const r=await gscFn({startDate:p.fecha,endDate:end,dimensions:['date'],type:'web',rowLimit:500,dimensionFilterGroups:[{filters:[{dimension:'page',operator:'equals',expression:p.url}]}]});
+    const rows=(r&&r.rows)||[];let c=0,im=0,pw=0;const hitos={};const t0=new Date(p.fecha).getTime();
+    rows.forEach(x=>{c+=x.clicks;im+=x.impressions;pw+=x.position*x.impressions;const dd=Math.floor((new Date(x.keys[0]).getTime()-t0)/864e5);[30,60,90].forEach(h=>{if(dd<h){hitos[h]=hitos[h]||{c:0,i:0};hitos[h].c+=x.clicks;hitos[h].i+=x.impressions}})});
+    setPubKw(kw,{medicion:{ts:Date.now(),clics:c,impr:im,pos:im?+(pw/im).toFixed(1):null,hitos}})}catch(e){alert('No se pudo medir: '+e.message)}setBusy('')}
+  if(!pubs.length)return null;
+  return(<section className="card" aria-labelledby="pubs-h">
+    <div className="card-head"><h2 id="pubs-h">Publicadas</h2><span className="mono-meta">{pubs.length}</span></div>
+    {pubs.map(([kw,p])=>{const dias=Math.floor((Date.now()-new Date(p.fecha).getTime())/864e5);const m=p.medicion;return(<div key={kw} className="pub-item">
+      <div className="today-body"><div className="today-t">{kw}</div><a className="mono-meta" href={p.url} target="_blank" rel="noopener">{shortPath(p.url)}</a>
+        <div className="pub-hitos">{[30,60,90].map(h=><span key={h} className={'sig '+(dias>=h?'sig-ok':'sig-off')}>{h}d{m&&m.hitos&&m.hitos[h]&&dias>=h?': '+fmt(m.hitos[h].c)+' clics':''}</span>)}<span className="mono-meta">día {dias}</span></div>
+        {m&&!m.pendiente&&<div className="today-why">Desde que se publicó: <b>{fmt(m.clics)}</b> clics · <b>{fmt(m.impr)}</b> impresiones{m.pos?<> · pos <b>{m.pos}</b></>:null} <span className="mono-meta">· medido {formatRelTime(m.ts)}</span></div>}
+        {m&&m.pendiente&&<div className="today-why">GSC tarda unos 2 días en tener datos.</div>}
+      </div>
+      <button className="cta-outline sm" disabled={busy===kw} onClick={()=>medir(kw,p)}>{busy===kw?'Midiendo…':'Medir'}</button>
+    </div>)})}
+  </section>);
+}
+
+const DEC_TAG={fusionar:'tag-coral',diferenciar:'tag-amber',reforzar:'tag-blue',ignorar:'tag-green'};
+const PRI_SIG={alta:'sig-warn',media:'sig-md',baja:'sig-ok'};
+function OptCanibal({rows}){
+  const[res,setRes]=useState(()=>lsGet('sp2_opt_canibal',null));const[st,setSt]=useState('');const[err,setErr]=useState(null);const[all,setAll]=useState(false);
+  const casos=useMemo(()=>{if(!rows)return[];const by={};rows.forEach(r=>{(by[r.keys[0]]=by[r.keys[0]]||[]).push(r)});return Object.entries(by).map(([q,rs])=>{const ps=rs.filter(r=>r.impressions>=10);if(ps.length<2)return null;const tot=ps.reduce((a,r)=>a+r.impressions,0);if(tot<40)return null;return{query:q,total_impr:tot,paginas:ps.sort((a,b)=>b.impressions-a.impressions).slice(0,4).map(r=>({url:r.keys[1],impr:r.impressions,clics:r.clicks,pos:+r.position.toFixed(1)}))}}).filter(Boolean).sort((a,b)=>b.total_impr-a.total_impr).slice(0,25)},[rows]);
+  async function run(){setSt('Claude está analizando los 10 casos principales…');setErr(null);try{const j=parseJsonLoose(await callClaude('canibal_sitio',{casos:casos.slice(0,10)}));const out={ts:Date.now(),casos:j.casos||[]};lsSet('sp2_opt_canibal',out);setRes(out)}catch(e){setErr(e.message)}setSt('')}
+  const find=q=>res&&res.casos?res.casos.find(c=>(c.query||'').toLowerCase()===q.toLowerCase()):null;
+  const list=all?casos:casos.slice(0,10);
+  return(<section className="card opt" aria-labelledby="oc-h">
+    <div className="card-head"><h2 id="oc-h">Canibalización en el sitio</h2><span className="mono-meta">{rows?casos.length+' queries':'…'}</span></div>
+    <p className="today-why">Queries por las que dos o más de tus páginas reciben impresiones a la vez (90 días, mínimo 10 impresiones por página).</p>
+    {casos.length>0&&<div style={{display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}><button className="cta-primary sm" disabled={!!st} onClick={run}>{res?'Volver a analizar':'Analizar los 10 principales'}</button>{res&&<span className="mono-meta">análisis {formatRelTime(res.ts)}</span>}</div>}
+    {st&&<div className="loading"><div className="spinner"/>{st}</div>}{err&&<div className="error-msg">{err}</div>}
+    {rows&&casos.length===0&&<div className="empty">Sin canibalización relevante en los últimos 90 días.</div>}
+    {list.map(c=>{const a=find(c.query);return(<div key={c.query} className="opt-item">
+      <div className="opt-top"><span className="today-t">“{c.query}”</span><span className="mono-meta">{fmt(c.total_impr)} impr</span></div>
+      {c.paginas.map(p=><div key={p.url} className="share-row"><span className={'mono-meta'+(a&&a.principal&&a.principal.indexOf(shortPath(p.url))>=0?' strong':'')}>{shortPath(p.url)}</span><div className="share-bar"><i style={{width:Math.round(p.impr/c.total_impr*100)+'%'}}/></div><span className="mono-meta">pos {p.pos}</span></div>)}
+      {a&&<div className="opt-rec"><div className="prio-tags"><span className={'tag '+(DEC_TAG[a.decision]||'tag-blue')}>{a.decision}</span>{a.prioridad&&<span className={'sig '+(PRI_SIG[a.prioridad]||'')}>prioridad {a.prioridad}</span>}</div><div className="today-t">{a.accion}</div><div className="today-why">{a.detalle}</div></div>}
+    </div>)})}
+    {casos.length>10&&<button className="link-btn" onClick={()=>setAll(x=>!x)}>{all?'Ver menos':'Ver los '+casos.length}</button>}
+  </section>);
+}
+function pageQueries(rows,url){return(rows||[]).filter(r=>r.keys[1]===url).sort((a,b)=>b.impressions-a.impressions).slice(0,20).map(r=>({q:r.keys[0],impr:r.impressions,pos:+r.position.toFixed(1)}))}
+function OptRefresh({d,rows}){
+  const[res,setRes]=useState(()=>lsGet('sp2_opt_refresh',{}));const[busy,setBusy]=useState('');const[err,setErr]=useState(null);const[open,setOpen]=useState('');
+  const items=(d&&d.dropping)||[];
+  async function run(r){setBusy(r.page);setErr(null);try{const j=parseJsonLoose(await callClaude('refresh',{url:r.page,stats:{pos_antes:+r.prevPos.toFixed(1),pos_ahora:+r.curPos.toFixed(1),clics_perdidos:r.lostClicks},queries:pageQueries(rows,r.page)}));const h=lsGet('sp2_opt_refresh',{});h[r.page]={ts:Date.now(),...j};lsSet('sp2_opt_refresh',h);setRes(h);setOpen(r.page)}catch(e){setErr(e.message)}setBusy('')}
+  return(<section className="card opt" aria-labelledby="or-h">
+    <div className="card-head"><h2 id="or-h">Páginas que caen</h2><span className="mono-meta">{items.length}</span></div>
+    <p className="today-why">Claude lee la página en tu sitio, la cruza con sus queries y te da un plan de refresh.</p>
+    {err&&<div className="error-msg">{err}</div>}
+    {d&&!items.length&&<div className="empty">Ninguna página cae en este periodo.</div>}
+    {items.map(r=>{const x=res[r.page];const isOpen=open===r.page;return(<div key={r.page} className="opt-item">
+      <div className="opt-top"><a className="today-t" href={r.page} target="_blank" rel="noopener">{shortPath(r.page)}</a><span className="mono-meta">pos {r.prevPos.toFixed(1)} → {r.curPos.toFixed(1)}{r.lostClicks>0?' · −'+fmt(r.lostClicks)+' clics':''}</span></div>
+      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}><button className="cta-outline sm" disabled={busy===r.page} onClick={()=>run(r)}>{busy===r.page?'Leyendo la página…':x?'Regenerar plan':'Plan de refresh'}</button>{x&&<button className="link-btn" onClick={()=>setOpen(isOpen?'':r.page)}>{isOpen?'Ocultar':'Ver plan · '+formatRelTime(x.ts)}</button>}</div>
+      {x&&isOpen&&<div className="opt-rec">
+        <div className="today-t">{x.diagnostico}</div>
+        {x.causas&&x.causas.length>0&&<div>{x.causas.map((c,i)=><div key={i} className="md-li"><span className="md-bul">•</span><span>{c}</span></div>)}</div>}
+        {(x.acciones||[]).map((a,i)=><div key={i} className="act-row"><span className={'sig '+(PRI_SIG[a.prioridad]||'')}>{a.prioridad||'—'}</span><div><div className="today-t">{a.accion}</div><div className="today-why">{a.detalle}</div></div></div>)}
+        {x.secciones_nuevas&&x.secciones_nuevas.length>0&&<div><div className="comp-sub">Secciones nuevas</div>{x.secciones_nuevas.map((s,i)=><div key={i} className="md-li"><span className="md-bul">+</span><span><b>{s.h2}</b> — {s.por_que}</span></div>)}</div>}
+        {(x.title_nuevo||x.meta_nueva)&&<div className="variant">{x.title_nuevo&&<div className="var-t">{x.title_nuevo} <span className="mono-meta">{x.title_nuevo.length}</span></div>}{x.meta_nueva&&<div className="var-m">{x.meta_nueva} <span className="mono-meta">{x.meta_nueva.length}</span></div>}<button className="link-btn" onClick={()=>copyText((x.title_nuevo||'')+'\n'+(x.meta_nueva||''))}>Copiar</button></div>}
+      </div>}
+    </div>)})}
+  </section>);
+}
+function OptCtr({d,rows}){
+  const[res,setRes]=useState(()=>lsGet('sp2_opt_ctr',{}));const[busy,setBusy]=useState('');const[err,setErr]=useState(null);const[open,setOpen]=useState('');
+  const items=(d&&d.optimizar)||[];
+  const pageOf=r=>{if(r.page)return r.page;const c=(rows||[]).filter(x=>x.keys[0]===r.keys[0]).sort((a,b)=>b.impressions-a.impressions)[0];return c?c.keys[1]:null};
+  async function run(r){const url=pageOf(r);const q=r.keys[0];if(!url){setErr('No encontré la página de “'+q+'” en GSC.');return}setBusy(q);setErr(null);try{const j=parseJsonLoose(await callClaude('ctr',{url,query:q,stats:{impresiones:r.impressions,ctr_pct:+(r.ctr*100).toFixed(2),ctr_esperado_pct:+r.expected,posicion:+r.position.toFixed(1)},queries:pageQueries(rows,url)}));const h=lsGet('sp2_opt_ctr',{});h[q]={ts:Date.now(),url,...j};lsSet('sp2_opt_ctr',h);setRes(h);setOpen(q)}catch(e){setErr(e.message)}setBusy('')}
+  return(<section className="card opt" aria-labelledby="ot-h">
+    <div className="card-head"><h2 id="ot-h">CTR bajo</h2><span className="mono-meta">{items.length}</span></div>
+    <p className="today-why">Muchas impresiones y pocos clics. Claude lee tu title y meta actuales y te propone 3 variantes.</p>
+    {err&&<div className="error-msg">{err}</div>}
+    {d&&!items.length&&<div className="empty">Sin queries con CTR por debajo de lo esperado en este periodo.</div>}
+    {items.map(r=>{const q=r.keys[0];const x=res[q];const isOpen=open===q;return(<div key={q} className="opt-item">
+      <div className="opt-top"><span className="today-t">“{q}”</span><span className="mono-meta">{fmt(r.impressions)} impr · CTR {(r.ctr*100).toFixed(1)}% (esperado {r.expected}%) · pos {r.position.toFixed(1)}</span></div>
+      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}><button className="cta-outline sm" disabled={busy===q} onClick={()=>run(r)}>{busy===q?'Leyendo la página…':x?'Regenerar':'3 variantes'}</button>{x&&<button className="link-btn" onClick={()=>setOpen(isOpen?'':q)}>{isOpen?'Ocultar':'Ver variantes · '+formatRelTime(x.ts)}</button>}</div>
+      {x&&isOpen&&<div className="opt-rec">
+        <div className="variant now"><div className="comp-sub" style={{color:'var(--muted)'}}>Actual · {shortPath(x.url)}</div><div className="var-t">{x.title_actual||'—'}</div><div className="var-m">{x.meta_actual||'Sin meta description'}</div></div>
+        {x.diagnostico&&<div className="today-why">{x.diagnostico}</div>}
+        {(x.variantes||[]).map((vv,i)=><div key={i} className="variant"><div className="comp-sub">{vv.enfoque||'Variante '+(i+1)}</div><div className="var-t">{vv.title} <span className={'mono-meta'+((vv.title||'').length>60?' over':'')}>{(vv.title||'').length}</span></div><div className="var-m">{vv.meta} <span className={'mono-meta'+((vv.meta||'').length>155?' over':'')}>{(vv.meta||'').length}</span></div>{vv.por_que&&<div className="today-why">{vv.por_que}</div>}<button className="link-btn" onClick={()=>copyText(vv.title+'\n'+vv.meta)}>Copiar</button></div>)}
+      </div>}
+    </div>)})}
+  </section>);
+}
+function OptimizarTab({d,gscFn,loading}){
+  const[rows,setRows]=useState(gscQPCache);
+  useEffect(()=>{if(!rows)loadQueryPageRows(gscFn).then(setRows).catch(()=>setRows([]))},[]);
+  return(<div className="opt-wrap">
+    {loading&&!d&&<div className="loading"><div className="spinner"/>Cargando datos…</div>}
+    <OptCanibal rows={rows}/>
+    <div className="plan-cols"><OptRefresh d={d} rows={rows}/><OptCtr d={d} rows={rows}/></div>
   </div>);
 }
 
@@ -2010,6 +2166,7 @@ function Etapa({data}){
 const TABS=[
   {id:'hoy',label:'Hoy',group:'main',primary:true,icon:'M12 8a4 4 0 100 8 4 4 0 000-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4'},
   {id:'produccion',label:'Producción',group:'main',primary:true,icon:'M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z'},
+  {id:'optimizar',label:'Optimizar',group:'main',primary:true,icon:'M3 17l6-6 4 4 8-8M14 7h7v7'},
   {id:'radar',label:'Radar',group:'main',primary:true,icon:'M12 3a9 9 0 100 18 9 9 0 000-18zM12 7a5 5 0 100 10 5 5 0 000-10zM12 12l6-6'},
   {id:'etapa',label:'Etapa',group:'analisis'},
   {id:'overview',label:'Overview',group:'analisis'},
@@ -2244,7 +2401,7 @@ function App(){
   const goTab=(id,kw)=>{if(kw)setProdFocus(kw);changeTab(id)};
   const onAct=a=>{if(!a)return;const v=(a.valor||'').trim();if(a.tipo==='produccion'){v?goCheck(v):goTab('produccion')}else if(a.tipo==='radar')goTab('radar');else if(a.tipo==='etapa')goTab('etapa');else if(a.tipo==='pagina'&&v){openDetail({query:null,page:/^https?:/.test(v)?v:('https://'+((config&&config.site)||'').replace('sc-domain:','')+(v.startsWith('/')?v:'/'+v)),position:0,clicks:0,impressions:0})}};
   const now=new Date();
-  const HEAD={etapa:{e:'Etapa',t:'El plan.',s:'Cuello de botella, mes y semana, razonados con tu roadmap y tus datos.'},hoy:{e:DIAS[now.getDay()]+' '+now.getDate()+' de '+MESES_L[now.getMonth()],t:'Hoy.',s:'Lo que mueve la aguja, en orden. Empieza por arriba.'},produccion:{e:'Producción',t:'De keyword a borrador.',s:'Chequeo, brief y verificación en un solo flujo.'},radar:{e:'Radar de oportunidades',t:'Qué atacar después.',s:'Temas que no cubres, validados con Google y tu Search Console.'}};
+  const HEAD={optimizar:{e:'Optimizar',t:'Lo que ya tienes, mejor.',s:'Canibalización en el sitio, páginas que caen y titles con CTR bajo.'},etapa:{e:'Etapa',t:'El plan.',s:'Cuello de botella, mes y semana, razonados con tu roadmap y tus datos.'},hoy:{e:DIAS[now.getDay()]+' '+now.getDate()+' de '+MESES_L[now.getMonth()],t:'Hoy.',s:'Lo que mueve la aguja, en orden. Empieza por arriba.'},produccion:{e:'Producción',t:'De keyword a borrador.',s:'Chequeo, brief y verificación en un solo flujo.'},radar:{e:'Radar de oportunidades',t:'Qué atacar después.',s:'Temas que no cubres, validados con Google y tu Search Console.'}};
   const head=HEAD[activeTab]||{e:'Análisis',t:(TABS.find(t=>t.id===activeTab)||{}).label||'',s:''};
   const allBadges={...tabBadges,produccion:Object.keys(getBriefs()).length};
   return(<div className="shell">
@@ -2260,6 +2417,7 @@ function App(){
 
     {activeTab==='hoy'&&<Hoy d={d} loading={loading} onGo={goTab} onCheck={goCheck} onBrief={goBrief} openDetail={openDetail} gscFn={gsc} onAct={onAct}/>}
     {activeTab==='produccion'&&<Produccion gscFn={gsc} config={config} canibalSeed={canibalSeed} briefSeed={briefSeed} onBriefSeed={goBrief} focusKw={prodFocus}/>}
+    {activeTab==='optimizar'&&<OptimizarTab d={d} gscFn={gsc} loading={loading}/>}
     {activeTab==='radar'&&<RadarTab d={d} loading={loading} onCheck={goCheck} gscFn={gsc} config={config}/>}
 
     {/* ========== ETAPA TAB ========== */}
