@@ -336,6 +336,22 @@ body{background:var(--bg)}
 .idea .cta-primary,.idea .cta-light{margin-top:auto}
 .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}.how-grid p{font-size:14px;color:#3F3E3A;line-height:1.5;margin-top:4px}.mono-blue{font-family:var(--mono);font-size:12px;color:#0039B8}
 #root>.app{margin:0 auto;max-width:640px}
+.plan-cta{background:#111;color:#F4F3EF;border-radius:18px;padding:22px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;margin-bottom:24px}.plan-cta>div:first-child{flex:1 1 360px;display:flex;flex-direction:column;gap:8px}.plan-cta p{font-size:14px;color:#D6D3CC;line-height:1.5}
+.plan-hoy{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:28px;align-items:stretch}
+.plan-neck{flex:1 1 300px;background:#111;color:#F4F3EF;border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:10px}.plan-neck p{font-size:14px;color:#D6D3CC;line-height:1.55}
+.plan-neck.big .ink-title{font-size:28px}
+.neck-dato{font-family:var(--mono);font-size:13px;color:#3DDC97;line-height:1.5}
+.plan-links{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:auto}.link-btn.light{color:#BFD0FF}
+.plan-today{flex:999 1 420px;min-width:0;background:#fff;border:1px solid var(--border);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.today-note{font-size:14px;color:#3F3E3A;line-height:1.5}
+.today-item{display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--line);padding-top:12px}
+.today-item input{width:20px;height:20px;margin-top:2px;accent-color:#0B6B45;flex:0 0 auto}
+.today-body{flex:1;min-width:0}.today-t{font-weight:600;font-size:15px;line-height:1.4}.today-why{font-size:13.5px;color:#3F3E3A;line-height:1.5;margin-top:2px}
+.today-item.done .today-t{text-decoration:line-through;color:var(--muted)}
+.plan-panel{display:flex;flex-direction:column;gap:16px;margin-bottom:28px}
+.plan-cols{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}.plan-cols>.card{flex:1 1 340px;min-width:0}
+.plan-obj{font-size:15px;line-height:1.5;color:#111;font-weight:500}
+.meta-row{display:flex;gap:12px;border-top:1px solid var(--line);padding-top:10px}.meta-n{font-family:var(--display);font-weight:700;font-size:20px;color:#C9C5BD;width:22px;flex:0 0 auto}
 .piece-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .save-btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 13px var(--sans);cursor:pointer}.save-btn.on{color:var(--blue);border-color:var(--blue-tint);background:var(--blue-soft)}
 .idea-ink .save-btn{border-color:#3A3A3A;color:#D6D3CC}.idea-ink .save-btn.on{background:#1E2A4A;color:#BFD0FF;border-color:#1E2A4A}
@@ -384,7 +400,7 @@ button.filter{cursor:pointer;font-family:var(--sans)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v4.2';
+const VERSION='v4.3';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SUGGEST_API=REDIRECT_URI+'/api/suggest';
 const CLAUDE_API=REDIRECT_URI+'/api/claude';
@@ -875,7 +891,7 @@ function HoyItem({n,it}){return(<article className="prio">
   <button className={it.primary?'cta-primary':'cta-outline'} onClick={it.action}>{it.cta}</button>
 </article>)}
 
-function Hoy({d,loading,onGo,onCheck,onBrief,openDetail}){
+function Hoy({d,loading,onGo,onCheck,onBrief,openDetail,gscFn,onAct}){
   const briefs=getBriefs();const can=getCanibalAll();const items=[];
   Object.entries(briefs).sort((a,b)=>b[1].ts-a[1].ts).slice(0,2).forEach(([kw,b])=>{const v=verifyStatus(kw,b.text);const pending=v.total&&v.done<v.total;items.push({tag:'Producción',tone:'blue',primary:true,meta:(TIPO_LABEL[b.tipo]||'brief')+' · '+formatRelTime(b.ts)+(v.total?' · '+v.done+'/'+v.total+' verificados':''),title:<>Brief listo: <em>{kw}</em></>,desc:pending?'Termina la verificación de datos y pasa a redactar.':'Listo para el siguiente paso: redactar el artículo.',cta:'Abrir',action:()=>onGo('produccion',kw)})});
   Object.entries(can).filter(([kw,c])=>!briefs[kw]&&c.res&&c.res.veredicto!=='actualizar').sort((a,b)=>b[1].ts-a[1].ts).slice(0,2).forEach(([kw,c])=>items.push({tag:'Producción',tone:'blue',meta:'canibalización: '+c.res.veredicto+' · '+formatRelTime(c.ts),title:<>Chequeo listo: <em>{kw}</em></>,desc:c.res.angulo_sugerido||c.res.resumen||'',cta:'Crear brief',action:()=>onBrief(kw)}));
@@ -886,9 +902,9 @@ function Hoy({d,loading,onGo,onCheck,onBrief,openDetail}){
   }
   const list=items.slice(0,6);
   const chequeos=Object.keys(can).filter(k=>!briefs[k]);
-  return(<div className="hoy">
+  return(<><PlanHoy d={d} gscFn={gscFn} onAct={onAct} onGo={onGo}/><div className="hoy">
     <section className="hoy-main" aria-labelledby="prio-h">
-      <div className="sec-head"><h2 id="prio-h">Prioridades</h2><span>Producción primero, luego oportunidades</span></div>
+      <div className="sec-head"><h2 id="prio-h">Señales de los datos</h2><span>Producción primero, luego oportunidades</span></div>
       {loading&&!d&&list.length===0&&<div className="loading"><div className="spinner"/>Cargando datos…</div>}
       {list.map((it,i)=><HoyItem key={i} n={i+1} it={it}/>)}
       {!loading&&list.length===0&&<div className="empty">Nada urgente. Busca ideas en el Radar o chequea una keyword nueva.</div>}
@@ -916,7 +932,7 @@ function Hoy({d,loading,onGo,onCheck,onBrief,openDetail}){
         </div>
       </section>}
     </aside>
-  </div>);
+  </div></>);
 }
 
 function Stepper({kw}){
@@ -1075,6 +1091,112 @@ function RadarTab({d,loading,onCheck,gscFn,config}){
         <button className={i===0?'cta-light':'cta-primary'} onClick={()=>onCheck(r.keys[0])}>{c?'Abrir en producción':'Chequear y producir'}</button>
       </article>)})}</div>
     </>}
+  </div>);
+}
+
+// ====== PLAN: mes, semana y prioridades del día (v4.3) ======
+function weekKey(dt){const d=dt?new Date(dt):new Date();const day=(d.getDay()+6)%7;const m=new Date(d.getFullYear(),d.getMonth(),d.getDate()-day);return m.toISOString().slice(0,10)}
+function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function lsGet(k,def){try{const v=JSON.parse(localStorage.getItem(k)||'null');return v==null?def:v}catch{return def}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}window.dispatchEvent(new Event('sp-plan'))}
+const getPlan=()=>lsGet('sp2_plan',null),getPlanHoy=()=>lsGet('sp2_plan_hoy',null);
+async function buildPlanInput(d,gscFn){
+  const st=lsGet('sp2_audit',null)||auditDefaults();const sig=deriveSignals(st);const{perPhase,stageFormal}=etAudit(sig);
+  const requisitos=[];AUDIT_GROUPS.forEach(g=>g.items.forEach(it=>{const s=st[it.id]||{};requisitos.push({grupo:g.label,requisito:it.t,estado:s.estado||'na',nota:(s.nota||'').slice(0,300)||undefined})}));
+  const roadmap={fase_sellada:stageFormal,fases:perPhase.map(f=>({n:f.n,nombre:f.nombre,avance_pct:f.pct,faltan:f.failing.map(g=>g[1])})),requisitos};
+  const datos={periodo_dias:28};
+  if(d){datos.resumen_periodo=d.summary;
+    datos.quick_wins=(d.quickWins||[]).slice(0,8).map(r=>({q:r.keys[0],pos:+r.position.toFixed(1),impr:r.impressions,clics:r.clicks}));
+    datos.ctr_bajo=(d.optimizar||[]).slice(0,6).map(r=>({q:r.keys[0],pagina:r.page?shortPath(r.page):undefined,impr:r.impressions,ctr_pct:+(r.ctr*100).toFixed(2),pos:+r.position.toFixed(1)}));
+    datos.cayendo=(d.dropping||[]).slice(0,5).map(r=>({pagina:shortPath(r.page),pos_antes:+r.prevPos.toFixed(1),pos_ahora:+r.curPos.toFixed(1),clics_perdidos:r.lostClicks}));
+    datos.sin_pagina_propia=(d.escribir||[]).slice(0,6).map(r=>({q:r.keys[0],impr:r.impressions,pos:+r.position.toFixed(1)}));
+    if(d.ga4Pages)datos.ga4_top=d.ga4Pages.slice(0,8)}
+  try{const rows=await loadQueryPageRows(gscFn);const pg={},qs={};rows.forEach(r=>{const p=r.keys[1];pg[p]=pg[p]||{i:0,c:0};pg[p].i+=r.impressions;pg[p].c+=r.clicks;qs[r.keys[0]]=Math.min(qs[r.keys[0]]||999,r.position)});
+    const b={'1-3':0,'4-10':0,'11-20':0,'21+':0};Object.values(qs).forEach(p=>{if(p<=3)b['1-3']++;else if(p<=10)b['4-10']++;else if(p<=20)b['11-20']++;else b['21+']++});
+    datos.cobertura_90d={paginas_con_impresiones:Object.keys(pg).length,paginas_con_clics:Object.values(pg).filter(x=>x.c>0).length,queries_distintas:Object.keys(qs).length,queries_por_mejor_posicion:b,top_paginas:Object.entries(pg).sort((a,c)=>c[1].i-a[1].i).slice(0,10).map(([p,x])=>({pagina:shortPath(p),impr:x.i,clics:x.c}))}}catch{}
+  const briefs=getBriefs();const can=getCanibalAll();const radar=getRadar();
+  const produccion={briefs:Object.entries(briefs).map(([k,b])=>{const v=verifyStatus(k,b.text);return{keyword:k,plantilla:b.tipo,verificados:v.done+'/'+v.total,dias:Math.round((Date.now()-b.ts)/864e5)}}).slice(0,10),
+    chequeos_sin_brief:Object.keys(can).filter(k=>!briefs[k]).slice(0,10),ideas_guardadas:getSavedIdeas().slice(-10).map(x=>x.keyword),
+    radar_keywords_con_demanda:radar&&radar.temporadas?radar.temporadas.reduce((a,t)=>a+t.piezas.filter(p=>p.demand>0).length,0):0};
+  const plan=getPlan(),hoy=getPlanHoy();
+  const avance={tareas_semana_hechas:plan&&plan.data&&plan.data.semana?(plan.done||[]).map(i=>(plan.data.semana.tareas[i]||{}).tarea).filter(Boolean):[],hoy_anterior:hoy?{fecha:hoy.date,hechas:(hoy.done||[]).map(i=>(hoy.items[i]||{}).tarea).filter(Boolean),pendientes:hoy.items.filter((_,i)=>!(hoy.done||[]).includes(i)).map(x=>x.tarea)}:null};
+  const n=new Date();
+  return{fecha:DIAS[n.getDay()]+' '+n.getDate()+' de '+MESES_L[n.getMonth()]+' de '+n.getFullYear(),contexto:lsGet('sp2_plan_ctx',''),roadmap,datos,produccion,plan_anterior:plan?plan.data:null,avance}}
+async function generatePlan(d,gscFn,onStage){onStage&&onStage('Reuniendo roadmap, datos y producción…');const input=await buildPlanInput(d,gscFn);onStage&&onStage('Claude está razonando el plan…');const data=parseJsonLoose(await callClaude('plan',input));lsSet('sp2_plan',{ts:Date.now(),week:weekKey(),data,done:[]});return data}
+async function generateHoy(d,gscFn,onStage){onStage&&onStage('Eligiendo las prioridades de hoy…');const input=await buildPlanInput(d,gscFn);const r=parseJsonLoose(await callClaude('plan_hoy',input));lsSet('sp2_plan_hoy',{date:todayKey(),ts:Date.now(),items:r.hoy||[],nota:r.nota||'',done:[]});return r}
+function usePlanStore(){const[v,setV]=useState(0);useEffect(()=>{const f=()=>setV(x=>x+1);window.addEventListener('sp-plan',f);return()=>window.removeEventListener('sp-plan',f)},[]);return{plan:getPlan(),hoy:getPlanHoy(),v}}
+const MODO_LABEL={producir:'Modo: producir',optimizar:'Modo: optimizar',tecnico:'Modo: técnico',autoridad:'Modo: autoridad',medir:'Modo: medir'};
+function ActionBtn({accion,onAct,ink}){if(!accion||!accion.tipo||accion.tipo==='ninguna')return null;const L={produccion:accion.valor?'Producir':'Ir a producción',radar:'Abrir radar',etapa:'Ver en Etapa',pagina:'Ver página'};return<button className={ink?'cta-light sm':'cta-outline sm'} onClick={()=>onAct(accion)}>{L[accion.tipo]||'Abrir'}</button>}
+let autoHoyRan=false;
+function PlanHoy({d,gscFn,onAct,onGo}){
+  const{plan,hoy}=usePlanStore();const[stage,setStage]=useState('');const[err,setErr]=useState(null);
+  const stale=plan&&plan.week!==weekKey();const hoyOk=hoy&&hoy.date===todayKey();
+  async function doPlan(){setErr(null);try{await generatePlan(d,gscFn,setStage);await generateHoy(d,gscFn,setStage)}catch(e){setErr(e.message)}setStage('')}
+  async function doHoy(){setErr(null);try{await generateHoy(d,gscFn,setStage)}catch(e){setErr(e.message)}setStage('')}
+  useEffect(()=>{if(plan&&!stale&&!hoyOk&&d&&!autoHoyRan){autoHoyRan=true;doHoy()}},[!!d,!!plan,stale,hoyOk]);
+  function toggle(i){const h=getPlanHoy();const s=new Set(h.done||[]);s.has(i)?s.delete(i):s.add(i);lsSet('sp2_plan_hoy',{...h,done:[...s]})}
+  if(!plan)return(<section className="plan-cta"><div><div className="side-label" style={{padding:0}}>Plan con razonamiento</div><h2 className="ink-title">Arma tu plan del mes y de la semana</h2><p>Claude cruza tu roadmap de Etapa, tus notas, Search Console y tu producción para decirte cuál es el cuello de botella y qué hacer.</p></div>{stage?<div className="loading" style={{color:'#D6D3CC'}}><div className="spinner"/>{stage}</div>:<button className="cta-light" onClick={doPlan}>Generar plan</button>}{err&&<div className="error-msg">{err}</div>}</section>);
+  const c=plan.data.cuello||{};
+  return(<section className="plan-hoy" aria-labelledby="ph-h">
+    <div className="plan-neck">
+      <div className="prio-tags"><span className="tag tag-mint">{MODO_LABEL[plan.data.modo]||'Plan'}</span><span className="mono-meta" style={{color:'#A8A49C'}}>plan de la semana · {formatRelTime(plan.ts)}</span></div>
+      <h2 className="ink-title">{c.titulo}</h2>
+      {c.dato&&<div className="neck-dato">{c.dato}</div>}
+      <div className="plan-links"><button className="link-btn light" onClick={()=>onGo('etapa')}>Ver plan completo</button>{stale&&<button className="cta-light sm" onClick={doPlan}>Nueva semana: regenerar plan</button>}</div>
+    </div>
+    <div className="plan-today">
+      <div className="sec-head"><h2 id="ph-h">Prioridades de hoy</h2>{hoyOk&&!stage&&<button className="link-btn" onClick={doHoy}>Regenerar</button>}</div>
+      {stage&&<div className="loading"><div className="spinner"/>{stage}</div>}
+      {err&&<div className="error-msg">{err}</div>}
+      {hoyOk&&hoy.nota&&<p className="today-note">{hoy.nota}</p>}
+      {hoyOk&&hoy.items.map((t,i)=>{const done=(hoy.done||[]).includes(i);return(<div key={i} className={'today-item'+(done?' done':'')}>
+        <input type="checkbox" checked={done} onChange={()=>toggle(i)} aria-label={'Marcar hecha: '+t.tarea}/>
+        <div className="today-body"><div className="today-t">{t.tarea}</div><div className="today-why">{t.por_que}{t.esfuerzo?<span className="mono-meta"> · {t.esfuerzo}</span>:null}</div></div>
+        {!done&&<ActionBtn accion={t.accion} onAct={onAct}/>}
+      </div>)})}
+      {!hoyOk&&!stage&&<button className="cta-outline" onClick={doHoy}>Generar prioridades de hoy</button>}
+    </div>
+  </section>);
+}
+function PlanPanel({d,gscFn,onAct}){
+  const{plan}=usePlanStore();const[ctx,setCtx]=useState(()=>lsGet('sp2_plan_ctx',''));const[stage,setStage]=useState('');const[err,setErr]=useState(null);
+  async function doPlan(){lsSet('sp2_plan_ctx',ctx);setErr(null);try{await generatePlan(d,gscFn,setStage);await generateHoy(d,gscFn,setStage)}catch(e){setErr(e.message)}setStage('')}
+  function toggle(i){const p=getPlan();const s=new Set(p.done||[]);s.has(i)?s.delete(i):s.add(i);lsSet('sp2_plan',{...p,done:[...s]})}
+  const P=plan&&plan.data;const done=plan?plan.done||[]:[];
+  return(<div className="plan-panel">
+    {P&&<>
+      <div className="plan-neck big">
+        <div className="prio-tags"><span className="tag tag-mint">{MODO_LABEL[P.modo]||'Plan'}</span><span className="mono-meta" style={{color:'#A8A49C'}}>generado {formatRelTime(plan.ts)}{plan.week!==weekKey()?' · de la semana pasada':''}</span></div>
+        <div className="side-label" style={{padding:0}}>Cuello de botella</div>
+        <h2 className="ink-title">{P.cuello&&P.cuello.titulo}</h2>
+        {P.cuello&&P.cuello.dato&&<div className="neck-dato">{P.cuello.dato}</div>}
+        {P.cuello&&P.cuello.explicacion&&<p>{P.cuello.explicacion}</p>}
+      </div>
+      <div className="plan-cols">
+        <section className="card" aria-labelledby="pm-h">
+          <div className="card-head"><h2 id="pm-h">Este mes</h2>{P.mes&&P.mes.fase_foco?<span className="tag tag-blue">Fase {P.mes.fase_foco}</span>:null}</div>
+          {P.mes&&<p className="plan-obj">{P.mes.objetivo}</p>}
+          {P.mes&&(P.mes.metas||[]).map((m,i)=><div key={i} className="meta-row"><div className="meta-n">{i+1}</div><div><div className="today-t">{m.meta}</div><div className="today-why">{m.por_que}</div>{m.indicador&&<div className="mono-meta">Se mide: {m.indicador}</div>}</div></div>)}
+        </section>
+        <section className="card" aria-labelledby="ps-h">
+          <div className="card-head"><h2 id="ps-h">Esta semana</h2><span className="mono-meta">{done.length}/{P.semana?(P.semana.tareas||[]).length:0}</span></div>
+          {P.semana&&<p className="plan-obj">{P.semana.foco}</p>}
+          {P.semana&&(P.semana.tareas||[]).map((t,i)=>{const ok=done.includes(i);return(<div key={i} className={'today-item'+(ok?' done':'')}>
+            <input type="checkbox" checked={ok} onChange={()=>toggle(i)} aria-label={'Marcar hecha: '+t.tarea}/>
+            <div className="today-body"><div className="today-t">{t.tarea}</div><div className="today-why">{t.por_que}{t.esfuerzo?<span className="mono-meta"> · {t.esfuerzo}</span>:null}</div></div>
+            {!ok&&<ActionBtn accion={t.accion} onAct={onAct}/>}
+          </div>)})}
+        </section>
+      </div>
+      {(P.esperar&&P.esperar.length>0)&&<section className="card"><h2 className="card-title">Puede esperar</h2>{P.esperar.map((x,i)=><div key={i} className="md-li"><span className="md-bul">–</span><span>{x}</span></div>)}{P.notas_usadas&&P.notas_usadas.length>0&&<div className="muted-s" style={{marginTop:6}}>Notas tomadas en cuenta: {P.notas_usadas.join(' · ')}</div>}</section>}
+    </>}
+    <section className="card">
+      <label htmlFor="plan-ctx" className="field-label">Contexto para el plan</label>
+      <textarea id="plan-ctx" className="kw-textarea" style={{minHeight:64}} placeholder="Ej. esta semana tengo 6 horas; quiero lanzar la temporada Wilde; prioridad: suscriptores al newsletter…" value={ctx} onChange={e=>setCtx(e.target.value)}/>
+      <div style={{display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}><button className="cta-primary" disabled={!!stage} onClick={doPlan}>{P?'Regenerar plan':'Generar plan'}</button>{stage&&<div className="loading" style={{padding:0}}><div className="spinner"/>{stage}</div>}</div>
+      {err&&<div className="error-msg">{err}</div>}
+      <div className="muted-s">El plan lee tus fases, el estado y las notas de cada requisito de abajo, los datos de Search Console y tu producción. Unos centavos por plan.</div>
+    </section>
   </div>);
 }
 
@@ -2120,8 +2242,9 @@ function App(){
   const goCheck=kw=>{setCanibalSeed(x=>({kw,n:x.n+1}));setProdFocus(kw.trim().toLowerCase());changeTab('produccion')};
   const goBrief=kw=>{setBriefSeed(x=>({kw,n:x.n+1}));setProdFocus(kw.trim().toLowerCase());changeTab('produccion')};
   const goTab=(id,kw)=>{if(kw)setProdFocus(kw);changeTab(id)};
+  const onAct=a=>{if(!a)return;const v=(a.valor||'').trim();if(a.tipo==='produccion'){v?goCheck(v):goTab('produccion')}else if(a.tipo==='radar')goTab('radar');else if(a.tipo==='etapa')goTab('etapa');else if(a.tipo==='pagina'&&v){openDetail({query:null,page:/^https?:/.test(v)?v:('https://'+((config&&config.site)||'').replace('sc-domain:','')+(v.startsWith('/')?v:'/'+v)),position:0,clicks:0,impressions:0})}};
   const now=new Date();
-  const HEAD={hoy:{e:DIAS[now.getDay()]+' '+now.getDate()+' de '+MESES_L[now.getMonth()],t:'Hoy.',s:'Lo que mueve la aguja, en orden. Empieza por arriba.'},produccion:{e:'Producción',t:'De keyword a borrador.',s:'Chequeo, brief y verificación en un solo flujo.'},radar:{e:'Radar de oportunidades',t:'Qué atacar después.',s:'Temas que no cubres, validados con Google y tu Search Console.'}};
+  const HEAD={etapa:{e:'Etapa',t:'El plan.',s:'Cuello de botella, mes y semana, razonados con tu roadmap y tus datos.'},hoy:{e:DIAS[now.getDay()]+' '+now.getDate()+' de '+MESES_L[now.getMonth()],t:'Hoy.',s:'Lo que mueve la aguja, en orden. Empieza por arriba.'},produccion:{e:'Producción',t:'De keyword a borrador.',s:'Chequeo, brief y verificación en un solo flujo.'},radar:{e:'Radar de oportunidades',t:'Qué atacar después.',s:'Temas que no cubres, validados con Google y tu Search Console.'}};
   const head=HEAD[activeTab]||{e:'Análisis',t:(TABS.find(t=>t.id===activeTab)||{}).label||'',s:''};
   const allBadges={...tabBadges,produccion:Object.keys(getBriefs()).length};
   return(<div className="shell">
@@ -2135,12 +2258,12 @@ function App(){
 
     <div className="tab-content">
 
-    {activeTab==='hoy'&&<Hoy d={d} loading={loading} onGo={goTab} onCheck={goCheck} onBrief={goBrief} openDetail={openDetail}/>}
+    {activeTab==='hoy'&&<Hoy d={d} loading={loading} onGo={goTab} onCheck={goCheck} onBrief={goBrief} openDetail={openDetail} gscFn={gsc} onAct={onAct}/>}
     {activeTab==='produccion'&&<Produccion gscFn={gsc} config={config} canibalSeed={canibalSeed} briefSeed={briefSeed} onBriefSeed={goBrief} focusKw={prodFocus}/>}
     {activeTab==='radar'&&<RadarTab d={d} loading={loading} onCheck={goCheck} gscFn={gsc} config={config}/>}
 
     {/* ========== ETAPA TAB ========== */}
-    {activeTab==='etapa'&&<Etapa data={data}/>}
+    {activeTab==='etapa'&&<><PlanPanel d={d} gscFn={gsc} onAct={onAct}/><Etapa data={data}/></>}
 
     {/* ========== OVERVIEW TAB ========== */}
     {activeTab==='overview'&&<>
