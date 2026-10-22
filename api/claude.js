@@ -7,6 +7,116 @@ const MODELS = {
   opus: 'claude-opus-5-5',
 };
 
+// ---------- Plantillas de País Lector para briefs ----------
+const BRIEF_TEMPLATES = {
+  resena: {
+    nombre: 'Reseña (cuento o novela)',
+    spec: [
+      '- URL tipo: /resena-de-[titulo]-de-[autor]/ o /[titulo]-de-[autor]/. Categoría: Reseñas (o Novelas/Cuentos según el caso).',
+      '- Antetítulo: "Reseña · Cuento|Novela · [año de publicación]".',
+      '- H1 en uno de estos moldes: "*Título* de Autor: de qué trata y por qué no lo olvidarás" o "Reseña de *Título* de Autor".',
+      '- Bajada de 2-3 oraciones bajo el H1 (promesa honesta, "sin academia").',
+      '- Intro de 2 párrafos en primera persona del editor (Andrés Rendón): gancho + a quién le sirve la reseña.',
+      '- Ficha "Datos esenciales" (cada valor marcado [VERIFICAR]): Autor, Título u Original, Publicado, Publicación/Editorial original, Libro recopilatorio (si es cuento), Género, Extensión, Idioma original, Dificultad (nivel + motivo), Traducción (si aplica), Vida autor, Tema dominante o Premios, Tiempo de lectura.',
+      '- Índice FIJO de 6 secciones, numeradas 01-06: 01 ¿De qué trata *X*? · 02 ¿Vale la pena leerlo/a? · 03 ¿Qué lo/la hace especial? · 04 ¿Por qué importa en [año en curso]? · 05 ¿Dónde leer *X* completo/a? · 06 El veredicto.',
+      '- 01: H2 "De qué trata *X* de Autor"; 3 párrafos de sinopsis sin spoilers grandes + cita destacada [PEGAR CITA — fuente].',
+      '- 02: H2 "¿Vale la pena leer *X* hoy?"; 3-4 párrafos, respuesta directa en la primera línea.',
+      '- 03: H2 con gancho ("Por qué ... sigue obsesionando lectores"); exactamente 3 razones numeradas 01-03 como H3, un párrafo cada una.',
+      '- 04: H2 "Por qué *X* sigue siendo vigente en [año]"; conexión con el presente (2-3 párrafos).',
+      '- 05: H2 "Dónde leer..." + botón. Si la obra es de dominio público: enlazar /obras/ propia o fuente pública. Si tiene derechos: SOLO compra o lectura autorizada; nunca enlaces a copias completas.',
+      '- 06 Veredicto: H2 frase-sentencia; 2 párrafos; bloques "Para ti, si" y "Sáltatelo, si" (una lista corrida cada uno).',
+      '- Bloque "Compra el libro": edición recomendada [VERIFICAR] + enlace afiliado Gandhi [PEGAR URL].',
+      '- FAQ de 8-10 preguntas reales (prioriza queries de GSC y sugerencias): de qué trata, cuándo se publicó, significado del título, género, extensión, dificultad, dónde leer, qué leer después, para qué edad.',
+      '- Fuentes: 4-6 referencias bibliográficas [VERIFICAR].',
+    ].join('\n'),
+  },
+  poemas: {
+    nombre: 'Lista "N poemas de [autor]"',
+    spec: [
+      '- URL tipo: /poemas-de-[autor]/. Va en un bloque HTML personalizado con clases pl-*.',
+      '- Intro de 3 párrafos cortos; la keyword en negritas en el primero; cerrar invitando a leer.',
+      '- Índice "Índice: N poemas de [Autor] completos con análisis" (normalmente 10).',
+      '- Por cada poema: número + título; H3 "\\"Título\\" – Autor"; texto del poema = [PEGAR POEMA COMPLETO — fuente sugerida]; línea de origen "De [Libro] ([año]) — poema completo" [VERIFICAR]; H4 "Sobre este poema" con 3 párrafos de análisis (indica el ÁNGULO de cada uno); enlace interno si existe una página propia de ese poema; nota "Texto tomado de [fuente]".',
+      '- FAQ de 5 preguntas (poema más famoso, mejores frases, significado de un poema clave, de qué libros vienen, poemas de amor/tema más buscado).',
+      '- Cierre de 2 párrafos con la keyword en negritas.',
+      '- "Fuentes consultadas": sitios de donde se toman los textos.',
+      '- Campos personalizados WP: Emoción principal (una de: Amor, Desamor, Nostalgia, Tristeza, Soledad, Rabia, Duelo, Alegría, Esperanza, Erotismo, Confusión, Identidad, Muerte, Naturaleza, Política), País de origen, Autor (nombre limpio), Es traducción propia (Sí/No), Movimiento literario (corto). Recomienda también el TAG con el nombre de la emoción.',
+    ].join('\n'),
+  },
+  cuentos: {
+    nombre: 'Lista "Los 10 mejores cuentos de [autor]"',
+    spec: [
+      '- URL tipo: /cuentos-de-[autor]/. Categoría: Cuentos › [Autor].',
+      '- H1: "Los 10 mejores cuentos de [Autor]: [subtítulo con gancho]".',
+      '- Intro de 2 párrafos; keyword en negritas; contexto del libro de donde vienen la mayoría.',
+      '- Índice "Índice: 10 cuentos de [Autor] completos con análisis".',
+      '- Por cada cuento: número; H3 "“Título” — Autor"; sinopsis de 1 párrafo; cita breve = [PEGAR CITA LITERAL — copiar de la fuente]; H4 "Sobre este cuento" con 1 párrafo de análisis (indica el ángulo); línea "Cuento completo de *[Libro]* ([Editorial], [año]). Lee **“Título” completo** en [fuente]" [VERIFICAR].',
+      '- H3 de semblanza del autor (3 párrafos).',
+      '- FAQ de 7 preguntas.',
+      '- "Sobre las fuentes" (ediciones y sitios) y "Sigue leyendo" con enlaces internos.',
+    ].join('\n'),
+  },
+  archivo: {
+    nombre: 'Archivo: carta o texto histórico',
+    spec: [
+      '- Sección Archivo › Cartas (o el tipo de texto). Antetítulo: "Carta · [Mes] de [Año]".',
+      '- H1 con gancho humano (molde: "El consejo que [Autor] escribió a los [N] años.").',
+      '- Encabezado DE / PARA con lugar.',
+      '- Ficha del remitente: fechas de vida, lugar, bio de 2-3 oraciones, edad al escribir, antología/edición, editor [VERIFICAR todo].',
+      '- 01 Preámbulo del editor: H2 "Por qué leemos hoy..."; 2-3 párrafos en primera persona + firma.',
+      '- 02 El texto íntegro = [PEGAR TRADUCCIÓN PROPIA]. Sugiere 3 notas del editor (dónde van y qué dicen).',
+      '- 03 "Lo que queda después": reflexión de 2-3 párrafos.',
+      '- Secciones de contexto: Sobre esta carta · El mensaje central · ¿Por qué la escribió? · Las frases más citadas (tomadas LITERALMENTE de la traducción, marcar [COTEJAR]) · ¿Dónde está publicada? (primera publicación [VERIFICAR]) · Otros textos del archivo.',
+      '- FAQ de 6 preguntas. Bloque "Sigue leyendo".',
+      '- La numeración de secciones debe ser consecutiva.',
+    ].join('\n'),
+  },
+  obra: {
+    nombre: 'Obra para leer gratis (/obras/)',
+    spec: [
+      '- Tipo de contenido Obras, URL /obras/[slug]/. SOLO para textos en dominio público.',
+      '- Title SEO molde: "[Título] de [Autor] — Leer gratis en español". Meta: "Lee [Título] de [Autor] completo, gratis y en español. [Género] de [año] sobre [temas]."',
+      '- Cabecera: "[Cuento|Novela|Poema] · Lectura gratuita", título, autor (enlace a /autor/), "[año] · Dominio público · [N] min".',
+      '- Texto íntegro = [PEGAR TRADUCCIÓN PROPIA].',
+      '- H2 "Sobre esta traducción": párrafo de contexto (primera publicación: medio, ciudad, fecha [VERIFICAR]; obras hermanas del autor) + párrafo de fuente (texto original usado y edición cotejada).',
+      '- H2 "Más sobre [Autor]": 2-3 fuentes externas de autoridad + enlaces internos a otras obras/poemas del autor.',
+    ].join('\n'),
+  },
+};
+
+const BRIEF_SYSTEM = [
+  'Eres el editor SEO de País Lector, revista literaria independiente mexicana: anti-académica, irreverente, latinoamericana. Voz: visceral, directa, metáforas corporales, frases cortas que golpean; nada de tono de enciclopedia ni clichés de autoayuda.',
+  'Tu trabajo: producir un BRIEF accionable en Markdown, no el artículo. El editor (Andrés Rendón) lo usará para escribir o para generar el borrador.',
+  '',
+  'REGLAS DE INTEGRIDAD (obligatorias):',
+  '1. Nunca escribas versos, citas literales ni fragmentos de obras. Usa marcadores [PEGAR ...] indicando la fuente sugerida.',
+  '2. Todo dato factual que venga de tu memoria (años, editoriales, títulos de libros, primeras publicaciones, premios, traductores, fechas de vida) va marcado [VERIFICAR]. No inventes títulos: si dudas, dilo.',
+  '3. Enlaces internos: usa SOLO URLs de la lista proporcionada. Nunca inventes URLs del sitio.',
+  '4. Respeta el veredicto de canibalización: si es "diferenciar", el brief entero debe seguir el ángulo sugerido y evitar el foco de las páginas en conflicto; si es "actualizar", empieza advirtiéndolo y explica qué cambiaría el enfoque.',
+  '5. Keywords secundarias y FAQ: prioriza queries reales de GSC y sugerencias de Google; no rellenes con preguntas inventadas si hay datos.',
+  '',
+  'SELECCIÓN AUTOMÁTICA DE PLANTILLA (si se pide AUTO): "poemas de/del/sobre X" → poemas; "cuentos de X" → cuentos; "reseña", "de qué trata", "resumen", "vale la pena", "análisis" de UNA obra → resena; "carta de/a X", textos históricos, manifiestos, discursos → archivo; "leer gratis", "completo", "pdf" de una obra en dominio público → obra. Si es ambiguo, elige la más adecuada a la intención y explica por qué en una línea.',
+  '',
+  'FORMATO DE SALIDA (Markdown, en este orden, con estos títulos exactos):',
+  '# Brief: [keyword]',
+  '## 1. Resumen',
+  '- Plantilla, intención de búsqueda (una línea), veredicto de canibalización y qué implica, ángulo central del artículo (2-3 oraciones).',
+  '## 2. SEO',
+  '- Title para Rank Math (≤60 caracteres, incluye la keyword) · Meta description (≤155) · Slug · H1 · Focus keyword · Keywords secundarias (5-10, con su fuente: GSC/sugerencia).',
+  '## 3. Estructura',
+  '- La estructura COMPLETA de la plantilla, sección por sección, con lo que debe contener cada una y el ángulo concreto para esta keyword. Incluye los ítems propuestos (poemas/cuentos/razones) marcados [VERIFICAR].',
+  '## 4. FAQ propuestas',
+  '- Lista de preguntas, marcando cuáles vienen de GSC o sugerencias.',
+  '## 5. Enlaces internos',
+  '- URL → anchor sugerido → dónde va. Solo de la lista.',
+  '## 6. Campos de WordPress',
+  '- Categoría, tags y campos personalizados que apliquen a la plantilla.',
+  '## 7. Secciones nuevas recomendadas (solo si se piden)',
+  '- Por cada una: H2 propuesto · por qué (el dato concreto de GSC/sugerencias o la brecha de intención que la justifica) · dónde va dentro de la estructura · qué cubre (2-3 líneas). Si no hay datos que justifiquen alguna, dilo en vez de forzarla.',
+  '## 8. Datos a verificar antes de publicar',
+  '- Checklist con "- [ ]" de cada dato marcado [VERIFICAR] o [PEGAR] en el brief.',
+].join('\n');
+
 // ---------- Tareas permitidas ----------
 // El cliente solo elige la tarea y manda datos.
 // Modelo, tope de salida y prompt se definen aquí, en el servidor.
@@ -52,7 +162,67 @@ const TASKS = {
       return 'Sitio: ' + site + '\nKeyword candidata: "' + keyword + '"\n\nPáginas existentes con queries relacionadas:\n' + JSON.stringify(pages, null, 1);
     },
   },
-  // Siguientes: brief, article, decay, ctr...
+
+  // Generador de briefs por plantilla de País Lector.
+  brief: {
+    model: MODELS.sonnet,
+    max_tokens: 6000,
+    system: () => BRIEF_SYSTEM,
+    build: (data) => {
+      const keyword = String(data.keyword || '').trim().slice(0, 200);
+      if (!keyword) throw new Error('keyword vacía');
+      const tipo = BRIEF_TEMPLATES[data.tipo] ? data.tipo : 'auto';
+      const extra = Math.max(0, Math.min(3, parseInt(data.extra, 10) || 0));
+      const year = parseInt(data.year, 10) || new Date().getFullYear();
+      const clip = (s, n) => String(s == null ? '' : s).slice(0, n);
+      const queries = (Array.isArray(data.queries) ? data.queries : []).slice(0, 40)
+        .map((q) => '- ' + clip(q.q, 150) + ' | ' + Math.round(+q.impressions || 0) + ' impr | pos ' + (+q.position || 0).toFixed(1));
+      const sugg = (Array.isArray(data.suggestions) ? data.suggestions : []).slice(0, 30).map((s) => '- ' + clip(s, 150));
+      const pages = (Array.isArray(data.pages) ? data.pages : []).slice(0, 50)
+        .map((p) => '- ' + clip(p.url, 300) + ' (' + Math.round(+p.impressions || 0) + ' impr)');
+      const c = data.canibal && typeof data.canibal === 'object' ? data.canibal : null;
+      const canibal = c
+        ? 'Veredicto: ' + clip(c.veredicto, 20) + '\nResumen: ' + clip(c.resumen, 600) +
+          (c.angulo_sugerido ? '\nÁngulo sugerido: ' + clip(c.angulo_sugerido, 800) : '') +
+          (c.url_principal ? '\nURL principal existente: ' + clip(c.url_principal, 300) : '') +
+          (Array.isArray(c.conflictos) && c.conflictos.length
+            ? '\nConflictos:\n' + c.conflictos.slice(0, 5).map((x) => '- ' + clip(x.url, 300) + ' [' + clip(x.riesgo, 10) + '] ' + clip(x.motivo, 300)).join('\n')
+            : '')
+        : 'Sin chequeo disponible.';
+      const plantilla = tipo === 'auto'
+        ? 'AUTO: elige tú la plantilla según la keyword y la intención (reglas abajo). Plantillas disponibles:\n\n' +
+          Object.entries(BRIEF_TEMPLATES).map(([k, t]) => '### ' + k + ' — ' + t.nombre + '\n' + t.spec).join('\n\n')
+        : 'Plantilla elegida por el editor: ' + tipo + ' — ' + BRIEF_TEMPLATES[tipo].nombre + '\n' + BRIEF_TEMPLATES[tipo].spec;
+      return [
+        'Keyword objetivo: "' + keyword + '"',
+        'Sitio: ' + clip(data.site, 100) + ' | Año en curso: ' + year,
+        '',
+        '## Chequeo de canibalización',
+        canibal,
+        '',
+        '## Queries reales de Search Console relacionadas (90 días)',
+        queries.length ? queries.join('\n') : '(ninguna)',
+        '',
+        '## Sugerencias de autocompletado de Google',
+        sugg.length ? sugg.join('\n') : '(ninguna)',
+        '',
+        '## URLs existentes del sitio (ÚNICAS válidas para enlaces internos)',
+        pages.length ? pages.join('\n') : '(ninguna)',
+        '',
+        '## Plantilla',
+        plantilla,
+        '',
+        '## Secciones nuevas',
+        extra > 0
+          ? 'Recomienda ' + extra + ' sección(es) NUEVA(S) que no estén en la plantilla (formato abajo).'
+          : 'No recomiendes secciones nuevas; omite ese apartado.',
+        '',
+        '## Notas del editor',
+        clip(data.notes, 2000) || '(ninguna)',
+      ].join('\n');
+    },
+  },
+  // Siguientes: article, decay, ctr...
 };
 
 const MAX_BODY_CHARS = 60000;
@@ -137,7 +307,7 @@ export default async function handler(req) {
     body: JSON.stringify({
       model: task.model,
       max_tokens: task.max_tokens,
-      system: task.system,
+      system: typeof task.system === 'function' ? task.system() : task.system,
       stream: true,
       messages: [{ role: 'user', content: prompt }],
     }),
