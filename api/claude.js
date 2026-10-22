@@ -94,6 +94,7 @@ const BRIEF_SYSTEM = [
   '3. Enlaces internos: usa SOLO URLs de la lista proporcionada. Nunca inventes URLs del sitio.',
   '4. Respeta el veredicto de canibalización: si es "diferenciar", el brief entero debe seguir el ángulo sugerido y evitar el foco de las páginas en conflicto; si es "actualizar", empieza advirtiéndolo y explica qué cambiaría el enfoque.',
   '5. Keywords secundarias y FAQ: prioriza queries reales de GSC y sugerencias de Google; no rellenes con preguntas inventadas si hay datos.',
+  '6. Si hay análisis de competencia, la estructura y el ángulo deben explotar sus huecos y diferenciarse de los formatos dominantes; nunca copies la estructura de un competidor.',
   '',
   'SELECCIÓN AUTOMÁTICA DE PLANTILLA (si se pide AUTO): "poemas de/del/sobre X" → poemas; "cuentos de X" → cuentos; "reseña", "de qué trata", "resumen", "vale la pena", "análisis" de UNA obra → resena; "carta de/a X", textos históricos, manifiestos, discursos → archivo; "leer gratis", "completo", "pdf" de una obra en dominio público → obra. Si es ambiguo, elige la más adecuada a la intención y explica por qué en una línea.',
   '',
@@ -103,17 +104,19 @@ const BRIEF_SYSTEM = [
   '- Plantilla, intención de búsqueda (una línea), veredicto de canibalización y qué implica, ángulo central del artículo (2-3 oraciones).',
   '## 2. SEO',
   '- Title para Rank Math (≤60 caracteres, incluye la keyword) · Meta description (≤155) · Slug · H1 · Focus keyword · Keywords secundarias (5-10, con su fuente: GSC/sugerencia).',
-  '## 3. Estructura',
+  '## 3. Competencia',
+  '- Si hay análisis: quién domina el SERP y con qué formato, los huecos concretos y cómo este artículo los aprovecha para ganar. Si no hay análisis, escribe una línea diciéndolo.',
+  '## 4. Estructura',
   '- La estructura COMPLETA de la plantilla, sección por sección, con lo que debe contener cada una y el ángulo concreto para esta keyword. Incluye los ítems propuestos (poemas/cuentos/razones) marcados [VERIFICAR].',
-  '## 4. FAQ propuestas',
+  '## 5. FAQ propuestas',
   '- Lista de preguntas, marcando cuáles vienen de GSC o sugerencias.',
-  '## 5. Enlaces internos',
+  '## 6. Enlaces internos',
   '- URL → anchor sugerido → dónde va. Solo de la lista.',
-  '## 6. Campos de WordPress',
+  '## 7. Campos de WordPress',
   '- Categoría, tags y campos personalizados que apliquen a la plantilla.',
-  '## 7. Secciones nuevas recomendadas (solo si se piden)',
+  '## 8. Secciones nuevas recomendadas (solo si se piden)',
   '- Por cada una: H2 propuesto · por qué (el dato concreto de GSC/sugerencias o la brecha de intención que la justifica) · dónde va dentro de la estructura · qué cubre (2-3 líneas). Si no hay datos que justifiquen alguna, dilo en vez de forzarla.',
-  '## 8. Datos a verificar antes de publicar',
+  '## 9. Datos a verificar antes de publicar',
   '- Checklist con "- [ ]" de cada dato marcado [VERIFICAR] o [PEGAR] en el brief.',
 ].join('\n');
 
@@ -189,6 +192,8 @@ const TASKS = {
             ? '\nConflictos:\n' + c.conflictos.slice(0, 5).map((x) => '- ' + clip(x.url, 300) + ' [' + clip(x.riesgo, 10) + '] ' + clip(x.motivo, 300)).join('\n')
             : '')
         : 'Sin chequeo disponible.';
+      const comp = data.competencia && typeof data.competencia === 'object' && !data.competencia.error ? data.competencia : null;
+      const compTxt = comp ? JSON.stringify({ resultados: (comp.resultados || []).slice(0, 8).map((r) => ({ dominio: clip(r.dominio, 80), titulo: clip(r.titulo, 160), tipo: clip(r.tipo, 30), formato: clip(r.formato, 60), cubre: (r.cubre || []).slice(0, 5).map((x) => clip(x, 160)), fuerza: clip(r.fuerza, 10) })), patrones: (comp.patrones || []).slice(0, 6).map((x) => clip(x, 200)), huecos: (comp.huecos || []).slice(0, 6).map((x) => clip(x, 200)), angulo: clip(comp.angulo, 600), dificultad: clip(comp.dificultad, 10) }, null, 1) : '(sin análisis de competencia)';
       const plantilla = tipo === 'auto'
         ? 'AUTO: elige tú la plantilla según la keyword y la intención (reglas abajo). Plantillas disponibles:\n\n' +
           Object.entries(BRIEF_TEMPLATES).map(([k, t]) => '### ' + k + ' — ' + t.nombre + '\n' + t.spec).join('\n\n')
@@ -208,6 +213,9 @@ const TASKS = {
         '',
         '## URLs existentes del sitio (ÚNICAS válidas para enlaces internos)',
         pages.length ? pages.join('\n') : '(ninguna)',
+        '',
+        '## Competencia en Google México (análisis previo del SERP)',
+        compTxt,
         '',
         '## Plantilla',
         plantilla,
@@ -260,7 +268,28 @@ const TASKS = {
       ].join('\n');
     },
   },
-  // Siguientes: competencia, article, decay, ctr...
+
+  // Competencia: lee el SERP real con búsqueda web y lo resume.
+  competencia: {
+    model: MODELS.sonnet,
+    max_tokens: 3500,
+    tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3, user_location: { type: 'approximate', country: 'MX', timezone: 'America/Mexico_City' } }],
+    system: [
+      'Eres analista SEO de País Lector (revista literaria mexicana). Analizas la competencia en Google México para una keyword.',
+      'Proceso: busca la keyword tal cual (y, si hace falta, una variante) con la herramienta de búsqueda. Identifica los 5-8 resultados orgánicos principales.',
+      'Para cada resultado: dominio, título, url, tipo (wikipedia | medio | blog | academico | tienda | foro | video | otro), formato (lista, reseña, resumen, texto completo, análisis, ficha…), qué cubre (3-5 puntos cortos, PARAFRASEADOS, nunca citas textuales) y fuerza (alta | media | baja) con una razón breve.',
+      'Luego: patrones (qué premia este SERP: formato, extensión, intención), huecos (qué no cubre bien nadie y País Lector puede ganar), ángulo recomendado (2-3 oraciones, voz de País Lector) y dificultad (alta | media | baja, con motivo).',
+      'No escribas texto antes ni entre búsquedas. Al terminar, responde SOLO con JSON válido, sin bloques de código:',
+      '{"resultados":[{"dominio":"","titulo":"","url":"","tipo":"","formato":"","cubre":["",""],"fuerza":"","razon":""}],"patrones":["",""],"huecos":["",""],"angulo":"","dificultad":"","dificultad_motivo":""}',
+      'Si la búsqueda falla o no devuelve resultados, responde {"error":"motivo"}.',
+    ].join('\n'),
+    build: (data) => {
+      const keyword = String(data.keyword || '').trim().slice(0, 200);
+      if (!keyword) throw new Error('keyword vacía');
+      return 'Keyword: "' + keyword + '"\nMercado: México, español.';
+    },
+  },
+  // Siguientes: article, decay, ctr...
 };
 
 const MAX_BODY_CHARS = 60000;
@@ -347,6 +376,7 @@ export default async function handler(req) {
       max_tokens: task.max_tokens,
       system: typeof task.system === 'function' ? task.system() : task.system,
       stream: true,
+      ...(task.tools ? { tools: task.tools } : {}),
       messages: [{ role: 'user', content: prompt }],
     }),
   });
