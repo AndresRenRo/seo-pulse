@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SEO Pulse v2.7 — País Lector</title>
+<title>SEO Pulse — País Lector</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
-:root{--blue:#0052FF;--blue-press:#003ECC;--blue-tint:#EAF0FF;--blue-soft:#F5F8FF;--ink:#0A0B0D;--text:#0A0B0D;--muted:#5B616E;--hint:#8A8F9A;--bg:#F5F6F8;--surface:#FFFFFF;--surface-alt:#F1F3F6;--card:#FFFFFF;--border:#E7E9ED;--line:#EFF0F2;--green:#0A8554;--green-light:#E5F4EC;--coral:#DB6038;--coral-light:#FBEAE2;--blue-l:#EAF0FF;--blue-light:#EAF0FF;--amber:#B5740F;--amber-light:#FBF0DD;--purple:#5A3FD6;--purple-light:#EEEAFB;--red:#CF202F;--red-light:#FBEAEC;--radius:14px;--serif:'Inter',sans-serif;--sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--shadow:0 1px 2px rgba(10,11,13,.04),0 6px 20px rgba(10,11,13,.05)}
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500&display=swap');
+:root{--blue:#0047E0;--blue-press:#00309E;--blue-tint:#E6EDFF;--blue-soft:#F2F5FF;--ink:#111111;--text:#111111;--muted:#5B5A55;--hint:#6B6963;--bg:#F4F3EF;--surface:#FFFFFF;--surface-alt:#F4F3EF;--card:#FFFFFF;--border:#E4E1D9;--line:#ECEAE4;--green:#0B6B45;--green-light:#DDF5EA;--coral:#B3401A;--coral-light:#FCE6DF;--blue-l:#E6EDFF;--blue-light:#E6EDFF;--amber:#7A5A00;--amber-light:#FFF3C4;--purple:#5A3FD6;--purple-light:#EEEAFB;--red:#B42318;--red-light:#FCE8E6;--radius:14px;--serif:'Inter',sans-serif;--sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--display:'Space Grotesk','Inter',sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;--shadow:none}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01";line-height:1.45}
 .tnum,.stat-val,.utm-metric-val,.utm-total-val,.rev-amount{font-variant-numeric:tabular-nums}
@@ -246,6 +246,107 @@ header h1 em{color:var(--blue);font-style:normal}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .md-brief{font-size:13.5px;line-height:1.6;color:var(--text);background:var(--surface-alt);border-radius:12px;padding:14px 16px;overflow-x:auto}.md-brief h2{font-size:17px;margin:4px 0 8px}.md-brief h3{font-size:14.5px;margin:14px 0 6px;color:var(--blue)}.md-brief h4{font-size:13.5px;margin:10px 0 4px}.md-brief p{margin:2px 0}.md-li{display:flex;gap:6px;margin:2px 0}.md-bul{flex:0 0 auto;color:var(--hint)}.md-flag{background:#FFF3C4;color:#7A5A00;border-radius:4px;padding:0 4px;font-size:12px;font-weight:600}.md-brief code{background:var(--surface);padding:0 4px;border-radius:4px}
 @media (prefers-color-scheme: dark){.md-flag{background:#4A3B00;color:#FFE08A}}
+/* ===== v4.0 Sala de redacción ===== */
+body{background:var(--bg)}
+.shell{display:flex;flex-wrap:wrap;min-height:100vh;align-items:stretch}
+.side{flex:1 1 232px;max-width:272px;padding:26px 16px;background:#111;color:#F4F3EF;display:flex;flex-direction:column;gap:26px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.side-brand{display:flex;flex-direction:column;gap:10px;padding:0 10px}
+.side-logo{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-0.02em}
+.side-site{display:inline-flex;align-self:flex-start;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:#D6D3CC;border:1px solid #3A3A3A;border-radius:999px;padding:5px 10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side-dot{width:7px;height:7px;border-radius:99px;background:#3DDC97;flex:0 0 auto}
+.side-group{display:flex;flex-direction:column;gap:3px}
+.side-label{padding:0 12px 6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A8A49C}
+.side-item{display:flex;align-items:center;gap:12px;min-height:42px;padding:0 12px;border-radius:10px;border:0;background:transparent;color:#D6D3CC;font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;text-align:left;width:100%}
+.side-item:hover{background:#1F1F1F;color:#fff}
+.side-item.active{background:#F4F3EF;color:#111;font-weight:600}
+.side-badge{margin-left:auto;font-family:var(--mono);font-size:11px;background:#2A2A2A;color:#E8E6E1;border-radius:99px;padding:2px 8px}
+.side-item.active .side-badge{background:#111;color:#F4F3EF}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+.side-ver{padding:0 12px;font-family:var(--mono);font-size:11px;color:#8C8981}
+.credit-card{background:#1E1E1E;border:1px solid #2E2E2E;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:9px}
+.credit-amt{font-family:var(--display);font-size:22px;font-weight:700}.credit-amt span{font-size:13px;font-weight:500;color:#A8A49C}
+.credit-track{height:6px;border-radius:99px;background:#2E2E2E;overflow:hidden}.credit-fill{height:6px;background:#3DDC97}
+.credit-meta{font-size:12px;color:#C9C5BD;line-height:1.5}
+.app{flex:999 1 560px;min-width:0;max-width:1180px;margin:0;padding:34px clamp(18px,4vw,52px) 64px}
+.page-head{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:26px}
+.eyebrow{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
+.page-title{font-family:var(--display);font-size:44px;line-height:1;letter-spacing:-0.03em;font-weight:700}
+.page-sub{font-size:15px;color:#3F3E3A;margin-top:8px}
+.panel,.stat{box-shadow:none;border:1px solid var(--border)}
+.panel{border-radius:16px}
+.panel-head h3,.card-title,.sec-head h2,.card-head h2{font-family:var(--display);font-weight:700;letter-spacing:-0.01em}
+.panel-head h3{font-size:17px}
+.btn-primary{border-radius:12px}.btn-primary:disabled{opacity:.6;cursor:default}
+.kw-textarea{white-space:pre-wrap;overflow-x:hidden}
+.tab-nav,.mobile-tab-bar{display:none!important}
+.tag{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:3px 8px}
+.tag-blue{color:#0039B8;background:#E6EDFF}.tag-green{color:#0B6B45;background:#DDF5EA}.tag-coral{color:#9A2B12;background:#FCE6DF}.tag-amber{color:#7A5A00;background:#FFF3C4}.tag-mint{color:#111;background:#3DDC97}
+.mono-meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.cta-primary,.cta-outline,.cta-light{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:11px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
+.cta-primary{background:var(--blue);color:#fff;border:0}.cta-primary:hover{background:var(--blue-press)}
+.cta-outline{background:#fff;color:#111;border:1px solid #111}.cta-outline:hover{background:#111;color:#fff}
+.cta-outline.amber{border-color:#7A5A00;color:#5B4300;background:transparent}.cta-outline:disabled{opacity:.55;cursor:default}.cta-outline.amber:disabled:hover{background:transparent;color:#5B4300}
+.cta-light{background:#F4F3EF;color:#111;border:0}
+.link-btn{border:0;background:transparent;color:var(--blue);font:600 13px var(--sans);cursor:pointer;min-height:32px}
+.hoy{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
+.hoy-main{flex:999 1 520px;min-width:0;display:flex;flex-direction:column;gap:12px}
+.hoy-side{flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.sec-head h2{font-size:20px}.sec-head span{font-size:13px;color:var(--muted)}
+.prio{background:#fff;border:1px solid var(--border);border-radius:16px;padding:18px 20px;display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.prio-n{font-family:var(--display);font-size:28px;font-weight:700;color:#C9C5BD;width:34px}
+.prio-body{flex:1 1 280px;min-width:0;display:flex;flex-direction:column;gap:6px}
+.prio-tags{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.prio-title{font-weight:600;font-size:16px;overflow-wrap:anywhere}
+.prio-desc{font-size:14px;color:#3F3E3A;line-height:1.5}
+.empty{background:#fff;border:1px dashed var(--border);border-radius:16px;padding:22px;font-size:14px;color:var(--muted)}
+.card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.card-head h2,.card-title{font-size:18px}
+.card-ink{background:#111;color:#F4F3EF;border-color:#111}.card-ink p{font-size:14px;color:#D6D3CC;line-height:1.5}
+.ink-title{font-family:var(--display);font-size:22px;line-height:1.15;font-weight:700}
+.board-row{display:flex;align-items:center;gap:10px;font-size:13px}.board-row>span:first-child{width:84px;color:#3F3E3A;flex:0 0 auto}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:12px;background:var(--bg);border-radius:8px;padding:5px 9px}.chip-blue{background:#E6EDFF;color:#0039B8;font-weight:600}
+.muted-s{font-size:12px;color:var(--muted)}
+.mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.mini{background:var(--bg);border-radius:12px;padding:12px}.mini div{font-size:12px;color:var(--muted)}.mini b{display:block;font-family:var(--mono);font-size:16px;font-weight:500;margin-top:4px}
+.prod{display:flex;flex-direction:column;gap:20px}
+.prod-kw{font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-0.02em}
+.stepper{list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.step{background:#fff;border:1px solid var(--border);border-radius:14px;padding:13px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.step.soon{border-style:dashed;border-color:#C9C5BD}
+.step.current{background:#111;color:#fff;border-color:#111}
+.step-top{display:flex;align-items:center;gap:8px}
+.step-dot{width:22px;height:22px;border-radius:99px;border:1.5px solid #8C8981;color:#5B5A55;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:0 0 auto}
+.step.done .step-dot{background:#0B6B45;border-color:#0B6B45;color:#fff}
+.step.current .step-dot{background:#fff;border-color:#fff;color:#111}
+.step-n{font-size:12px;color:var(--muted)}.step.current .step-n{color:#C9C5BD}
+.step-l{font-weight:600;font-size:14px;overflow-wrap:anywhere}.step-x{font-weight:500}.v-crear{color:#0B6B45}.v-diferenciar{color:#7A5A00}.v-actualizar{color:#9A2B12}.step-soon{font-weight:500;color:var(--muted)}
+.prod-cols{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.prod-main{flex:999 1 480px;min-width:0}
+.verify{flex:1 1 260px;min-width:0;background:#FFFBEA;border:1px solid #F0DF9A;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.verify .card-head h2{font-size:18px}
+.verify-note{font-size:13px;color:#5B4300;line-height:1.5}
+.verify-item{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;cursor:pointer}.verify-item input{width:18px;height:18px;margin-top:1px;accent-color:#7A5A00;flex:0 0 auto}
+.radar{display:flex;flex-direction:column;gap:20px}
+.radar-filters{display:flex;flex-wrap:wrap;gap:8px}
+.filter{display:inline-flex;align-items:center;min-height:38px;padding:0 14px;border-radius:99px;font-size:13px;font-weight:500;border:1px solid var(--border);background:#fff;color:#3F3E3A}.filter.on{background:#111;color:#fff;border-color:#111;font-weight:600}.filter.off{color:var(--muted)}
+.radar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.idea{background:#fff;border:1px solid var(--border);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.idea-ink{background:#111;color:#F4F3EF;border-color:#111}.idea-ink .mono-meta{color:#A8A49C}
+.idea-title{font-family:var(--display);font-size:22px;line-height:1.15;letter-spacing:-0.02em;overflow-wrap:anywhere}
+.idea-facts{background:var(--bg);border-radius:12px;padding:12px;font-size:13px}.idea-facts div{display:flex;justify-content:space-between;gap:8px}.idea-ink .idea-facts{background:#1E1E1E}
+.idea .cta-primary,.idea .cta-light{margin-top:auto}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}.how-grid p{font-size:14px;color:#3F3E3A;line-height:1.5;margin-top:4px}.mono-blue{font-family:var(--mono);font-size:12px;color:#0039B8}
+#root>.app{margin:0 auto;max-width:640px}
+@media(max-width:900px){
+  .side{position:sticky;top:0;z-index:20;height:auto;max-width:none;flex:1 1 100%;flex-direction:row;align-items:center;gap:6px;padding:10px 12px calc(10px) 12px;overflow-x:auto;scrollbar-width:none}
+  .side::-webkit-scrollbar{display:none}
+  .side-brand{padding:0 6px 0 2px;flex:0 0 auto}.side-site,.side-label,.credit-card,.side-ver{display:none}
+  .side-logo{font-size:17px}
+  .side-group,.side-foot{flex-direction:row;margin-top:0;gap:4px;flex:0 0 auto}
+  .side-item{min-height:38px;width:auto;white-space:nowrap;padding:0 11px}
+  .app{padding:22px 16px 48px}
+  .page-title{font-size:34px}
+  .stepper{grid-template-columns:repeat(5,minmax(120px,1fr));overflow-x:auto}
+}
 </style>
 </head>
 <body>
@@ -256,7 +357,7 @@ header h1 em{color:var(--blue);font-style:normal}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v3.6';
+const VERSION='v4.0';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SUGGEST_API=REDIRECT_URI+'/api/suggest';
 const CLAUDE_API=REDIRECT_URI+'/api/claude';
@@ -266,17 +367,20 @@ async function callClaude(task,data,onText){
   if(!t)throw new Error('Conecta Google primero');
   const r=await fetch(CLAUDE_API,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t.tk},body:JSON.stringify({task,data})});
   if(!r.ok){let m='Error '+r.status;try{m=(await r.json()).error||m}catch{}throw new Error(m)}
-  const reader=r.body.getReader();const dec=new TextDecoder();let buf='',full='';
+  const reader=r.body.getReader();const dec=new TextDecoder();let buf='',full='',uModel='',uIn=0,uOut=0;
   while(true){
     const {done,value}=await reader.read();if(done)break;
     buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop();
     for(const line of lines){
       if(!line.startsWith('data:'))continue;const p=line.slice(5).trim();if(!p)continue;
       let ev;try{ev=JSON.parse(p)}catch{continue}
-      if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.type==='text_delta'){full+=ev.delta.text;if(onText)onText(full)}
+      if(ev.type==='message_start'&&ev.message){uModel=ev.message.model||'';const u=ev.message.usage||{};uIn=(u.input_tokens||0)+(u.cache_creation_input_tokens||0)+(u.cache_read_input_tokens||0)}
+      else if(ev.type==='message_delta'&&ev.usage){uOut=ev.usage.output_tokens||uOut}
+      else if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.type==='text_delta'){full+=ev.delta.text;if(onText)onText(full)}
       else if(ev.type==='error'){throw new Error((ev.error&&ev.error.message)||'Error en streaming')}
     }
   }
+  recordUsage(uModel,uIn,uOut);
   return full}
 const SCOPES='openid email https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly https://www.googleapis.com/auth/adsense.readonly';
 const GSC_API='https://www.googleapis.com/webmasters/v3';
@@ -578,14 +682,14 @@ async function canibalAnalyze(gscFn,site,keyword){
   saveCanibal(keyword,res);return{res,pages}}
 
 let lastCanibalNonce=0;
-function CanibalCheck({gscFn,config,seed,seedNonce,onBrief}){
+function CanibalCheck({gscFn,config,seed,seedNonce,onBrief,onDone}){
   const[kw,setKw]=useState('');const[st,setSt]=useState('idle');const[res,setRes]=useState(null);const[err,setErr]=useState(null);const[cands,setCands]=useState([]);const[doneKw,setDoneKw]=useState('');
   const ref=useRef(null);
   useEffect(()=>{if(seed&&seedNonce>lastCanibalNonce){lastCanibalNonce=seedNonce;setKw(seed);run(seed);if(ref.current)ref.current.scrollIntoView({behavior:'smooth',block:'start'})}},[seedNonce]);
   async function run(k){
     const keyword=(k||kw).trim();if(keyword.length<3)return;
     setSt('loading');setRes(null);setErr(null);setCands([]);
-    try{const r=await canibalAnalyze(gscFn,config&&config.site,keyword);setCands(r.pages);setRes(r.res);setDoneKw(keyword);setSt('done')}catch(e){setErr(e.message);setSt('error')}
+    try{const r=await canibalAnalyze(gscFn,config&&config.site,keyword);setCands(r.pages);setRes(r.res);setDoneKw(keyword);setSt('done');if(onDone)onDone(keyword)}catch(e){setErr(e.message);setSt('error')}
   }
   const V={crear:{label:'CREAR',cls:'s-hi',txt:'Sin conflicto: adelante con el artículo nuevo'},actualizar:{label:'ACTUALIZAR',cls:'s-lo',txt:'Ya tienes una página para esta intención'},diferenciar:{label:'DIFERENCIAR',cls:'s-md',txt:'Viable solo con otro ángulo'}};
   const v=res?(V[res.veredicto]||V.diferenciar):null;
@@ -629,11 +733,12 @@ function getBriefs(){try{return JSON.parse(localStorage.getItem('sp2_briefs')||'
 function saveBrief(kw,obj){try{const h=getBriefs();h[kw.trim().toLowerCase()]=obj;const keys=Object.keys(h).sort((a,b)=>h[b].ts-h[a].ts);keys.slice(30).forEach(k=>delete h[k]);localStorage.setItem('sp2_briefs',JSON.stringify(h))}catch{}}
 async function fetchSuggestions(kw){const pre=['','que ','por que ','cual es '];const res=await Promise.all(pre.map(p=>fetch(SUGGEST_API+'?q='+encodeURIComponent(p+kw)+'&lang=es').then(r=>r.ok?r.json():{suggestions:[]}).then(d=>d.suggestions||[]).catch(()=>[])));return[...new Set(res.flat().map(x=>x.trim()).filter(Boolean))].slice(0,30)}
 let lastBriefNonce=0;
-function BriefGen({gscFn,config,seed,seedNonce}){
+function BriefGen({gscFn,config,seed,seedNonce,onDone,focusKw}){
   const[kw,setKw]=useState('');const[tipo,setTipo]=useState('auto');const[extraOn,setExtraOn]=useState(false);const[extraN,setExtraN]=useState(1);const[notes,setNotes]=useState('');
   const[st,setSt]=useState('idle');const[stage,setStage]=useState('');const[text,setText]=useState('');const[err,setErr]=useState(null);const[saved,setSaved]=useState(()=>getBriefs());const[copied,setCopied]=useState(false);
   const ref=useRef(null);
   useEffect(()=>{if(seed&&seedNonce>lastBriefNonce){lastBriefNonce=seedNonce;setKw(seed);setText('');setSt('idle');if(ref.current)ref.current.scrollIntoView({behavior:'smooth',block:'start'})}},[seedNonce]);
+  useEffect(()=>{if(!focusKw||st==='loading')return;setKw(focusKw);const b=getBriefs()[focusKw.toLowerCase()];if(b){setTipo(b.tipo||'auto');setText(b.text);setSt('done');setErr(null)}else{setText('');setSt('idle')}},[focusKw]);
   async function run(){
     const keyword=kw.trim();if(keyword.length<3)return;
     setSt('loading');setErr(null);setText('');
@@ -650,7 +755,7 @@ function BriefGen({gscFn,config,seed,seedNonce}){
       const suggestions=await fetchSuggestions(keyword);
       setStage('Escribiendo el brief…');
       const out=await callClaude('brief',{keyword,tipo,year:new Date().getFullYear(),site:config&&config.site,canibal:can.res,queries,suggestions,pages,extra:extraOn?extraN:0,notes},t=>{setText(t);setStage('')});
-      saveBrief(keyword,{ts:Date.now(),tipo,text:out,canibal:can.res});setSaved(getBriefs());setSt('done');setStage('');
+      saveBrief(keyword,{ts:Date.now(),tipo,text:out,canibal:can.res});setSaved(getBriefs());setSt('done');setStage('');if(onDone)onDone(keyword);
     }catch(e){setErr(e.message);setSt('error');setStage('')}
   }
   function download(){const blob=new Blob([text],{type:'text/markdown'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='brief-'+slugify(kw)+'.md';a.click();URL.revokeObjectURL(a.href)}
@@ -668,7 +773,7 @@ function BriefGen({gscFn,config,seed,seedNonce}){
     <textarea className="kw-textarea" style={{marginTop:10,minHeight:56}} placeholder="Notas opcionales: ángulo que quieres, obras a incluir o excluir, tono…" value={notes} onChange={e=>setNotes(e.target.value)}/>
     <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap',marginTop:8}}>
       <button className="btn-primary" style={{padding:'7px 16px',fontSize:'12px'}} disabled={st==='loading'} onClick={run}>{st==='loading'?'Generando…':'Generar brief'}</button>
-      {savedKeys.length>0&&<select className="disc-input" style={{width:'auto',padding:'5px 8px',fontSize:12}} value="" onChange={e=>{const k=e.target.value;if(!k)return;const b=saved[k];setKw(k);setTipo(b.tipo||'auto');setText(b.text);setSt('done');setErr(null)}}><option value="">Briefs guardados ({savedKeys.length})</option>{savedKeys.map(k=><option key={k} value={k}>{k}</option>)}</select>}
+      {savedKeys.length>0&&<select className="disc-input" style={{width:'auto',padding:'5px 8px',fontSize:12}} value="" onChange={e=>{const k=e.target.value;if(!k)return;const b=saved[k];setKw(k);setTipo(b.tipo||'auto');setText(b.text);setSt('done');setErr(null);if(onDone)onDone(k)}}><option value="">Briefs guardados ({savedKeys.length})</option>{savedKeys.map(k=><option key={k} value={k}>{k}</option>)}</select>}
     </div>
     {canNow&&canNow.res&&st!=='loading'&&<div style={{marginTop:8,fontSize:12,color:'var(--muted)'}}>Canibalización: <strong>{(canNow.res.veredicto||'').toUpperCase()}</strong> ({formatRelTime(canNow.ts)})</div>}
     {stage&&<div className="loading" style={{padding:'14px 0'}}><div className="spinner"/>{stage}</div>}
@@ -679,6 +784,151 @@ function BriefGen({gscFn,config,seed,seedNonce}){
     </div>}
     <div className="explain">Usa el chequeo de canibalización guardado (o lo corre si falta), queries de GSC, sugerencias de Google y tus URLs para enlazado. Lo marcado en amarillo se verifica antes de publicar.</div>
   </div></div>);
+}
+
+// ====== REDISEÑO v4.0: navegación, Hoy, Producción, Radar ======
+const CREDIT_MONTHLY=100,CREDIT_DAY=27;
+const PRICES={haiku:[0.10,0.50],sonnet:[2,10],opus:[4,20]};
+function cycleBounds(now){const d=now?new Date(now):new Date();const y=d.getFullYear(),m=d.getMonth();const start=d.getDate()>=CREDIT_DAY?new Date(y,m,CREDIT_DAY):new Date(y,m-1,CREDIT_DAY);const next=new Date(start.getFullYear(),start.getMonth()+1,CREDIT_DAY);return{start,next}}
+function getUsage(){try{const u=JSON.parse(localStorage.getItem('sp2_usage')||'null');const{start}=cycleBounds();if(u&&u.cycle===start.toISOString().slice(0,10))return u}catch{}return{cycle:cycleBounds().start.toISOString().slice(0,10),usd:0,calls:0,tokIn:0,tokOut:0}}
+function recordUsage(model,tokIn,tokOut){try{const fam=/haiku/.test(model||'')?'haiku':/opus/.test(model||'')?'opus':'sonnet';const p=PRICES[fam];const u=getUsage();u.usd+=tokIn/1e6*p[0]+tokOut/1e6*p[1];u.calls+=1;u.tokIn+=tokIn;u.tokOut+=tokOut;localStorage.setItem('sp2_usage',JSON.stringify(u));window.dispatchEvent(new Event('sp-usage'))}catch{}}
+const MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const DIAS=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const MESES_L=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const TIPO_LABEL={auto:'brief',resena:'reseña',poemas:'lista de poemas',cuentos:'lista de cuentos',archivo:'archivo',obra:'obra'};
+function getCanibalAll(){try{return JSON.parse(localStorage.getItem('sp2_canibal')||'{}')}catch{return{}}}
+function verifyItems(text){if(!text)return[];const lines=text.split('\n');const out=[];lines.forEach(l=>{const m=l.match(/^\s*[-*]\s+\[[ xX]\]\s+(.*)$/);if(m)out.push(m[1].trim())});return out}
+function getVerify(kw){try{const h=JSON.parse(localStorage.getItem('sp2_verify')||'{}');return h[(kw||'').toLowerCase()]||[]}catch{return[]}}
+function setVerify(kw,arr){try{const h=JSON.parse(localStorage.getItem('sp2_verify')||'{}');h[kw.toLowerCase()]=arr;localStorage.setItem('sp2_verify',JSON.stringify(h))}catch{}}
+function verifyStatus(kw,text){const items=verifyItems(text);const done=getVerify(kw).filter(i=>i<items.length).length;return{total:items.length,done}}
+
+function NavIcon({d}){return<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d}/></svg>}
+function SideNav({activeTab,onTabChange,badges,site}){
+  const[u,setU]=useState(getUsage);
+  useEffect(()=>{const f=()=>setU(getUsage());window.addEventListener('sp-usage',f);return()=>window.removeEventListener('sp-usage',f)},[]);
+  const{next}=cycleBounds();const pct=Math.min(100,u.usd/CREDIT_MONTHLY*100);
+  const item=t=><button key={t.id} className={'side-item'+(activeTab===t.id?' active':'')} aria-current={activeTab===t.id?'page':undefined} onClick={()=>onTabChange(t.id)}>{t.primary&&<NavIcon d={t.icon}/>}<span>{t.label}</span>{badges&&badges[t.id]>0&&<span className="side-badge">{badges[t.id]}</span>}</button>;
+  return(<nav className="side" aria-label="Navegación principal">
+    <div className="side-brand"><div className="side-logo">SEO Pulse</div><div className="side-site"><span className="side-dot"/>{(site||'').replace('sc-domain:','').replace(/^https?:\/\//,'').replace(/\/$/,'')}</div></div>
+    <div className="side-group">{TABS.filter(t=>t.group==='main').map(item)}</div>
+    <div className="side-group"><div className="side-label">Análisis</div>{TABS.filter(t=>t.group==='analisis').map(item)}</div>
+    <div className="side-foot">
+      <div className="credit-card"><div className="side-label" style={{padding:0}}>Créditos API</div><div className="credit-amt">USD {CREDIT_MONTHLY} <span>/ mes</span></div><div className="credit-track"><div className="credit-fill" style={{width:Math.max(2,pct)+'%'}}/></div><div className="credit-meta">Usado: ${u.usd.toFixed(2)} (estimado) · {u.calls} llamadas<br/>Próximo crédito: {next.getDate()} {MES[next.getMonth()]}</div></div>
+      {TABS.filter(t=>t.group==='foot').map(item)}
+      <div className="side-ver">{VERSION}</div>
+    </div>
+  </nav>);
+}
+
+function HoyItem({n,it}){return(<article className="prio">
+  <div className="prio-n">{String(n).padStart(2,'0')}</div>
+  <div className="prio-body"><div className="prio-tags"><span className={'tag tag-'+it.tone}>{it.tag}</span>{it.meta&&<span className="mono-meta">{it.meta}</span>}</div><div className="prio-title">{it.title}</div><div className="prio-desc">{it.desc}</div></div>
+  <button className={it.primary?'cta-primary':'cta-outline'} onClick={it.action}>{it.cta}</button>
+</article>)}
+
+function Hoy({d,loading,onGo,onCheck,onBrief,openDetail}){
+  const briefs=getBriefs();const can=getCanibalAll();const items=[];
+  Object.entries(briefs).sort((a,b)=>b[1].ts-a[1].ts).slice(0,2).forEach(([kw,b])=>{const v=verifyStatus(kw,b.text);const pending=v.total&&v.done<v.total;items.push({tag:'Producción',tone:'blue',primary:true,meta:(TIPO_LABEL[b.tipo]||'brief')+' · '+formatRelTime(b.ts)+(v.total?' · '+v.done+'/'+v.total+' verificados':''),title:<>Brief listo: <em>{kw}</em></>,desc:pending?'Termina la verificación de datos y pasa a redactar.':'Listo para el siguiente paso: redactar el artículo.',cta:'Abrir',action:()=>onGo('produccion',kw)})});
+  Object.entries(can).filter(([kw,c])=>!briefs[kw]&&c.res&&c.res.veredicto!=='actualizar').sort((a,b)=>b[1].ts-a[1].ts).slice(0,2).forEach(([kw,c])=>items.push({tag:'Producción',tone:'blue',meta:'canibalización: '+c.res.veredicto+' · '+formatRelTime(c.ts),title:<>Chequeo listo: <em>{kw}</em></>,desc:c.res.angulo_sugerido||c.res.resumen||'',cta:'Crear brief',action:()=>onBrief(kw)}));
+  if(d){
+    (d.escribir||[]).filter(r=>!can[r.keys[0].toLowerCase()]).slice(0,2).forEach(r=>items.push({tag:'Oportunidad',tone:'green',meta:fmt(r.impressions)+' impr · pos '+r.position.toFixed(1),title:<>“{r.keys[0]}”</>,desc:'Recibe impresiones y no tiene una página dedicada.',cta:'Chequear',action:()=>onCheck(r.keys[0])}));
+    (d.dropping||[]).slice(0,1).forEach(r=>items.push({tag:'Cayendo',tone:'coral',meta:'pos '+r.prevPos.toFixed(1)+' → '+r.curPos.toFixed(1),title:shortPath(r.page),desc:'Perdió posiciones contra el periodo anterior'+(r.lostClicks>0?' ('+fmt(r.lostClicks)+' clics menos).':'.'),cta:'Diagnóstico',action:()=>openDetail({query:null,page:r.page,position:r.curPos,clicks:r.clicks,impressions:0})}));
+    (d.optimizar||[]).slice(0,1).forEach(r=>items.push({tag:'CTR bajo',tone:'amber',meta:fmt(r.impressions)+' impr · CTR '+(r.ctr*100).toFixed(1)+'%',title:<>“{r.keys[0]}”</>,desc:'Muchas impresiones y pocos clics: revisa el title y la meta.',cta:'Diagnóstico',action:()=>openDetail({query:r.keys[0],page:r.page,position:r.position,clicks:r.clicks,impressions:r.impressions,ctr:r.ctr})}));
+  }
+  const list=items.slice(0,6);
+  const chequeos=Object.keys(can).filter(k=>!briefs[k]);
+  return(<div className="hoy">
+    <section className="hoy-main" aria-labelledby="prio-h">
+      <div className="sec-head"><h2 id="prio-h">Prioridades</h2><span>Producción primero, luego oportunidades</span></div>
+      {loading&&!d&&list.length===0&&<div className="loading"><div className="spinner"/>Cargando datos…</div>}
+      {list.map((it,i)=><HoyItem key={i} n={i+1} it={it}/>)}
+      {!loading&&list.length===0&&<div className="empty">Nada urgente. Busca ideas en el Radar o chequea una keyword nueva.</div>}
+    </section>
+    <aside className="hoy-side">
+      <section className="card" aria-labelledby="tab-h">
+        <div className="card-head"><h2 id="tab-h">Tablero</h2><button className="link-btn" onClick={()=>onGo('produccion')}>Abrir</button></div>
+        <div className="board-row"><span>Chequeo</span><div className="chips">{chequeos.length?chequeos.slice(0,4).map(k=><span className="chip" key={k}>{k}</span>):<span className="muted-s">Vacío</span>}</div></div>
+        <div className="board-row"><span>Brief</span><div className="chips">{Object.keys(briefs).length?Object.keys(briefs).slice(0,4).map(k=><span className="chip chip-blue" key={k}>{k}</span>):<span className="muted-s">Vacío</span>}</div></div>
+        <div className="board-row"><span>Borrador</span><span className="muted-s">Pronto</span></div>
+        <div className="board-row"><span>Publicado</span><span className="muted-s">Pronto</span></div>
+      </section>
+      <section className="card card-ink" aria-labelledby="rad-h">
+        <div className="side-label" style={{padding:0}}>Radar</div>
+        <h2 id="rad-h" className="ink-title">{d&&d.escribir&&d.escribir.length?d.escribir.length+' queries sin página propia':'Qué atacar después'}</h2>
+        <p>Demanda que ya te encuentra en Google y todavía no tiene artículo.</p>
+        <button className="cta-light" onClick={()=>onGo('radar')}>Ver en el radar</button>
+      </section>
+      {d&&<section className="card" aria-labelledby="pul-h">
+        <h2 id="pul-h" className="card-title">Pulso</h2>
+        <div className="mini-grid">
+          <div className="mini"><div>Clics</div><b>{fmt(d.summary.clicks)}</b></div>
+          <div className="mini"><div>Impresiones</div><b>{fmt(d.summary.impressions)}</b></div>
+          <div className="mini"><div>CTR</div><b>{d.summary.ctr.toFixed(1)}%</b></div>
+          <div className="mini"><div>Posición</div><b>{d.summary.pos.toFixed(1)}</b></div>
+        </div>
+      </section>}
+    </aside>
+  </div>);
+}
+
+function Stepper({kw}){
+  const c=kw?getCanibal(kw):null;const b=kw?getBriefs()[kw.toLowerCase()]:null;
+  const steps=[{l:'Keyword',ok:!!kw},{l:'Chequeo',ok:!!c,x:c&&c.res?c.res.veredicto:''},{l:'Brief',ok:!!b},{l:'Artículo',ok:false,soon:true},{l:'WordPress',ok:false,soon:true}];
+  const cur=steps.findIndex(s=>!s.ok);
+  return(<ol className="stepper" aria-label="Pasos">{steps.map((s,i)=><li key={i} className={'step'+(s.ok?' done':'')+(i===cur?' current':'')+(s.soon&&i!==cur?' soon':'')} aria-current={i===cur?'step':undefined}>
+    <div className="step-top"><span className="step-dot">{s.ok?<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>:i+1}</span><span className="step-n">Paso {i+1}</span></div>
+    <div className="step-l">{s.l}{s.x?<span className={'step-x v-'+s.x}> · {s.x}</span>:null}{s.soon&&!s.ok?<span className="step-soon"> · pronto</span>:null}</div>
+  </li>)}</ol>);
+}
+
+function VerifyPanel({kw,ver}){
+  const b=kw?getBriefs()[kw.toLowerCase()]:null;const items=verifyItems(b&&b.text);
+  const[checked,setChecked]=useState(()=>getVerify(kw));
+  useEffect(()=>{setChecked(getVerify(kw))},[kw,ver]);
+  function toggle(i){const s=new Set(checked);s.has(i)?s.delete(i):s.add(i);const arr=[...s];setChecked(arr);setVerify(kw,arr)}
+  return(<aside className="verify" aria-labelledby="ver-h">
+    <div className="card-head"><h2 id="ver-h">Por verificar</h2><span className="mono-meta" style={{color:'var(--amber)'}}>{checked.filter(i=>i<items.length).length}/{items.length}</span></div>
+    {!b&&<p className="verify-note">Aquí aparece la checklist del brief cuando lo generes.</p>}
+    {b&&items.length===0&&<p className="verify-note">Este brief no trae datos marcados para verificar.</p>}
+    {items.length>0&&<p className="verify-note">Cada dato viene de memoria, no de una fuente. Márcalo cuando lo confirmes.</p>}
+    {items.map((t,i)=><label key={i} className="verify-item"><input type="checkbox" checked={checked.includes(i)} onChange={()=>toggle(i)}/><span>{t}</span></label>)}
+    {items.length>0&&<button className="cta-outline amber" disabled title="Próximamente">Verificar con búsqueda web · pronto</button>}
+  </aside>);
+}
+
+function Produccion({gscFn,config,canibalSeed,briefSeed,onBriefSeed,focusKw}){
+  const latest=()=>{const b=Object.entries(getBriefs()).sort((a,c)=>c[1].ts-a[1].ts)[0];const c=Object.entries(getCanibalAll()).sort((a,x)=>x[1].ts-a[1].ts)[0];if(b&&c)return b[1].ts>c[1].ts?b[0]:c[0];return(b&&b[0])||(c&&c[0])||''};
+  const[current,setCurrent]=useState(()=>focusKw||latest());const[ver,setVer]=useState(0);
+  useEffect(()=>{if(focusKw)setCurrent(focusKw)},[focusKw]);
+  const done=kw=>{setCurrent(kw.trim().toLowerCase());setVer(v=>v+1)};
+  return(<div className="prod">
+    <div className="prod-top"><div><div className="eyebrow">Pieza actual</div><div className="prod-kw">{current?<em>{current}</em>:'Elige una keyword'}</div></div></div>
+    <Stepper kw={current} key={'s'+ver+current}/>
+    <div className="prod-cols">
+      <div className="prod-main">
+        <CanibalCheck gscFn={gscFn} config={config} seed={canibalSeed.kw} seedNonce={canibalSeed.n} onBrief={onBriefSeed} onDone={done}/>
+        <BriefGen gscFn={gscFn} config={config} seed={briefSeed.kw} seedNonce={briefSeed.n} onDone={done} focusKw={current}/>
+      </div>
+      <VerifyPanel kw={current} ver={ver}/>
+    </div>
+  </div>);
+}
+
+function RadarTab({d,loading,onCheck}){
+  const can=getCanibalAll();const rows=d&&d.escribir?d.escribir:[];
+  return(<div className="radar">
+    <div className="radar-filters" role="group" aria-label="Fuentes"><span className="filter on">Ya asoman en GSC</span><span className="filter off">Vecinos de lo que tienes · pronto</span><span className="filter off">Dominio público · pronto</span></div>
+    {loading&&!d&&<div className="loading"><div className="spinner"/>Cargando datos…</div>}
+    {d&&rows.length===0&&<div className="empty">No hay queries sin página dedicada que cumplan el umbral en este periodo.</div>}
+    <div className="radar-grid">{rows.slice(0,12).map((r,i)=>{const c=can[r.keys[0].toLowerCase()];return(<article key={i} className={'idea'+(i===0?' idea-ink':'')}>
+      <div className="prio-tags"><span className={'tag '+(i===0?'tag-mint':'tag-green')}>Ya asoma en GSC</span></div>
+      <div className="mono-meta">{fmt(r.impressions)} impr · pos {r.position.toFixed(1)} · {fmt(r.clicks)} clics</div>
+      <h3 className="idea-title">{r.keys[0]}</h3>
+      <div className="idea-facts"><div><span>Canibalización</span><span className="mono-meta">{c&&c.res?c.res.veredicto:'sin chequear'}</span></div></div>
+      <button className={i===0?'cta-light':'cta-primary'} onClick={()=>onCheck(r.keys[0])}>{c?'Abrir en producción':'Chequear y producir'}</button>
+    </article>)})}</div>
+    <section className="card how"><h2 className="card-title">De dónde salen las ideas</h2><div className="how-grid"><div><div className="mono-blue">01 · GSC</div><p>Queries con impresiones y sin página propia. Activo.</p></div><div><div className="mono-blue">02 · Vecinos</div><p>Autores y obras cercanas a lo que ya publicaste, en paquetes de temporada. Próximamente.</p></div><div><div className="mono-blue">03 · Validación</div><p>Autocompletado de Google para confirmar demanda y chequeo de canibalización para filtrar.</p></div></div></section>
+  </div>);
 }
 
 // ====== UTM BUILDER ======
@@ -1489,13 +1739,16 @@ function Etapa({data}){
 
 // ====== TAB NAV ======
 const TABS=[
-  {id:'etapa',label:'Etapa',icon:'M4 4h12l-2 4 2 4H4M4 4v17'},
-  {id:'overview',label:'Overview',icon:'M3 12l2-2 7-7 7 7 2 2M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3'},
-  {id:'index',label:'Index',icon:'M9 13h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'},
-  {id:'content',label:'Content',icon:'M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z'},
-  {id:'tracking',label:'Tracking',icon:'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'},
-  {id:'revenue',label:'Revenue',icon:'M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6'},
-  {id:'config',label:'Config',icon:'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM12 15a3 3 0 100-6 3 3 0 000 6z'}
+  {id:'hoy',label:'Hoy',group:'main',primary:true,icon:'M12 8a4 4 0 100 8 4 4 0 000-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4'},
+  {id:'produccion',label:'Producción',group:'main',primary:true,icon:'M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z'},
+  {id:'radar',label:'Radar',group:'main',primary:true,icon:'M12 3a9 9 0 100 18 9 9 0 000-18zM12 7a5 5 0 100 10 5 5 0 000-10zM12 12l6-6'},
+  {id:'etapa',label:'Etapa',group:'analisis'},
+  {id:'overview',label:'Overview',group:'analisis'},
+  {id:'index',label:'Index',group:'analisis'},
+  {id:'content',label:'Content',group:'analisis'},
+  {id:'tracking',label:'Tracking',group:'analisis'},
+  {id:'revenue',label:'Revenue',group:'analisis'},
+  {id:'config',label:'Config',group:'foot'}
 ];
 
 function TabNav({activeTab,onTabChange,badges}){
@@ -1519,7 +1772,7 @@ function getInitialTab(){
   const h=window.location.hash.replace('#','');
   if(TABS.find(t=>t.id===h))return h;
   try{const s=localStorage.getItem('sp2_active_tab');if(s&&TABS.find(t=>t.id===s))return s}catch{}
-  return'etapa';
+  return'hoy';
 }
 function getTabPeriods(){
   try{const s=JSON.parse(localStorage.getItem('sp2_tab_periods')||'null');if(s&&typeof s==='object')return{overview:s.overview||28,content:s.content||28,tracking:s.tracking||28,revenue:s.revenue||28,config:28}}catch{}
@@ -1530,6 +1783,7 @@ function saveTabPeriods(obj){try{localStorage.setItem('sp2_tab_periods',JSON.str
 function App(){
   const[canibalSeed,setCanibalSeed]=useState({kw:'',n:0});
   const[briefSeed,setBriefSeed]=useState({kw:'',n:0});
+  const[prodFocus,setProdFocus]=useState('');
   const[config,setConfig]=useState(getConfig);const[token,setToken]=useState(getToken);
   // Tab state (v2.8)
   const[activeTab,setActiveTab]=useState(getInitialTab);
@@ -1716,16 +1970,27 @@ function App(){
     </div>
   );
 
-  return(<div className="app">
-    <header><h1>SEO <em>Pulse</em></h1><div className="header-right"><span className="ver">{VERSION}</span><div className="dot on"/></div></header>
-
-    <TabNav activeTab={activeTab} onTabChange={changeTab} badges={tabBadges}/>
+  const goCheck=kw=>{setCanibalSeed(x=>({kw,n:x.n+1}));setProdFocus(kw.trim().toLowerCase());changeTab('produccion')};
+  const goBrief=kw=>{setBriefSeed(x=>({kw,n:x.n+1}));setProdFocus(kw.trim().toLowerCase());changeTab('produccion')};
+  const goTab=(id,kw)=>{if(kw)setProdFocus(kw);changeTab(id)};
+  const now=new Date();
+  const HEAD={hoy:{e:DIAS[now.getDay()]+' '+now.getDate()+' de '+MESES_L[now.getMonth()],t:'Hoy.',s:'Lo que mueve la aguja, en orden. Empieza por arriba.'},produccion:{e:'Producción',t:'De keyword a borrador.',s:'Chequeo, brief y verificación en un solo flujo.'},radar:{e:'Radar de oportunidades',t:'Qué atacar después.',s:'Demanda que ya te encuentra en Google y todavía no tiene artículo.'}};
+  const head=HEAD[activeTab]||{e:'Análisis',t:(TABS.find(t=>t.id===activeTab)||{}).label||'',s:''};
+  const allBadges={...tabBadges,produccion:Object.keys(getBriefs()).length};
+  return(<div className="shell">
+    <SideNav activeTab={activeTab} onTabChange={changeTab} badges={allBadges} site={config&&config.site}/>
+    <div className="app">
+    <div className="page-head"><div><div className="eyebrow">{head.e}</div><h1 className="page-title">{head.t}</h1>{head.s&&<p className="page-sub">{head.s}</p>}</div>{(activeTab==='hoy'||activeTab==='radar')&&<button className="cta-primary" onClick={()=>goTab('produccion')}>+ Nueva keyword</button>}</div>
 
     {error&&<div className="error-msg">{error}</div>}
     {ga4Warn&&activeTab!=='config'&&<div className="warn-msg">{ga4Warn}</div>}
     {adsenseWarn&&activeTab==='revenue'&&<div className="warn-msg">{adsenseWarn}</div>}
 
     <div className="tab-content">
+
+    {activeTab==='hoy'&&<Hoy d={d} loading={loading} onGo={goTab} onCheck={goCheck} onBrief={goBrief} openDetail={openDetail}/>}
+    {activeTab==='produccion'&&<Produccion gscFn={gsc} config={config} canibalSeed={canibalSeed} briefSeed={briefSeed} onBriefSeed={goBrief} focusKw={prodFocus}/>}
+    {activeTab==='radar'&&<RadarTab d={d} loading={loading} onCheck={goCheck}/>}
 
     {/* ========== ETAPA TAB ========== */}
     {activeTab==='etapa'&&<Etapa data={data}/>}
@@ -1779,9 +2044,7 @@ function App(){
           {d.contentVsTraffic.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({page:'https://paislector.com'+r.page,query:null,position:0,clicks:r.gscClicks,impressions:0})}><div className="row-left"><div className="row-kw">{r.page.length>45?r.page.slice(0,45)+'...':r.page}</div><div className="row-meta">GSC: {fmt(r.gscClicks)} / GA4: {fmt(r.gaSessions)} / ratio {r.ratio.toFixed(1)}x{r.ratio>1.5?' \u2014 social fuerte':''}</div></div></div>)}
           <div className="explain">Ratio +1.5 = trafico no-SEO. ~1 = depende de Google.</div></div></div>}
         <Discovery gscRows={d.allRows} onOpenDetail={openDetail}/>
-        <KwAnalyzer gscRows={d.allRows} onCheck={kw=>setCanibalSeed(x=>({kw,n:x.n+1}))} onBrief={kw=>setBriefSeed(x=>({kw,n:x.n+1}))}/>
-        <CanibalCheck gscFn={gsc} config={config} seed={canibalSeed.kw} seedNonce={canibalSeed.n} onBrief={kw=>setBriefSeed(x=>({kw,n:x.n+1}))}/>
-        <BriefGen gscFn={gsc} config={config} seed={briefSeed.kw} seedNonce={briefSeed.n}/>
+        <KwAnalyzer gscRows={d.allRows} onCheck={goCheck} onBrief={goBrief}/>
       </>:null}
     </>}
 
@@ -1837,7 +2100,7 @@ function App(){
 
     {detailItem&&<PageDetailDrawer item={detailItem} onClose={()=>setDetailItem(null)} gscFn={gsc} period={period}/>}
     {utmDetail&&<UtmDetailDrawer utm={utmDetail} onClose={()=>setUtmDetail(null)} ga4Fetch={ga4Fetch} period={period} onDelete={deleteUtm} onArchive={archiveUtm}/>}
-  </div>);
+  </div></div>);
 }
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
