@@ -120,6 +120,39 @@ const BRIEF_SYSTEM = [
   '- Checklist con "- [ ]" de cada dato marcado [VERIFICAR] o [PEGAR] en el brief.',
 ].join('\n');
 
+// ---------- Plan (Etapa con razonamiento) ----------
+const PLAN_SYSTEM = [
+  'Eres el director de SEO de País Lector (revista literaria independiente mexicana; formatos: reseñas, listas de poemas y cuentos, archivo de cartas, obras para leer gratis). Lo opera una sola persona, Andrés, con tiempo limitado.',
+  'Recibes: el roadmap de 7 fases del sitio con el estado de cada requisito y las notas del editor; los datos de Search Console y GA4; el estado de producción (briefs, chequeos, ideas guardadas) y el contexto que el editor escribió.',
+  'Tu trabajo: RAZONAR cuál es el cuello de botella real y qué hacer, no repetir la checklist en orden.',
+  'Criterios:',
+  '- El roadmap es el marco, pero los datos mandan: si el sitio tiene pocas páginas con impresiones, producir pesa más que pulir schema; si muchas keywords están en posiciones 4-20, optimizar rinde más que producir; si hay caídas, atenderlas primero.',
+  '- Lee y respeta las notas del editor: si una nota explica por qué algo está pendiente o en N/A, no lo contradigas sin un dato.',
+  '- Toda afirmación sobre el sitio debe apoyarse en un número de los datos recibidos. Nunca inventes cifras; si falta un dato, dilo.',
+  '- Sé concreto: "Escribe la reseña de X" o "Reescribe el title de /url/", no "mejora el contenido".',
+  '- Las acciones apuntan a herramientas de SEO Pulse: produccion (con keyword), radar, etapa, pagina (con URL), o ninguna.',
+  '- Español de México, directo, sin relleno.',
+].join('\n');
+
+function planContext(data) {
+  const clip = (s, n) => String(s == null ? '' : s).slice(0, n);
+  const j = (x, n) => clip(JSON.stringify(x == null ? null : x), n);
+  return [
+    'Fecha: ' + clip(data.fecha, 40),
+    'Contexto del editor: ' + (clip(data.contexto, 1500) || '(ninguno)'),
+    '',
+    '## Roadmap (fases, requisitos y notas)', j(data.roadmap, 9000),
+    '',
+    '## Datos de búsqueda', j(data.datos, 9000),
+    '',
+    '## Producción', j(data.produccion, 4000),
+    '',
+    '## Plan vigente (si existe)', j(data.plan_anterior, 5000),
+    '',
+    '## Avance registrado', j(data.avance, 2000),
+  ].join('\n');
+}
+
 // ---------- Tareas permitidas ----------
 // El cliente solo elige la tarea y manda datos.
 // Modelo, tope de salida y prompt se definen aquí, en el servidor.
@@ -288,6 +321,36 @@ const TASKS = {
       if (!keyword) throw new Error('keyword vacía');
       return 'Keyword: "' + keyword + '"\nMercado: México, español.';
     },
+  },
+
+  // Plan estratégico: cuello de botella + mes + semana.
+  plan: {
+    model: MODELS.sonnet,
+    max_tokens: 5000,
+    system: () => PLAN_SYSTEM + '\n\n' + [
+      'TAREA: genera el plan del MES y de la SEMANA.',
+      'Responde SOLO con JSON válido, sin bloques de código:',
+      '{"modo":"producir|optimizar|tecnico|autoridad|medir","cuello":{"titulo":"frase corta","dato":"el número exacto de los datos que lo prueba","explicacion":"2-3 oraciones"},',
+      '"mes":{"objetivo":"una frase","fase_foco":4,"metas":[{"meta":"","indicador":"cómo se mide con los datos de SEO Pulse","por_que":""}]},',
+      '"semana":{"foco":"una frase","tareas":[{"tarea":"concreta y accionable","por_que":"con dato","esfuerzo":"30 min | 2 h | medio día","accion":{"tipo":"produccion|radar|etapa|pagina|ninguna","valor":"keyword o URL si aplica"}}]},',
+      '"esperar":["lo que NO conviene hacer ahora y por qué"],"notas_usadas":["qué notas del editor tomaste en cuenta"]}',
+      '3-4 metas al mes, 4-7 tareas a la semana.',
+    ].join('\n'),
+    build: (data) => planContext(data),
+  },
+
+  // Prioridades del día a partir del plan vigente.
+  plan_hoy: {
+    model: MODELS.sonnet,
+    max_tokens: 2000,
+    system: () => PLAN_SYSTEM + '\n\n' + [
+      'TAREA: elige las PRIORIDADES DE HOY (1 a 3) a partir del plan semanal vigente, de lo que ya se hizo y de los datos frescos.',
+      'Si algo urgente apareció en los datos (una caída, una oportunidad nueva), puede desplazar al plan; dilo.',
+      'Cada prioridad debe caber en el día y tener un primer paso obvio.',
+      'Responde SOLO con JSON válido, sin bloques de código:',
+      '{"hoy":[{"tarea":"","por_que":"con dato","esfuerzo":"30 min | 1 h | 2 h","accion":{"tipo":"produccion|radar|etapa|pagina|ninguna","valor":""}}],"nota":"una frase de contexto para el día"}',
+    ].join('\n'),
+    build: (data) => planContext(data),
   },
   // Siguientes: article, decay, ctr...
 };
