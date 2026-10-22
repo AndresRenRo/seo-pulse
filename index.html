@@ -244,6 +244,8 @@ header h1 em{color:var(--blue);font-style:normal}
 .list{animation-delay:.05s}.detail{animation-delay:.08s}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.md-brief{font-size:13.5px;line-height:1.6;color:var(--text);background:var(--surface-alt);border-radius:12px;padding:14px 16px;overflow-x:auto}.md-brief h2{font-size:17px;margin:4px 0 8px}.md-brief h3{font-size:14.5px;margin:14px 0 6px;color:var(--blue)}.md-brief h4{font-size:13.5px;margin:10px 0 4px}.md-brief p{margin:2px 0}.md-li{display:flex;gap:6px;margin:2px 0}.md-bul{flex:0 0 auto;color:var(--hint)}.md-flag{background:#FFF3C4;color:#7A5A00;border-radius:4px;padding:0 4px;font-size:12px;font-weight:600}.md-brief code{background:var(--surface);padding:0 4px;border-radius:4px}
+@media (prefers-color-scheme: dark){.md-flag{background:#4A3B00;color:#FFE08A}}
 </style>
 </head>
 <body>
@@ -254,7 +256,7 @@ header h1 em{color:var(--blue);font-style:normal}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v3.5';
+const VERSION='v3.6';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SUGGEST_API=REDIRECT_URI+'/api/suggest';
 const CLAUDE_API=REDIRECT_URI+'/api/claude';
@@ -542,7 +544,7 @@ function ConfigScreen({onSave}){
     <button className="btn-primary" onClick={()=>{if(!cid)return alert('Client ID requerido');const c={cid,site,ga4};localStorage.setItem('sp2_config',JSON.stringify(c));onSave(c)}}>Guardar y conectar</button></div></div>);
 }
 
-function KwAnalyzer({gscRows,onCheck}){
+function KwAnalyzer({gscRows,onCheck,onBrief}){
   const[text,setText]=useState('');const[results,setResults]=useState(getSavedKws);const gscMap=useRef({});
   useEffect(()=>{if(gscRows){const m={};gscRows.forEach(r=>{m[r.keys[0].toLowerCase()]={clicks:r.clicks,impressions:r.impressions,position:r.position,ctr:r.ctr}});gscMap.current=m;if(results)analyzeKws(results.map(r=>r.kw))}},[gscRows]);
   function analyzeKws(kwList){const analyzed=kwList.map(kw=>{const k=kw.toLowerCase().trim();const exact=gscMap.current[k];if(exact)return{kw:k,status:'ranking',clicks:exact.clicks,impressions:exact.impressions,position:exact.position,ctr:exact.ctr};const partial=Object.keys(gscMap.current).filter(q=>q.includes(k)||k.includes(q));if(partial.length>0){const best=partial.reduce((a,b)=>gscMap.current[a].impressions>gscMap.current[b].impressions?a:b);const d=gscMap.current[best];return{kw:k,status:'partial',matchedQuery:best,clicks:d.clicks,impressions:d.impressions,position:d.position,ctr:d.ctr}}return{kw:k,status:'gap',clicks:0,impressions:0,position:0,ctr:0}});analyzed.sort((a,b)=>{const order={gap:0,partial:1,ranking:2};return order[a.status]-order[b.status]||b.impressions-a.impressions});setResults(analyzed);localStorage.setItem('sp2_extrakws',JSON.stringify(analyzed))}
@@ -552,43 +554,38 @@ function KwAnalyzer({gscRows,onCheck}){
     <textarea className="kw-textarea" placeholder="Pega keywords (una por linea)" value={text} onChange={e=>setText(e.target.value)}/>
     <div className="kw-actions"><button className="btn-primary" style={{padding:'7px 16px',fontSize:'12px'}} onClick={handleAnalyze}>Analizar vs GSC</button>{results&&<button className="btn-secondary" onClick={()=>{setResults(null);setText('');localStorage.removeItem('sp2_extrakws')}}>Limpiar</button>}<span className="kw-count">{text.split('\n').filter(l=>l.trim().length>2).length} kws</span></div>
     {results&&results.length>0&&<><div style={{marginTop:12,display:'flex',gap:6}}><span className="score s-lo" style={{fontSize:11,height:22,minWidth:40}}>{gaps.length} gaps</span><span className="score s-md" style={{fontSize:11,height:22,minWidth:50}}>{partials.length} parcial</span><span className="score s-hi" style={{fontSize:11,height:22,minWidth:55}}>{ranking.length} ranking</span></div>
-    {gaps.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6}}>No rankeas ({gaps.length})</div>{gaps.slice(0,10).map((r,i)=><div className="row" key={'g'+i}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">Sin datos en GSC</div></div><span className="score s-new">GAP</span><button className="row-btn" style={{marginRight:6}} onClick={()=>onCheck&&onCheck(r.kw)}>Chequear</button><button className="row-btn" onClick={()=>window.open('https://claude.ai/new?q='+encodeURIComponent('Content brief para "'+r.kw+'" para paislector.com'),'_blank')}>Brief</button></div>)}</div>}
+    {gaps.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6}}>No rankeas ({gaps.length})</div>{gaps.slice(0,10).map((r,i)=><div className="row" key={'g'+i}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">Sin datos en GSC</div></div><span className="score s-new">GAP</span><button className="row-btn" style={{marginRight:6}} onClick={()=>onCheck&&onCheck(r.kw)}>Chequear</button><button className="row-btn" onClick={()=>onBrief&&onBrief(r.kw)}>Brief</button></div>)}</div>}
     {partials.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--amber)',marginBottom:6}}>Parcial ({partials.length})</div>{partials.slice(0,10).map((r,i)=><div className="row" key={'p'+i}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">~"{r.matchedQuery}" / pos {r.position.toFixed(1)} / {fmt(r.impressions)} impr</div></div><span className="score s-md">~{r.position.toFixed(0)}</span><button className="row-btn" style={{marginLeft:6}} onClick={()=>onCheck&&onCheck(r.kw)}>Chequear</button></div>)}</div>}
     {ranking.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--green)',marginBottom:6}}>Ya rankeas ({ranking.length})</div>{ranking.slice(0,10).map((r,i)=><div className="row" key={'r'+i}><div className="row-left"><div className="row-kw">{r.kw}</div><div className="row-meta">pos {r.position.toFixed(1)} / {fmt(r.clicks)} clicks</div></div><span className={`score ${r.position<=3?'s-hi':r.position<=10?'s-md':'s-lo'}`}>P{r.position.toFixed(0)}</span></div>)}</div>}
     <div className="explain">GAP = contenido nuevo. Parcial = similar. Ranking = compites.</div></>}
   </div></div>);
 }
 
-// ====== ANTICANIBALIZACION (v3.5) ======
+// ====== ANTICANIBALIZACION + BRIEFS (v3.6) ======
 const CANIBAL_STOP=new Set(['de','la','el','los','las','en','y','a','para','por','con','del','que','un','una','unos','unas','al','lo','se','su','sus','es','o','mas','como','sobre','mi','tu','te','me','sin','le','les']);
 function normTokens(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]+/g,' ').split(/\s+/).filter(w=>w.length>1&&!CANIBAL_STOP.has(w)).map(w=>w.length>4?w.replace(/(es|s)$/,''):w)}
+let gscQPCache=null;
+async function loadQueryPageRows(gscFn){if(gscQPCache)return gscQPCache;const r=await gscFn({startDate:daysAgo(92),endDate:daysAgo(2),dimensions:['query','page'],type:'web',rowLimit:25000});gscQPCache=(r&&r.rows)||[];return gscQPCache}
+function relatedRows(rows,keyword){const kt=[...new Set(normTokens(keyword))];if(!kt.length)throw new Error('La keyword no tiene términos útiles');const kNorm=normTokens(keyword).join(' ');const out=[];for(const r of rows){const q=r.keys[0];const qtArr=normTokens(q);const qt=new Set(qtArr);let shared=0;kt.forEach(t=>{if(qt.has(t))shared++});if(shared===0)continue;const exact=qtArr.join(' ')===kNorm;out.push({q,page:r.keys[1],impressions:r.impressions,clicks:r.clicks,position:r.position,overlap:exact?1.01:shared/kt.length})}out.sort((a,b)=>b.overlap-a.overlap||b.impressions-a.impressions);return out}
+function groupPages(scored){const byPage={};scored.slice(0,120).forEach(x=>{const p=byPage[x.page]||(byPage[x.page]={url:x.page,impressions:0,clicks:0,position:999,maxOverlap:0,queries:[]});p.impressions+=x.impressions;p.clicks+=x.clicks;p.position=Math.min(p.position,x.position);p.maxOverlap=Math.max(p.maxOverlap,x.overlap);p.queries.push({q:x.q,impressions:x.impressions,position:x.position})});const pages=Object.values(byPage).sort((a,b)=>b.maxOverlap-a.maxOverlap||b.impressions-a.impressions).slice(0,15);pages.forEach(p=>p.queries.sort((a,b)=>b.impressions-a.impressions));return pages}
+function getCanibal(keyword){try{const h=JSON.parse(localStorage.getItem('sp2_canibal')||'{}');return h[(keyword||'').trim().toLowerCase()]||null}catch{return null}}
+function saveCanibal(keyword,res){try{const h=JSON.parse(localStorage.getItem('sp2_canibal')||'{}');h[keyword.trim().toLowerCase()]={ts:Date.now(),res};localStorage.setItem('sp2_canibal',JSON.stringify(h))}catch{}}
+function parseJsonLoose(txt){const c=txt.replace(/```json|```/g,'').trim();return JSON.parse(c.slice(c.indexOf('{'),c.lastIndexOf('}')+1))}
+async function canibalAnalyze(gscFn,site,keyword){
+  const rows=await loadQueryPageRows(gscFn);const pages=groupPages(relatedRows(rows,keyword));let res;
+  if(pages.length===0)res={veredicto:'crear',url_principal:null,resumen:'Ninguna página del sitio recibe impresiones por queries relacionadas en los últimos 90 días.',conflictos:[],angulo_sugerido:null};
+  else res=parseJsonLoose(await callClaude('anticanibal',{keyword,site,pages}));
+  saveCanibal(keyword,res);return{res,pages}}
+
 let lastCanibalNonce=0;
-function CanibalCheck({gscFn,config,seed,seedNonce}){
-  const[kw,setKw]=useState('');const[st,setSt]=useState('idle');const[res,setRes]=useState(null);const[err,setErr]=useState(null);const[cands,setCands]=useState([]);
-  const cache=useRef(null);const ref=useRef(null);
+function CanibalCheck({gscFn,config,seed,seedNonce,onBrief}){
+  const[kw,setKw]=useState('');const[st,setSt]=useState('idle');const[res,setRes]=useState(null);const[err,setErr]=useState(null);const[cands,setCands]=useState([]);const[doneKw,setDoneKw]=useState('');
+  const ref=useRef(null);
   useEffect(()=>{if(seed&&seedNonce>lastCanibalNonce){lastCanibalNonce=seedNonce;setKw(seed);run(seed);if(ref.current)ref.current.scrollIntoView({behavior:'smooth',block:'start'})}},[seedNonce]);
-  async function loadRows(){if(cache.current)return cache.current;const r=await gscFn({startDate:daysAgo(92),endDate:daysAgo(2),dimensions:['query','page'],type:'web',rowLimit:25000});cache.current=(r&&r.rows)||[];return cache.current}
   async function run(k){
     const keyword=(k||kw).trim();if(keyword.length<3)return;
     setSt('loading');setRes(null);setErr(null);setCands([]);
-    try{
-      const rows=await loadRows();
-      const kt=[...new Set(normTokens(keyword))];if(!kt.length)throw new Error('La keyword no tiene términos útiles');
-      const kNorm=normTokens(keyword).join(' ');
-      const scored=[];
-      for(const r of rows){const q=r.keys[0];const qtArr=normTokens(q);const qt=new Set(qtArr);let shared=0;kt.forEach(t=>{if(qt.has(t))shared++});if(shared===0)continue;const exact=qtArr.join(' ')===kNorm;scored.push({q,page:r.keys[1],impressions:r.impressions,clicks:r.clicks,position:r.position,overlap:exact?1.01:shared/kt.length})}
-      scored.sort((a,b)=>b.overlap-a.overlap||b.impressions-a.impressions);
-      const byPage={};
-      scored.slice(0,120).forEach(x=>{const p=byPage[x.page]||(byPage[x.page]={url:x.page,impressions:0,clicks:0,position:999,maxOverlap:0,queries:[]});p.impressions+=x.impressions;p.clicks+=x.clicks;p.position=Math.min(p.position,x.position);p.maxOverlap=Math.max(p.maxOverlap,x.overlap);p.queries.push({q:x.q,impressions:x.impressions,position:x.position})});
-      const pages=Object.values(byPage).sort((a,b)=>b.maxOverlap-a.maxOverlap||b.impressions-a.impressions).slice(0,15);
-      pages.forEach(p=>p.queries.sort((a,b)=>b.impressions-a.impressions));
-      setCands(pages);
-      let j;
-      if(pages.length===0){j={veredicto:'crear',url_principal:null,resumen:'Ninguna página del sitio recibe impresiones por queries relacionadas en los últimos 90 días.',conflictos:[],angulo_sugerido:null}}
-      else{const txt=await callClaude('anticanibal',{keyword,site:config&&config.site,pages});const clean=txt.replace(/```json|```/g,'').trim();j=JSON.parse(clean.slice(clean.indexOf('{'),clean.lastIndexOf('}')+1))}
-      setRes(j);setSt('done');
-      try{const h=JSON.parse(localStorage.getItem('sp2_canibal')||'{}');h[keyword.toLowerCase()]={ts:Date.now(),res:j};localStorage.setItem('sp2_canibal',JSON.stringify(h))}catch{}
-    }catch(e){setErr(e.message);setSt('error')}
+    try{const r=await canibalAnalyze(gscFn,config&&config.site,keyword);setCands(r.pages);setRes(r.res);setDoneKw(keyword);setSt('done')}catch(e){setErr(e.message);setSt('error')}
   }
   const V={crear:{label:'CREAR',cls:'s-hi',txt:'Sin conflicto: adelante con el artículo nuevo'},actualizar:{label:'ACTUALIZAR',cls:'s-lo',txt:'Ya tienes una página para esta intención'},diferenciar:{label:'DIFERENCIAR',cls:'s-md',txt:'Viable solo con otro ángulo'}};
   const v=res?(V[res.veredicto]||V.diferenciar):null;
@@ -601,9 +598,86 @@ function CanibalCheck({gscFn,config,seed,seedNonce}){
       {res.url_principal&&<div className="row"><div className="row-left"><div className="row-meta">Página a actualizar</div><div className="row-kw"><span className="url-tag">{shortPath(res.url_principal)}</span></div></div><button className="row-btn" onClick={()=>window.open(res.url_principal,'_blank')}>Abrir</button></div>}
       {res.angulo_sugerido&&<div className="row"><div className="row-left"><div className="row-meta">Ángulo sugerido</div><div className="row-kw" style={{whiteSpace:'normal'}}>{res.angulo_sugerido}</div></div></div>}
       {res.conflictos&&res.conflictos.length>0&&<div style={{marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--coral)',marginBottom:6}}>Páginas en conflicto ({res.conflictos.length})</div>{res.conflictos.map((c,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw"><span className="url-tag">{shortPath(c.url||'')}</span></div><div className="row-meta" style={{whiteSpace:'normal'}}>{c.motivo}</div></div><span className={'score '+(c.riesgo==='alto'?'s-lo':c.riesgo==='medio'?'s-md':'s-hi')}>{(c.riesgo||'').toUpperCase()}</span></div>)}</div>}
+      {onBrief&&res.veredicto!=='actualizar'&&<div style={{marginTop:10}}><button className="btn-primary" style={{padding:'7px 16px',fontSize:'12px'}} onClick={()=>onBrief(doneKw)}>Crear brief con este veredicto →</button></div>}
     </div>}
     {cands.length>0&&<details style={{marginTop:10,fontSize:12}}><summary style={{cursor:'pointer',color:'var(--muted)'}}>Datos de GSC analizados ({cands.length} páginas)</summary>{cands.map((p,i)=><div className="row" key={i}><div className="row-left"><div className="row-kw"><span className="url-tag">{shortPath(p.url)}</span></div><div className="row-meta">{fmt(p.impressions)} impr · mejor pos {p.position.toFixed(1)} · {p.queries.slice(0,3).map(q=>q.q).join(', ')}</div></div></div>)}</details>}
     <div className="explain">Compara contra 90 días de Search Console. Pendiente: sumar posts recientes y borradores de WordPress.</div>
+  </div></div>);
+}
+
+// ---- Markdown mínimo para mostrar briefs ----
+function mdInline(s){const parts=[];const re=/(\*\*[^*]+\*\*|`[^`]+`|\*[^*\s][^*]*\*|\[(?:PEGAR|VERIFICAR|COTEJAR)[^\]]*\])/g;let last=0,m,i=0;
+  while((m=re.exec(s))){if(m.index>last)parts.push(s.slice(last,m.index));const t=m[0];
+    if(t.startsWith('**'))parts.push(<strong key={i++}>{t.slice(2,-2)}</strong>);
+    else if(t.startsWith('`'))parts.push(<code key={i++}>{t.slice(1,-1)}</code>);
+    else if(t.startsWith('['))parts.push(<span key={i++} className="md-flag">{t}</span>);
+    else parts.push(<em key={i++}>{t.slice(1,-1)}</em>);last=m.index+t.length}
+  if(last<s.length)parts.push(s.slice(last));return parts}
+function MdView({text}){return(<div className="md-brief">{text.split('\n').map((l,i)=>{
+  if(/^#\s/.test(l))return<h2 key={i}>{mdInline(l.replace(/^#\s+/,''))}</h2>;
+  if(/^##\s/.test(l))return<h3 key={i}>{mdInline(l.replace(/^##\s+/,''))}</h3>;
+  if(/^#{3,}\s/.test(l))return<h4 key={i}>{mdInline(l.replace(/^#{3,}\s+/,''))}</h4>;
+  const li=l.match(/^(\s*)[-*]\s+(\[[ xX]\]\s+)?(.*)$/);if(li){const ind=Math.min(3,Math.floor(li[1].length/2));return<div key={i} className="md-li" style={{paddingLeft:12+ind*16}}><span className="md-bul">{li[2]?'☐':'•'}</span><span>{mdInline(li[3])}</span></div>}
+  const ol=l.match(/^(\s*)(\d+)[.)]\s+(.*)$/);if(ol){const ind=Math.min(3,Math.floor(ol[1].length/2));return<div key={i} className="md-li" style={{paddingLeft:12+ind*16}}><span className="md-bul">{ol[2]}.</span><span>{mdInline(ol[3])}</span></div>}
+  if(/^\s*(---|\*\*\*)\s*$/.test(l))return<hr key={i}/>;
+  if(!l.trim())return<div key={i} style={{height:6}}/>;
+  return<p key={i}>{mdInline(l)}</p>})}</div>)}
+
+// ---- Generador de briefs ----
+const BRIEF_TIPOS=[['auto','Automático (según la keyword)'],['resena','Reseña (cuento o novela)'],['poemas','Lista: N poemas de [autor]'],['cuentos','Lista: 10 cuentos de [autor]'],['archivo','Archivo: carta o texto histórico'],['obra','Obra para leer gratis (/obras/)']];
+function getBriefs(){try{return JSON.parse(localStorage.getItem('sp2_briefs')||'{}')}catch{return{}}}
+function saveBrief(kw,obj){try{const h=getBriefs();h[kw.trim().toLowerCase()]=obj;const keys=Object.keys(h).sort((a,b)=>h[b].ts-h[a].ts);keys.slice(30).forEach(k=>delete h[k]);localStorage.setItem('sp2_briefs',JSON.stringify(h))}catch{}}
+async function fetchSuggestions(kw){const pre=['','que ','por que ','cual es '];const res=await Promise.all(pre.map(p=>fetch(SUGGEST_API+'?q='+encodeURIComponent(p+kw)+'&lang=es').then(r=>r.ok?r.json():{suggestions:[]}).then(d=>d.suggestions||[]).catch(()=>[])));return[...new Set(res.flat().map(x=>x.trim()).filter(Boolean))].slice(0,30)}
+let lastBriefNonce=0;
+function BriefGen({gscFn,config,seed,seedNonce}){
+  const[kw,setKw]=useState('');const[tipo,setTipo]=useState('auto');const[extraOn,setExtraOn]=useState(false);const[extraN,setExtraN]=useState(1);const[notes,setNotes]=useState('');
+  const[st,setSt]=useState('idle');const[stage,setStage]=useState('');const[text,setText]=useState('');const[err,setErr]=useState(null);const[saved,setSaved]=useState(()=>getBriefs());const[copied,setCopied]=useState(false);
+  const ref=useRef(null);
+  useEffect(()=>{if(seed&&seedNonce>lastBriefNonce){lastBriefNonce=seedNonce;setKw(seed);setText('');setSt('idle');if(ref.current)ref.current.scrollIntoView({behavior:'smooth',block:'start'})}},[seedNonce]);
+  async function run(){
+    const keyword=kw.trim();if(keyword.length<3)return;
+    setSt('loading');setErr(null);setText('');
+    try{
+      let can=getCanibal(keyword);
+      if(!can){setStage('Chequeando canibalización…');const r=await canibalAnalyze(gscFn,config&&config.site,keyword);can={res:r.res}}
+      if(can.res&&can.res.veredicto==='actualizar'&&!window.confirm('El chequeo dice ACTUALIZAR: ya tienes una página para esta intención ('+(can.res.url_principal||'ver chequeo')+').\n\n¿Generar el brief de todos modos?')){setSt('idle');setStage('');return}
+      setStage('Juntando datos de GSC y sugerencias…');
+      const rows=await loadQueryPageRows(gscFn);
+      const qmap={};relatedRows(rows,keyword).forEach(x=>{const q=qmap[x.q]||(qmap[x.q]={q:x.q,impressions:0,position:999});q.impressions+=x.impressions;q.position=Math.min(q.position,x.position)});
+      const queries=Object.values(qmap).sort((a,b)=>b.impressions-a.impressions).slice(0,40);
+      const pmap={};rows.forEach(r=>{pmap[r.keys[1]]=(pmap[r.keys[1]]||0)+r.impressions});
+      const pages=Object.entries(pmap).sort((a,b)=>b[1]-a[1]).slice(0,50).map(([url,impressions])=>({url,impressions}));
+      const suggestions=await fetchSuggestions(keyword);
+      setStage('Escribiendo el brief…');
+      const out=await callClaude('brief',{keyword,tipo,year:new Date().getFullYear(),site:config&&config.site,canibal:can.res,queries,suggestions,pages,extra:extraOn?extraN:0,notes},t=>{setText(t);setStage('')});
+      saveBrief(keyword,{ts:Date.now(),tipo,text:out,canibal:can.res});setSaved(getBriefs());setSt('done');setStage('');
+    }catch(e){setErr(e.message);setSt('error');setStage('')}
+  }
+  function download(){const blob=new Blob([text],{type:'text/markdown'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='brief-'+slugify(kw)+'.md';a.click();URL.revokeObjectURL(a.href)}
+  const savedKeys=Object.keys(saved).sort((a,b)=>saved[b].ts-saved[a].ts);
+  const canNow=getCanibal(kw);
+  return(<div className="panel" ref={ref}><div className="panel-head"><h3>Generador de briefs</h3><span className="pill pill-green">Plantillas País Lector</span></div><div className="panel-body">
+    <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+      <input className="disc-input" style={{flex:'1 1 260px'}} placeholder='Keyword: "reseña de pedro páramo"' value={kw} onChange={e=>setKw(e.target.value)}/>
+      <select className="disc-input" style={{flex:'0 1 260px'}} value={tipo} onChange={e=>setTipo(e.target.value)}>{BRIEF_TIPOS.map(([k,l])=><option key={k} value={k}>{l}</option>)}</select>
+    </div>
+    <div style={{display:'flex',gap:12,alignItems:'center',flexWrap:'wrap',marginTop:10,fontSize:13}}>
+      <label style={{display:'flex',gap:6,alignItems:'center',cursor:'pointer'}}><input type="checkbox" checked={extraOn} onChange={e=>setExtraOn(e.target.checked)}/>Recomendar secciones nuevas</label>
+      {extraOn&&<select className="disc-input" style={{width:'auto',padding:'4px 8px'}} value={extraN} onChange={e=>setExtraN(+e.target.value)}>{[1,2,3].map(n=><option key={n} value={n}>{n} {n===1?'sección':'secciones'}</option>)}</select>}
+    </div>
+    <textarea className="kw-textarea" style={{marginTop:10,minHeight:56}} placeholder="Notas opcionales: ángulo que quieres, obras a incluir o excluir, tono…" value={notes} onChange={e=>setNotes(e.target.value)}/>
+    <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap',marginTop:8}}>
+      <button className="btn-primary" style={{padding:'7px 16px',fontSize:'12px'}} disabled={st==='loading'} onClick={run}>{st==='loading'?'Generando…':'Generar brief'}</button>
+      {savedKeys.length>0&&<select className="disc-input" style={{width:'auto',padding:'5px 8px',fontSize:12}} value="" onChange={e=>{const k=e.target.value;if(!k)return;const b=saved[k];setKw(k);setTipo(b.tipo||'auto');setText(b.text);setSt('done');setErr(null)}}><option value="">Briefs guardados ({savedKeys.length})</option>{savedKeys.map(k=><option key={k} value={k}>{k}</option>)}</select>}
+    </div>
+    {canNow&&canNow.res&&st!=='loading'&&<div style={{marginTop:8,fontSize:12,color:'var(--muted)'}}>Canibalización: <strong>{(canNow.res.veredicto||'').toUpperCase()}</strong> ({formatRelTime(canNow.ts)})</div>}
+    {stage&&<div className="loading" style={{padding:'14px 0'}}><div className="spinner"/>{stage}</div>}
+    {st==='error'&&<div style={{marginTop:10,fontSize:12,color:'var(--coral)'}}>Error: {err}</div>}
+    {text&&<div style={{marginTop:12}}>
+      {st==='done'&&<div style={{display:'flex',gap:8,marginBottom:8}}><button className="row-btn" onClick={()=>{navigator.clipboard.writeText(text).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),1500)})}}>{copied?'Copiado ✓':'Copiar'}</button><button className="row-btn" onClick={download}>Descargar .md</button></div>}
+      <MdView text={text}/>
+    </div>}
+    <div className="explain">Usa el chequeo de canibalización guardado (o lo corre si falta), queries de GSC, sugerencias de Google y tus URLs para enlazado. Lo marcado en amarillo se verifica antes de publicar.</div>
   </div></div>);
 }
 
@@ -1455,6 +1529,7 @@ function saveTabPeriods(obj){try{localStorage.setItem('sp2_tab_periods',JSON.str
 
 function App(){
   const[canibalSeed,setCanibalSeed]=useState({kw:'',n:0});
+  const[briefSeed,setBriefSeed]=useState({kw:'',n:0});
   const[config,setConfig]=useState(getConfig);const[token,setToken]=useState(getToken);
   // Tab state (v2.8)
   const[activeTab,setActiveTab]=useState(getInitialTab);
@@ -1704,8 +1779,9 @@ function App(){
           {d.contentVsTraffic.map((r,i)=><div className="row" key={i} onClick={()=>openDetail({page:'https://paislector.com'+r.page,query:null,position:0,clicks:r.gscClicks,impressions:0})}><div className="row-left"><div className="row-kw">{r.page.length>45?r.page.slice(0,45)+'...':r.page}</div><div className="row-meta">GSC: {fmt(r.gscClicks)} / GA4: {fmt(r.gaSessions)} / ratio {r.ratio.toFixed(1)}x{r.ratio>1.5?' \u2014 social fuerte':''}</div></div></div>)}
           <div className="explain">Ratio +1.5 = trafico no-SEO. ~1 = depende de Google.</div></div></div>}
         <Discovery gscRows={d.allRows} onOpenDetail={openDetail}/>
-        <KwAnalyzer gscRows={d.allRows} onCheck={kw=>setCanibalSeed(x=>({kw,n:x.n+1}))}/>
-        <CanibalCheck gscFn={gsc} config={config} seed={canibalSeed.kw} seedNonce={canibalSeed.n}/>
+        <KwAnalyzer gscRows={d.allRows} onCheck={kw=>setCanibalSeed(x=>({kw,n:x.n+1}))} onBrief={kw=>setBriefSeed(x=>({kw,n:x.n+1}))}/>
+        <CanibalCheck gscFn={gsc} config={config} seed={canibalSeed.kw} seedNonce={canibalSeed.n} onBrief={kw=>setBriefSeed(x=>({kw,n:x.n+1}))}/>
+        <BriefGen gscFn={gsc} config={config} seed={briefSeed.kw} seedNonce={briefSeed.n}/>
       </>:null}
     </>}
 
