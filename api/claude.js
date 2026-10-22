@@ -14,10 +14,45 @@ const TASKS = {
   test: {
     model: MODELS.haiku,
     max_tokens: 100,
-    system: 'Responde en español, en una sola oración.',
-    build: () => 'Confirma que la conexión entre SEO Pulse y Claude funciona.',
+    system: 'Responde exactamente con el texto que se te pide, sin agregar nada.',
+    build: () => 'Responde solo: Conexión con SEO Pulse OK.',
   },
-  // Aquí se irán agregando: anticanibal, brief, article, decay, ctr...
+
+  // Chequeo de canibalización antes de crear contenido nuevo.
+  anticanibal: {
+    model: MODELS.sonnet,
+    max_tokens: 1200,
+    system: [
+      'Eres un estratega SEO senior. Evalúas riesgo de canibalización de keywords para un sitio en español.',
+      'Recibes una keyword candidata para un artículo NUEVO y las páginas del sitio que ya reciben impresiones en Google por queries relacionadas (datos de Search Console, últimos 90 días).',
+      'Juzga por INTENCIÓN DE BÚSQUEDA, no por coincidencia de palabras: dos queries con palabras distintas pueden competir, y dos con palabras parecidas pueden tener intenciones distintas.',
+      'Veredictos posibles:',
+      '- "crear": ninguna página existente cubre esa intención; el artículo nuevo es seguro.',
+      '- "actualizar": ya existe una página que cubre esa intención; conviene mejorarla en vez de crear otra.',
+      '- "diferenciar": hay páginas cercanas; el artículo nuevo es viable solo con un ángulo o intención distintos, que debes proponer.',
+      'Responde SOLO con un objeto JSON válido, sin texto antes ni después y sin bloques de código, con esta forma:',
+      '{"veredicto":"crear|actualizar|diferenciar","url_principal":"URL o null","resumen":"1-2 oraciones","conflictos":[{"url":"...","riesgo":"alto|medio|bajo","motivo":"una oración"}],"angulo_sugerido":"texto o null"}',
+      'Incluye en conflictos solo páginas con riesgo real, máximo 5. Usa url_principal solo si el veredicto es "actualizar".',
+    ].join('\n'),
+    build: (data) => {
+      const keyword = String(data.keyword || '').trim().slice(0, 200);
+      if (!keyword) throw new Error('keyword vacía');
+      const site = String(data.site || '').slice(0, 100);
+      const pages = (Array.isArray(data.pages) ? data.pages : []).slice(0, 15).map((pg) => ({
+        url: String(pg.url || '').slice(0, 300),
+        impresiones: Math.round(Number(pg.impressions) || 0),
+        clics: Math.round(Number(pg.clicks) || 0),
+        mejor_posicion: Number(Number(pg.position || 0).toFixed(1)),
+        queries: (Array.isArray(pg.queries) ? pg.queries : []).slice(0, 8).map((q) => ({
+          q: String(q.q || '').slice(0, 150),
+          impresiones: Math.round(Number(q.impressions) || 0),
+          posicion: Number(Number(q.position || 0).toFixed(1)),
+        })),
+      }));
+      return 'Sitio: ' + site + '\nKeyword candidata: "' + keyword + '"\n\nPáginas existentes con queries relacionadas:\n' + JSON.stringify(pages, null, 1);
+    },
+  },
+  // Siguientes: brief, article, decay, ctr...
 };
 
 const MAX_BODY_CHARS = 60000;
