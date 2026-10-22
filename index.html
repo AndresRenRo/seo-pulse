@@ -336,6 +336,22 @@ body{background:var(--bg)}
 .idea .cta-primary,.idea .cta-light{margin-top:auto}
 .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}.how-grid p{font-size:14px;color:#3F3E3A;line-height:1.5;margin-top:4px}.mono-blue{font-family:var(--mono);font-size:12px;color:#0039B8}
 #root>.app{margin:0 auto;max-width:640px}
+.radar-run{gap:10px}.field-label{font-size:13px;font-weight:600}
+.radar-run-row{display:flex;flex-wrap:wrap;gap:8px}.radar-run-row .disc-input{flex:1 1 280px;min-height:44px}
+.radar-summary{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;font-size:14px;color:#3F3E3A}
+button.filter{cursor:pointer;font-family:var(--sans)}
+.idea-why{font-size:14px;line-height:1.5;color:#3F3E3A}.idea-ink .idea-why{color:#D6D3CC}
+.pieces{display:flex;flex-direction:column;gap:10px}
+.piece{border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:6px}.idea-ink .piece{border-color:#2E2E2E}
+.piece-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.piece-kw{font-family:var(--mono);font-size:13px;overflow-wrap:anywhere}
+.piece-type{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);flex:0 0 auto}.idea-ink .piece-type{color:#A8A49C}
+.piece-meta{display:flex;flex-wrap:wrap;gap:6px}
+.sig{font-size:11px;font-weight:600;border-radius:6px;padding:2px 7px}
+.sig-hi{background:#DDF5EA;color:#0B6B45}.sig-md{background:#FFF3C4;color:#7A5A00}.sig-off{background:#ECEAE4;color:#5B5A55}.sig-ok{background:#E6EDFF;color:#0039B8}.sig-warn{background:#FCE6DF;color:#9A2B12}
+.piece-var{font-size:12px;color:var(--muted);line-height:1.4}.idea-ink .piece-var{color:#A8A49C}
+.cta-light.sm,.cta-outline.sm{min-height:36px;padding:0 12px;font-size:13px;align-self:flex-start}
+.link-btn.discard{align-self:flex-start;color:var(--muted);margin-top:auto}.idea-ink .link-btn.discard{color:#A8A49C}
 @media(max-width:900px){
   .side{position:sticky;top:0;z-index:20;height:auto;max-width:none;flex:1 1 100%;flex-direction:row;align-items:center;gap:6px;padding:10px 12px calc(10px) 12px;overflow-x:auto;scrollbar-width:none}
   .side::-webkit-scrollbar{display:none}
@@ -357,7 +373,7 @@ body{background:var(--bg)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef}=React;
-const VERSION='v4.0';
+const VERSION='v4.1';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SUGGEST_API=REDIRECT_URI+'/api/suggest';
 const CLAUDE_API=REDIRECT_URI+'/api/claude';
@@ -854,8 +870,7 @@ function Hoy({d,loading,onGo,onCheck,onBrief,openDetail}){
       </section>
       <section className="card card-ink" aria-labelledby="rad-h">
         <div className="side-label" style={{padding:0}}>Radar</div>
-        <h2 id="rad-h" className="ink-title">{d&&d.escribir&&d.escribir.length?d.escribir.length+' queries sin página propia':'Qué atacar después'}</h2>
-        <p>Demanda que ya te encuentra en Google y todavía no tiene artículo.</p>
+        {(()=>{const rr=getRadar();const nk=rr&&rr.temporadas?rr.temporadas.reduce((a,t)=>a+t.piezas.filter(p=>p.demand>0).length,0):0;return nk?<><h2 id="rad-h" className="ink-title">{nk} keywords nuevas con demanda</h2><p>Temporadas que no cubres, validadas con Google y sin canibalizar tu sitio.</p></>:<><h2 id="rad-h" className="ink-title">{d&&d.escribir&&d.escribir.length?d.escribir.length+' queries sin página propia':'Qué atacar después'}</h2><p>Demanda que ya te encuentra en Google y todavía no tiene artículo.</p></>})()}
         <button className="cta-light" onClick={()=>onGo('radar')}>Ver en el radar</button>
       </section>
       {d&&<section className="card" aria-labelledby="pul-h">
@@ -914,20 +929,94 @@ function Produccion({gscFn,config,canibalSeed,briefSeed,onBriefSeed,focusKw}){
   </div>);
 }
 
-function RadarTab({d,loading,onCheck}){
+function getRadar(){try{return JSON.parse(localStorage.getItem('sp2_radar')||'null')}catch{return null}}
+function saveRadar(r){try{localStorage.setItem('sp2_radar',JSON.stringify(r))}catch{}}
+function getRadarDiscard(){try{return JSON.parse(localStorage.getItem('sp2_radar_discard')||'[]')}catch{return[]}}
+function addRadarDiscard(x){try{const a=getRadarDiscard();if(!a.includes(x))a.push(x);localStorage.setItem('sp2_radar_discard',JSON.stringify(a.slice(-150)))}catch{}}
+async function validateKeyword(kw,rows){
+  let sugg=[];try{const r=await fetch(SUGGEST_API+'?q='+encodeURIComponent(kw)+'&lang=es');if(r.ok){const j=await r.json();sugg=j.suggestions||[]}}catch{}
+  const norm=x=>x.trim().toLowerCase();const variants=sugg.map(norm).filter(x=>x!==norm(kw)).slice(0,3);
+  let conflict=null;try{const rel=relatedRows(rows,kw).filter(x=>x.overlap>=0.66);if(rel.length){const by={};rel.forEach(x=>{by[x.page]=(by[x.page]||0)+x.impressions});const top=Object.entries(by).sort((a,b)=>b[1]-a[1])[0];conflict={page:top[0],impressions:top[1]}}}catch{}
+  return{demand:sugg.length,variants,conflict}}
+const TIPO_CORTO={resena:'reseña',poemas:'poemas',cuentos:'cuentos',archivo:'archivo',obra:'obra'};
+
+function RadarVecinos({gscFn,config,onCheck}){
+  const[data,setData]=useState(getRadar);const[focus,setFocus]=useState(()=>{const r=getRadar();return r?r.focus||'':''});
+  const[st,setSt]=useState('idle');const[stage,setStage]=useState('');const[err,setErr]=useState(null);const[showOff,setShowOff]=useState(false);
+  async function run(){
+    setSt('loading');setErr(null);
+    try{
+      setStage('Leyendo tu cobertura en GSC…');
+      const rows=await loadQueryPageRows(gscFn);
+      const pmap={},qmap={};rows.forEach(r=>{pmap[r.keys[1]]=(pmap[r.keys[1]]||0)+r.impressions;qmap[r.keys[0]]=(qmap[r.keys[0]]||0)+r.impressions});
+      const urls=Object.entries(pmap).sort((a,b)=>b[1]-a[1]).slice(0,200).map(([u])=>shortPath(u));
+      const queries=Object.entries(qmap).sort((a,b)=>b[1]-a[1]).slice(0,120).map(([q])=>q);
+      const prev=getRadar();const exclude=[...getRadarDiscard(),...(prev&&prev.temporadas?prev.temporadas.map(t=>t.autor):[])];
+      setStage('Claude está proponiendo temporadas…');
+      const j=parseJsonLoose(await callClaude('radar',{site:config&&config.site,focus,urls,queries,exclude}));
+      const temps=(j.temporadas||[]).filter(t=>t&&t.autor&&Array.isArray(t.piezas));
+      const all=[];temps.forEach(t=>t.piezas.forEach(p=>{if(p&&p.keyword)all.push(p)}));
+      let n=0;
+      for(let i=0;i<all.length;i+=5){const batch=all.slice(i,i+5);setStage('Validando demanda en Google ('+Math.min(i+5,all.length)+'/'+all.length+')…');const res=await Promise.all(batch.map(p=>validateKeyword(p.keyword,rows)));batch.forEach((p,k)=>Object.assign(p,res[k]));n+=batch.length}
+      const out={ts:Date.now(),focus,temporadas:temps};saveRadar(out);setData(out);setSt('done');setStage('');
+    }catch(e){setErr(e.message);setSt('error');setStage('')}
+  }
+  function discard(autor){addRadarDiscard(autor);const r={...data,temporadas:data.temporadas.filter(t=>t.autor!==autor)};saveRadar(r);setData(r)}
+  const temps=data&&data.temporadas?data.temporadas:[];
+  const live=temps.map(t=>({...t,vivas:t.piezas.filter(p=>p.demand>0)})).filter(t=>showOff||t.vivas.length>0);
+  const nKw=temps.reduce((a,t)=>a+t.piezas.filter(p=>p.demand>0).length,0);const nOff=temps.reduce((a,t)=>a+t.piezas.filter(p=>!p.demand).length,0);
+  return(<div className="radar">
+    <div className="card radar-run">
+      <label htmlFor="radar-focus" className="field-label">Enfoque opcional</label>
+      <div className="radar-run-row">
+        <input id="radar-focus" className="disc-input" placeholder="Ej. poesía mexicana del siglo XX, terror clásico, autoras latinoamericanas…" value={focus} onChange={e=>setFocus(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&st!=='loading')run()}}/>
+        <button className="cta-primary" disabled={st==='loading'} onClick={run}>{st==='loading'?'Buscando…':temps.length?'Buscar más ideas':'Buscar ideas nuevas'}</button>
+      </div>
+      <div className="muted-s">Claude propone temas que no cubres, Google confirma si se buscan y tu GSC descarta lo que canibaliza. Unos centavos por búsqueda.</div>
+    </div>
+    {stage&&<div className="loading" style={{padding:'10px 0'}}><div className="spinner"/>{stage}</div>}
+    {st==='error'&&<div className="error-msg">Error: {err}</div>}
+    {temps.length>0&&<div className="radar-summary"><span><b>{live.filter(t=>t.vivas.length).length}</b> temporadas · <b>{nKw}</b> keywords con demanda{nOff>0?' · '+nOff+' sin demanda':''}{data&&data.ts?' · '+formatRelTime(data.ts):''}</span>{nOff>0&&<button className="link-btn" onClick={()=>setShowOff(v=>!v)}>{showOff?'Ocultar sin demanda':'Ver sin demanda'}</button>}</div>}
+    {!temps.length&&st!=='loading'&&<div className="empty">Todavía no hay ideas. Dale a “Buscar ideas nuevas”; si quieres, primero escribe un enfoque.</div>}
+    <div className="radar-grid">{live.map((t,i)=>{const ink=i===0;const pz=showOff?t.piezas:t.vivas;return(<article key={t.autor+i} className={'idea'+(ink?' idea-ink':'')}>
+      <div className="prio-tags"><span className={'tag '+(ink?'tag-mint':'tag-green')}>Vecino</span>{t.muerte?<span className="mono-meta">† {t.muerte}</span>:null}</div>
+      <div><div className="mono-meta">{t.autor}</div><h3 className="idea-title">{t.titulo||('Temporada '+t.autor)}</h3></div>
+      {t.por_que&&<p className="idea-why">{t.por_que}</p>}
+      <div className="pieces">{pz.map((p,k)=><div className="piece" key={k}>
+        <div className="piece-top"><span className="piece-kw">{p.keyword}</span><span className="piece-type">{TIPO_CORTO[p.tipo]||p.tipo}</span></div>
+        <div className="piece-meta">
+          {p.demand>0?<span className={'sig '+(p.demand>=5?'sig-hi':'sig-md')}>Demanda {p.demand>=8?'alta':p.demand>=5?'media':'baja'}</span>:<span className="sig sig-off">Sin demanda</span>}
+          {p.conflict?<span className="sig sig-warn" title={'Ya recibe impresiones: '+p.conflict.page}>Revisar: {shortPath(p.conflict.page)}</span>:p.demand>0?<span className="sig sig-ok">Libre en GSC</span>:null}
+        </div>
+        {p.variants&&p.variants.length>0&&<div className="piece-var">{p.variants.join(' · ')}</div>}
+        {p.demand>0&&<button className={ink?'cta-light sm':'cta-outline sm'} onClick={()=>onCheck(p.keyword)}>Producir</button>}
+      </div>)}</div>
+      <button className="link-btn discard" onClick={()=>discard(t.autor)}>Descartar temporada</button>
+    </article>)})}</div>
+  </div>);
+}
+
+function RadarTab({d,loading,onCheck,gscFn,config}){
+  const[view,setView]=useState(()=>{try{return localStorage.getItem('sp2_radar_view')||'vecinos'}catch{return'vecinos'}});
+  const pick=v=>{setView(v);try{localStorage.setItem('sp2_radar_view',v)}catch{}};
   const can=getCanibalAll();const rows=d&&d.escribir?d.escribir:[];
   return(<div className="radar">
-    <div className="radar-filters" role="group" aria-label="Fuentes"><span className="filter on">Ya asoman en GSC</span><span className="filter off">Vecinos de lo que tienes · pronto</span><span className="filter off">Dominio público · pronto</span></div>
-    {loading&&!d&&<div className="loading"><div className="spinner"/>Cargando datos…</div>}
-    {d&&rows.length===0&&<div className="empty">No hay queries sin página dedicada que cumplan el umbral en este periodo.</div>}
-    <div className="radar-grid">{rows.slice(0,12).map((r,i)=>{const c=can[r.keys[0].toLowerCase()];return(<article key={i} className={'idea'+(i===0?' idea-ink':'')}>
-      <div className="prio-tags"><span className={'tag '+(i===0?'tag-mint':'tag-green')}>Ya asoma en GSC</span></div>
-      <div className="mono-meta">{fmt(r.impressions)} impr · pos {r.position.toFixed(1)} · {fmt(r.clicks)} clics</div>
-      <h3 className="idea-title">{r.keys[0]}</h3>
-      <div className="idea-facts"><div><span>Canibalización</span><span className="mono-meta">{c&&c.res?c.res.veredicto:'sin chequear'}</span></div></div>
-      <button className={i===0?'cta-light':'cta-primary'} onClick={()=>onCheck(r.keys[0])}>{c?'Abrir en producción':'Chequear y producir'}</button>
-    </article>)})}</div>
-    <section className="card how"><h2 className="card-title">De dónde salen las ideas</h2><div className="how-grid"><div><div className="mono-blue">01 · GSC</div><p>Queries con impresiones y sin página propia. Activo.</p></div><div><div className="mono-blue">02 · Vecinos</div><p>Autores y obras cercanas a lo que ya publicaste, en paquetes de temporada. Próximamente.</p></div><div><div className="mono-blue">03 · Validación</div><p>Autocompletado de Google para confirmar demanda y chequeo de canibalización para filtrar.</p></div></div></section>
+    <div className="radar-filters" role="group" aria-label="Fuentes">
+      <button className={'filter'+(view==='vecinos'?' on':'')} aria-pressed={view==='vecinos'} onClick={()=>pick('vecinos')}>Vecinos de lo que tienes</button>
+      <button className={'filter'+(view==='gsc'?' on':'')} aria-pressed={view==='gsc'} onClick={()=>pick('gsc')}>Ya asoman en GSC{rows.length?' · '+rows.length:''}</button>
+    </div>
+    {view==='vecinos'&&<RadarVecinos gscFn={gscFn} config={config} onCheck={onCheck}/>}
+    {view==='gsc'&&<>
+      {loading&&!d&&<div className="loading"><div className="spinner"/>Cargando datos…</div>}
+      {d&&rows.length===0&&<div className="empty">No hay queries sin página dedicada que cumplan el umbral en este periodo.</div>}
+      <div className="radar-grid">{rows.slice(0,12).map((r,i)=>{const c=can[r.keys[0].toLowerCase()];return(<article key={i} className={'idea'+(i===0?' idea-ink':'')}>
+        <div className="prio-tags"><span className={'tag '+(i===0?'tag-mint':'tag-green')}>Ya asoma en GSC</span></div>
+        <div className="mono-meta">{fmt(r.impressions)} impr · pos {r.position.toFixed(1)} · {fmt(r.clicks)} clics</div>
+        <h3 className="idea-title">{r.keys[0]}</h3>
+        <div className="idea-facts"><div><span>Canibalización</span><span className="mono-meta">{c&&c.res?c.res.veredicto:'sin chequear'}</span></div></div>
+        <button className={i===0?'cta-light':'cta-primary'} onClick={()=>onCheck(r.keys[0])}>{c?'Abrir en producción':'Chequear y producir'}</button>
+      </article>)})}</div>
+    </>}
   </div>);
 }
 
@@ -1974,7 +2063,7 @@ function App(){
   const goBrief=kw=>{setBriefSeed(x=>({kw,n:x.n+1}));setProdFocus(kw.trim().toLowerCase());changeTab('produccion')};
   const goTab=(id,kw)=>{if(kw)setProdFocus(kw);changeTab(id)};
   const now=new Date();
-  const HEAD={hoy:{e:DIAS[now.getDay()]+' '+now.getDate()+' de '+MESES_L[now.getMonth()],t:'Hoy.',s:'Lo que mueve la aguja, en orden. Empieza por arriba.'},produccion:{e:'Producción',t:'De keyword a borrador.',s:'Chequeo, brief y verificación en un solo flujo.'},radar:{e:'Radar de oportunidades',t:'Qué atacar después.',s:'Demanda que ya te encuentra en Google y todavía no tiene artículo.'}};
+  const HEAD={hoy:{e:DIAS[now.getDay()]+' '+now.getDate()+' de '+MESES_L[now.getMonth()],t:'Hoy.',s:'Lo que mueve la aguja, en orden. Empieza por arriba.'},produccion:{e:'Producción',t:'De keyword a borrador.',s:'Chequeo, brief y verificación en un solo flujo.'},radar:{e:'Radar de oportunidades',t:'Qué atacar después.',s:'Temas que no cubres, validados con Google y tu Search Console.'}};
   const head=HEAD[activeTab]||{e:'Análisis',t:(TABS.find(t=>t.id===activeTab)||{}).label||'',s:''};
   const allBadges={...tabBadges,produccion:Object.keys(getBriefs()).length};
   return(<div className="shell">
@@ -1990,7 +2079,7 @@ function App(){
 
     {activeTab==='hoy'&&<Hoy d={d} loading={loading} onGo={goTab} onCheck={goCheck} onBrief={goBrief} openDetail={openDetail}/>}
     {activeTab==='produccion'&&<Produccion gscFn={gsc} config={config} canibalSeed={canibalSeed} briefSeed={briefSeed} onBriefSeed={goBrief} focusKw={prodFocus}/>}
-    {activeTab==='radar'&&<RadarTab d={d} loading={loading} onCheck={goCheck}/>}
+    {activeTab==='radar'&&<RadarTab d={d} loading={loading} onCheck={goCheck} gscFn={gsc} config={config}/>}
 
     {/* ========== ETAPA TAB ========== */}
     {activeTab==='etapa'&&<Etapa data={data}/>}
