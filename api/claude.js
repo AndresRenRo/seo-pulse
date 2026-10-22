@@ -222,7 +222,45 @@ const TASKS = {
       ].join('\n');
     },
   },
-  // Siguientes: article, decay, ctr...
+
+  // Radar · Vecinos: propone temporadas nuevas a partir de la cobertura actual.
+  radar: {
+    model: MODELS.sonnet,
+    max_tokens: 5000,
+    system: [
+      'Eres el estratega editorial y SEO de País Lector, revista literaria independiente mexicana (anti-académica, latinoamericana, irreverente). Formatos que produce: reseña (de una obra), poemas (lista "N poemas de [autor]"), cuentos (lista "10 cuentos de [autor]"), archivo (cartas o textos históricos), obra (texto íntegro para leer gratis).',
+      'Recibes el mapa de cobertura del sitio (sus URLs y las queries por las que Google ya lo muestra). Tu trabajo: proponer TEMPORADAS nuevas, es decir paquetes de 2-4 piezas sobre un mismo autor u obra que el sitio NO cubre todavía, cercanos a lo que ya cubre (mismo canon, misma época, misma sensibilidad, autores que sus lectores probablemente buscan después).',
+      'Reglas:',
+      '1. Nada que ya esté cubierto: revisa las URLs y queries; si un autor u obra ya tiene página, no lo propongas (salvo una pieza claramente distinta que no exista, y dilo).',
+      '2. Las keywords van como las teclea la gente en Google en español: minúsculas, sin comillas, 2-6 palabras ("poemas de alejandra pizarnik", "el retrato de dorian gray resumen"). Una sola keyword por pieza.',
+      '3. Mezcla: autores consagrados con alta demanda probable y apuestas de nicho con poca competencia. Prioriza Latinoamérica sin excluir clásicos universales.',
+      '4. Para cada autor indica su año de muerte si lo sabes (null si vive o no estás seguro). No opines sobre derechos de autor.',
+      '5. "por_que": una oración concreta que conecte con la cobertura existente (ej. "Tus lectores de Sabines buscan después a Rosario Castellanos").',
+      'Responde SOLO con JSON válido, sin texto antes ni después y sin bloques de código:',
+      '{"temporadas":[{"autor":"...","muerte":1900,"titulo":"Temporada ...","por_que":"...","piezas":[{"tipo":"resena|poemas|cuentos|archivo|obra","keyword":"...","pieza":"título corto de la pieza"}]}]}',
+      'Entre 7 y 9 temporadas, 2-4 piezas cada una.',
+    ].join('\n'),
+    build: (data) => {
+      const clip = (s, n) => String(s == null ? '' : s).slice(0, n);
+      const urls = (Array.isArray(data.urls) ? data.urls : []).slice(0, 200).map((u) => '- ' + clip(u, 200));
+      const queries = (Array.isArray(data.queries) ? data.queries : []).slice(0, 120).map((q) => '- ' + clip(q, 120));
+      const exclude = (Array.isArray(data.exclude) ? data.exclude : []).slice(0, 80).map((x) => '- ' + clip(x, 120));
+      return [
+        'Sitio: ' + clip(data.site, 100),
+        'Enfoque pedido por el editor: ' + (clip(data.focus, 300) || '(libre)'),
+        '',
+        '## URLs del sitio (cobertura actual)',
+        urls.join('\n') || '(ninguna)',
+        '',
+        '## Queries con impresiones en Google (90 días)',
+        queries.join('\n') || '(ninguna)',
+        '',
+        '## Ya propuestas o descartadas antes (no repetir)',
+        exclude.join('\n') || '(ninguna)',
+      ].join('\n');
+    },
+  },
+  // Siguientes: competencia, article, decay, ctr...
 };
 
 const MAX_BODY_CHARS = 60000;
