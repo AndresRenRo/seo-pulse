@@ -213,6 +213,9 @@ async function pageLinks(url) {
   return [...new Set([...body.matchAll(/<a\s[^>]*href=["']([^"'#]+)["']/gi)].map((m) => m[1]))].slice(0, 200);
 }
 
+const JSON_RULE = 'FORMATO ESTRICTO: el JSON debe ser válido. Dentro de los textos usa comillas latinas « » o simples, NUNCA comillas dobles rectas; no uses saltos de línea dentro de los valores; cierra todos los arreglos y objetos.';
+function withJsonRule(sys) { return /JSON/.test(sys) ? sys + '\n' + JSON_RULE : sys; }
+
 // ---------- Tareas permitidas ----------
 // El cliente solo elige la tarea y manda datos.
 // Modelo, tope de salida y prompt se definen aquí, en el servidor.
@@ -386,7 +389,7 @@ const TASKS = {
   // Plan estratégico: cuello de botella + mes + semana.
   plan: {
     model: MODELS.sonnet,
-    max_tokens: 5000,
+    max_tokens: 9000,
     system: () => PLAN_SYSTEM + '\n\n' + [
       'TAREA: genera el plan del MES y de la SEMANA.',
       'Responde SOLO con JSON válido, sin bloques de código:',
@@ -394,7 +397,7 @@ const TASKS = {
       '"mes":{"objetivo":"una frase","fase_foco":4,"metas":[{"meta":"","indicador":"cómo se mide con los datos de SEO Pulse","por_que":""}]},',
       '"semana":{"foco":"una frase","tareas":[{"tarea":"concreta y accionable","por_que":"con dato","esfuerzo":"30 min | 2 h | medio día","accion":{"tipo":"produccion|radar|etapa|pagina|ninguna","valor":"keyword o URL si aplica"}}]},',
       '"esperar":["lo que NO conviene hacer ahora y por qué"],"notas_usadas":["qué notas del editor tomaste en cuenta"]}',
-      '3-4 metas al mes, 4-7 tareas a la semana.',
+      '3-4 metas al mes, 4-7 tareas a la semana. Sé breve: cada "por_que" y cada "explicacion" en máximo 35 palabras.',
     ].join('\n'),
     build: (data) => planContext(data),
   },
@@ -402,7 +405,7 @@ const TASKS = {
   // Prioridades del día a partir del plan vigente.
   plan_hoy: {
     model: MODELS.sonnet,
-    max_tokens: 2000,
+    max_tokens: 3000,
     system: () => PLAN_SYSTEM + '\n\n' + [
       'TAREA: elige las PRIORIDADES DE HOY (1 a 3) a partir del plan semanal vigente, de lo que ya se hizo y de los datos frescos.',
       'Si algo urgente apareció en los datos (una caída, una oportunidad nueva), puede desplazar al plan; dilo.',
@@ -620,7 +623,7 @@ export default async function handler(req) {
     body: JSON.stringify({
       model: task.model,
       max_tokens: task.max_tokens,
-      system: typeof task.system === 'function' ? task.system() : task.system,
+      system: withJsonRule(typeof task.system === 'function' ? task.system() : task.system),
       stream: true,
       ...(task.tools ? { tools: task.tools } : {}),
       messages: [{ role: 'user', content: prompt }],
