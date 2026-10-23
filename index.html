@@ -419,12 +419,13 @@ button.filter{cursor:pointer;font-family:var(--sans)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
 const {useState,useEffect,useCallback,useRef,useMemo}=React;
-const VERSION='v4.5';
+const VERSION='v4.6';
 const REDIRECT_URI='https://seo-pulse-dusky.vercel.app';
 const SUGGEST_API=REDIRECT_URI+'/api/suggest';
 const CLAUDE_API=REDIRECT_URI+'/api/claude';
 // Llama al endpoint protegido. onText recibe el texto acumulado mientras llega (streaming).
-async function callClaude(task,data,onText){
+let lastStopReason=null;
+async function callClaude(task,data,onText){lastStopReason=null;
   const t=(()=>{try{const x=JSON.parse(localStorage.getItem('sp2_token')||'null');return x&&x.exp>Date.now()?x:null}catch{return null}})();
   if(!t)throw new Error('Conecta Google primero');
   const r=await fetch(CLAUDE_API,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t.tk},body:JSON.stringify({task,data})});
@@ -437,7 +438,7 @@ async function callClaude(task,data,onText){
       if(!line.startsWith('data:'))continue;const p=line.slice(5).trim();if(!p)continue;
       let ev;try{ev=JSON.parse(p)}catch{continue}
       if(ev.type==='message_start'&&ev.message){uModel=ev.message.model||'';const u=ev.message.usage||{};uIn=(u.input_tokens||0)+(u.cache_creation_input_tokens||0)+(u.cache_read_input_tokens||0)}
-      else if(ev.type==='message_delta'&&ev.usage){uOut=ev.usage.output_tokens||uOut}
+      else if(ev.type==='message_delta'){if(ev.usage)uOut=ev.usage.output_tokens||uOut;if(ev.delta&&ev.delta.stop_reason)lastStopReason=ev.delta.stop_reason}
       else if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.type==='text_delta'){full+=ev.delta.text;if(onText)onText(full)}
       else if(ev.type==='error'){throw new Error((ev.error&&ev.error.message)||'Error en streaming')}
     }
@@ -736,7 +737,11 @@ function relatedRows(rows,keyword){const kt=[...new Set(normTokens(keyword))];if
 function groupPages(scored){const byPage={};scored.slice(0,120).forEach(x=>{const p=byPage[x.page]||(byPage[x.page]={url:x.page,impressions:0,clicks:0,position:999,maxOverlap:0,queries:[]});p.impressions+=x.impressions;p.clicks+=x.clicks;p.position=Math.min(p.position,x.position);p.maxOverlap=Math.max(p.maxOverlap,x.overlap);p.queries.push({q:x.q,impressions:x.impressions,position:x.position})});const pages=Object.values(byPage).sort((a,b)=>b.maxOverlap-a.maxOverlap||b.impressions-a.impressions).slice(0,15);pages.forEach(p=>p.queries.sort((a,b)=>b.impressions-a.impressions));return pages}
 function getCanibal(keyword){try{const h=JSON.parse(localStorage.getItem('sp2_canibal')||'{}');return h[(keyword||'').trim().toLowerCase()]||null}catch{return null}}
 function saveCanibal(keyword,res){try{const h=JSON.parse(localStorage.getItem('sp2_canibal')||'{}');h[keyword.trim().toLowerCase()]={ts:Date.now(),res};localStorage.setItem('sp2_canibal',JSON.stringify(h))}catch{}}
-function parseJsonLoose(txt){const c=txt.replace(/```json|```/g,'').trim();return JSON.parse(c.slice(c.indexOf('{'),c.lastIndexOf('}')+1))}
+function repairJson(t){let inS=false,esc=false,stack=[],safe=-1,safeStack=[];for(let i=0;i<t.length;i++){const c=t[i];if(inS){if(esc)esc=false;else if(c==='\\')esc=true;else if(c==='"')inS=false;continue}if(c==='"'){inS=true;continue}if(c==='{'||c==='[')stack.push(c);else if(c==='}'||c===']'){stack.pop();safe=i+1;safeStack=stack.slice()}else if(c===','){safe=i;safeStack=stack.slice()}}if(safe<0)return null;let out=t.slice(0,safe).replace(/,\s*$/,'');for(let k=safeStack.length-1;k>=0;k--)out+=safeStack[k]==='{'?'}':']';return out}
+function parseJsonLoose(txt){const c=(txt||'').replace(/```json|```/g,'').trim();const start=c.indexOf('{');if(start<0)throw new Error('Claude no devolvió datos. Intenta de nuevo.');const end=c.lastIndexOf('}');
+  try{return JSON.parse(c.slice(start,end+1))}catch(e){}
+  const fixed=repairJson(c.slice(start));if(fixed){try{const o=JSON.parse(fixed);o._reparado=true;return o}catch(e){}}
+  throw new Error('La respuesta llegó incompleta o mal formada'+(lastStopReason==='max_tokens'?' (se cortó por largo)':'')+'. Intenta de nuevo.')}
 async function canibalAnalyze(gscFn,site,keyword){
   const rows=await loadQueryPageRows(gscFn);const pages=groupPages(relatedRows(rows,keyword));let res;
   if(pages.length===0)res={veredicto:'crear',url_principal:null,resumen:'Ninguna página del sitio recibe impresiones por queries relacionadas en los últimos 90 días.',conflictos:[],angulo_sugerido:null};
